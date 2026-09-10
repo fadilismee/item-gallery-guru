@@ -1,1 +1,4 @@
-https://github.com/fadilismee/item-gallery-guru/
+buana-computer.vercel.app
+Deployment: buana-computer-3qg2z68rz-fadilismees-projects.vercel.app
+Status: Build Completed - Deployment completed (Vercel CLI 59.11.7, vite v8.1.5, 1983 modules client + 81 ssr)
+Commit: 92f0968 (previously), now fixed with 3 Buana posters + nitro vercel preset

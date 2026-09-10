@@ -1,4 +1,5 @@
-export default {
-  // Auto-switch preset for Vercel vs local
-  preset: process.env.VERCEL ? "vercel" : "node-server",
-};
+import { defineNitroConfig } from "nitro/config";
+
+export default defineNitroConfig({
+  preset: "vercel",
+});
