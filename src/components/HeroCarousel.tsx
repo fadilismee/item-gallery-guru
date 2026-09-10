@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import reff1 from "@/img/reff1.jpg";
-import reff2 from "@/img/reff2.jpg";
-import reff3 from "@/img/reff3.jpg";
-import reffV2 from "@/img/reff-v2.png";
+import poster1 from "@/img/Buanacomputer-poster1.png";
+import poster2 from "@/img/Buanacomputer-poster2.png";
+import poster3 from "@/img/Buanacomputer-poster3.png";
 
 type Props = {
   images?: string[];
   interval?: number;
 };
 
-const defaultImages = [reff1, reff2, reff3, reffV2];
+const defaultImages = [poster1, poster2, poster3];
 
 export function HeroCarousel({ images = defaultImages, interval = 3000 }: Props) {
   const [index, setIndex] = useState(0);
