@@ -4,9 +4,12 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:grid-cols-3 lg:gap-12 lg:py-12">
         <div>
           <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded bg-white text-xs font-bold text-black">
-              BC
-            </span>
+            <img
+              src="/Buanacomputer-logo.png"
+              alt="Buana Computer"
+              className="h-8 w-auto object-contain brightness-0 invert"
+              loading="lazy"
+            />
             <span className="text-sm font-bold tracking-tight">BUANA COMPUTER</span>
           </div>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/60">

@@ -2,17 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import poster1 from "@/img/Buanacomputer-poster1.png";
 import poster2 from "@/img/Buanacomputer-poster2.png";
 import poster3 from "@/img/Buanacomputer-poster3.png";
+import hp from "@/img/Buanacomputer-hp.jpg";
+import hp2 from "@/img/Buanacomputer-hp2.jpg";
+import hp3 from "@/img/Buanacomputer-hp3.jpg";
 import banners from "@/data/banners.json";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Props = {
   images?: string[];
   interval?: number;
 };
 
+const desktopImages = [poster1, poster2, poster3];
+const phoneImages = [hp, hp2, hp3];
 const defaultImages =
-  banners.hero && banners.hero.length > 0 ? banners.hero : [poster1, poster2, poster3];
+  banners.hero && banners.hero.length > 0 ? banners.hero : desktopImages;
 
-export function HeroCarousel({ images = defaultImages, interval = 3000 }: Props) {
+export function HeroCarousel({ images: propImages, interval = 3000 }: Props) {
+  const isMobile = useIsMobile();
+  const images = propImages ?? (isMobile ? phoneImages : defaultImages);
   const [index, setIndex] = useState(0);
   const timerRef = useRef<number | null>(null);
   const pausedRef = useRef(false);

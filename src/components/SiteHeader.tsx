@@ -66,9 +66,12 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
       <div className="border-b border-black/10 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-2.5 lg:gap-6">
           <Link to="/" className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded bg-black text-xs font-bold text-white">
-              BC
-            </span>
+            <img
+              src="/Buanacomputer-logo.png"
+              alt="Buana Computer"
+              className="h-8 w-auto object-contain"
+              loading="eager"
+            />
             <span className="hidden text-[15px] font-bold tracking-tight text-black sm:block">
               BUANA<span className="font-light"> COMPUTER</span>
             </span>
