@@ -40,58 +40,24 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
   );
   const waCartHref = `https://wa.me/6285979220599?text=${waCartMessage}`;
 
+  const marqueeItems = [
+    "Konsultasi Gratis — Chat WA 6285979220599 →",
+    "Harga Terbaik & Garansi Resmi — Tanya Stok Sekarang →",
+    "Jual Rusak? HP 80rb–600rb • Laptop 500rb–2,5jt — Estimasi Via WA →",
+    "Bantul 55196 — Jemput Gratis Area Bantul →",
+  ];
+
   return (
     <header className="sticky top-0 z-40 w-full">
-      {/* Top bar — samain kayak home untuk /jual juga (tampil di phone juga) */}
-      <div className="bg-[#0f0f0f] text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-1.5 text-[11px] tracking-wide">
-          <div className="flex items-center gap-3">
-            <span className="font-semibold tracking-widest text-white">BUANA COMPUTER</span>
-            <span className="hidden text-white/30 lg:inline">|</span>
-            <Link to="/" className="text-white/70 hover:text-white">
-              Katalog
-            </Link>
-            <Link to="/jual" className="text-white/70 hover:text-white">
-              Jual Rusak
-            </Link>
-            <div className="group relative">
-              <a
-                href="https://google.com"
-                target="_blank"
-                rel="noreferrer"
-                className="text-white/70 hover:text-white"
-              >
-                Services
-              </a>
-              <span className="pointer-events-none absolute left-1/2 top-full z-50 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-white px-2.5 py-1.5 text-[11px] font-medium text-black shadow-lg group-hover:block">
-                Service: Garansi • Repair • Konsultasi WA
+      {/* Top bar — running text CTA hover pause (simple) */}
+      <div className="bg-[#0f0f0f] text-white overflow-hidden">
+        <div className="group flex items-center whitespace-nowrap py-1 sm:py-1.5 text-[10px] sm:text-[11px] tracking-wide">
+          <div className="flex w-max animate-marquee items-center gap-8 group-hover:[animation-play-state:paused] sm:gap-10 [animation-duration:20s]">
+            {[...marqueeItems, ...marqueeItems].map((txt, i) => (
+              <span key={`${txt}-${i}`} className="px-2 text-white/80">
+                {txt}
               </span>
-            </div>
-            <div className="group relative">
-              <a
-                href="https://google.com"
-                target="_blank"
-                rel="noreferrer"
-                className="text-white/70 hover:text-white"
-              >
-                Support
-              </a>
-              <span className="pointer-events-none absolute left-1/2 top-full z-50 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-white px-2.5 py-1.5 text-[11px] font-medium text-black shadow-lg group-hover:block">
-                Support: Tracking • Garansi • Bantuan
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 text-white/70">
-            <span className="hidden lg:inline">Mertosan Kulon, Bantul 55196</span>
-            <span className="hidden text-white/20 lg:inline">|</span>
-            <a
-              href="https://wa.me/6285979220599"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-white"
-            >
-              WA 6285979220599
-            </a>
+            ))}
           </div>
         </div>
       </div>
