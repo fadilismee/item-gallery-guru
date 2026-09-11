@@ -2,13 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import poster1 from "@/img/Buanacomputer-poster1.png";
 import poster2 from "@/img/Buanacomputer-poster2.png";
 import poster3 from "@/img/Buanacomputer-poster3.png";
+import banners from "@/data/banners.json";
 
 type Props = {
   images?: string[];
   interval?: number;
 };
 
-const defaultImages = [poster1, poster2, poster3];
+const defaultImages =
+  banners.hero && banners.hero.length > 0 ? banners.hero : [poster1, poster2, poster3];
 
 export function HeroCarousel({ images = defaultImages, interval = 3000 }: Props) {
   const [index, setIndex] = useState(0);

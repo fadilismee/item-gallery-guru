@@ -41,9 +41,15 @@ function ProductDetail() {
   const [active, setActive] = useState(0);
   const [qty, setQty] = useState(1);
 
-  const related = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 5);
+  const related = (() => {
+    const same = products.filter((p) => p.category === product.category && p.id !== product.id);
+    if (same.length >= 4) return same.slice(0, 4);
+    const others = products
+      .filter((p) => p.category !== product.category && p.id !== product.id)
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 4 - same.length);
+    return [...same, ...others].slice(0, 4);
+  })();
 
   const discount = product.oldPrice
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
@@ -136,7 +142,17 @@ function ProductDetail() {
         </div>
 
         <div>
-          <p className="text-xs font-medium uppercase tracking-widest text-primary">
+          <div className="flex flex-wrap items-center gap-2">
+            {product.isFeatured && (
+              <span className="rounded-full bg-amber-500 px-2.5 py-1 text-xs font-bold text-white">
+                ★ 4.5 • Produk Pilihan
+              </span>
+            )}
+            <span className="rounded-full bg-green-500 px-2.5 py-1 text-xs font-bold text-white">
+              Stok {product.stock}
+            </span>
+          </div>
+          <p className="mt-2 text-xs font-medium uppercase tracking-widest text-primary">
             {product.brand} &middot; {product.condition}
           </p>
           <h1 className="mt-2 text-2xl font-bold leading-snug text-foreground">{product.name}</h1>
@@ -188,6 +204,34 @@ function ProductDetail() {
                 {added ? "✓ Ditambahkan" : "+ Keranjang"}
               </Button>
             </div>
+            {(product.tokopediaUrl || product.shopeeUrl) && (
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {product.tokopediaUrl && (
+                  <Button asChild className="h-10 bg-[#03AC0E] text-white hover:bg-[#03940C]">
+                    <a href={product.tokopediaUrl} target="_blank" rel="noreferrer">
+                      <img
+                        src="https://cdn.simpleicons.org/tokopedia/FFFFFF"
+                        alt="Tokopedia"
+                        className="h-4 w-4"
+                      />
+                      Tokopedia
+                    </a>
+                  </Button>
+                )}
+                {product.shopeeUrl && (
+                  <Button asChild className="h-10 bg-[#EE4D2D] text-white hover:bg-[#D73211]">
+                    <a href={product.shopeeUrl} target="_blank" rel="noreferrer">
+                      <img
+                        src="https://cdn.simpleicons.org/shopee/FFFFFF"
+                        alt="Shopee"
+                        className="h-4 w-4"
+                      />
+                      Shopee
+                    </a>
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="mt-6">

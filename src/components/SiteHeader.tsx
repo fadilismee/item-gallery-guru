@@ -81,19 +81,14 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
             <Link to="/jual" className="rounded px-2.5 py-2 hover:bg-black/5 hover:text-black">
               Jual
             </Link>
-            <div className="group relative">
-              <a
-                href="https://google.com"
-                target="_blank"
-                rel="noreferrer"
-                className="rounded px-2.5 py-2 hover:bg-black/5 hover:text-black inline-block"
-              >
-                Services
-              </a>
-              <span className="pointer-events-none absolute left-1/2 top-full z-50 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-black px-2.5 py-1.5 text-xs text-white shadow group-hover:block">
-                Garansi • Repair • Konsultasi
-              </span>
-            </div>
+            <a
+              href="https://google.com"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded px-2.5 py-2 hover:bg-black/5 hover:text-black"
+            >
+              Services
+            </a>
             <a href="#kontak" className="rounded px-2.5 py-2 hover:bg-black/5 hover:text-black">
               Kontak
             </a>
