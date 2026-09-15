@@ -51,7 +51,7 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
     <header className="sticky top-0 z-40 w-full">
       {/* Top bar — running text CTA hover pause (simple) */}
       <div className="bg-[#0f0f0f] text-white overflow-hidden">
-        <div className="group flex items-center whitespace-nowrap py-1 sm:py-1.5 text-[10px] sm:text-[11px] tracking-wide">
+        <div className="group flex items-center whitespace-nowrap py-1.5 text-[10px] tracking-wide sm:py-2 sm:text-[11px]">
           <div className="flex w-max animate-marquee items-center gap-8 group-hover:[animation-play-state:paused] sm:gap-10 [animation-duration:20s]">
             {[...marqueeItems, ...marqueeItems].map((txt, i) => (
               <span key={`${txt}-${i}`} className="px-2 text-white/80">
@@ -64,7 +64,7 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
 
       {/* Main navbar */}
       <div className="border-b border-black/10 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-2.5 lg:gap-6">
+        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 lg:gap-6">
           <Link to="/" className="flex items-center gap-2">
             <img
               src="/Buanacomputer-logo.png"
@@ -154,9 +154,7 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
                 <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-xl border bg-white p-4 shadow-xl">
                   <h4 className="text-sm font-bold text-foreground">Keranjang</h4>
                   {items.length === 0 ? (
-                    <p className="mt-3 text-sm text-muted-foreground">
-                      Keranjang kosong — klik + Keranjang di produk
-                    </p>
+                    <p className="mt-3 text-sm text-muted-foreground">Keranjang kosong.</p>
                   ) : (
                     <>
                       <ul className="mt-3 max-h-64 space-y-3 overflow-auto pr-1">
@@ -198,9 +196,6 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
                         >
                           Checkout via WA
                         </a>
-                        <p className="mt-2 text-center text-[11px] text-muted-foreground">
-                          CO langsung ke WA 6285979220599
-                        </p>
                       </div>
                     </>
                   )}

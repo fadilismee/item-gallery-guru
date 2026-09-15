@@ -9,26 +9,26 @@ export function ReviewReels() {
   const go = () => setPressed(false);
 
   return (
-    <section aria-label="Testimoni pembeli" className="mx-auto max-w-7xl px-4 pb-10">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-bold text-foreground">Testimoni Pembeli</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Geser otomatis • bentuk Reels 9:16 • tekan & tahan untuk berhenti
-          </p>
-        </div>
+    <section aria-label="Testimoni pembeli" className="pb-14 pt-12 sm:pb-20 sm:pt-16">
+      <div className="mx-auto max-w-7xl px-4 text-center">
+        <span className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold text-blue-700">
+          Testimoni
+        </span>
+        <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+          Testimoni Pembeli
+        </h2>
         <a
           href="https://wa.me/6285979220599?text=Halo%20Buana%20Computer%2C%20mau%20lihat%20testimoni"
           target="_blank"
           rel="noreferrer"
-          className="hidden text-sm font-medium text-primary hover:underline sm:block"
+          className="mt-3 inline-block text-sm font-medium text-primary hover:text-primary/80"
         >
           Lihat semua →
         </a>
       </div>
 
       <div
-        className="group relative mt-5 select-none overflow-hidden rounded-xl [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
+        className="group relative mt-8 select-none overflow-hidden sm:mt-10"
         onMouseDown={stop}
         onMouseUp={go}
         onMouseLeave={go}
@@ -37,7 +37,7 @@ export function ReviewReels() {
         onTouchCancel={go}
       >
         <div
-          className="flex w-max gap-3 animate-marquee group-hover:[animation-play-state:paused] group-focus-within:[animation-play-state:paused]"
+          className="flex w-max gap-4 animate-marquee group-hover:[animation-play-state:paused] group-focus-within:[animation-play-state:paused]"
           style={{ animationPlayState: pressed ? "paused" : undefined }}
         >
           {reels.map((r, idx) => (
@@ -87,31 +87,25 @@ export function ReviewReels() {
                       (e.currentTarget as HTMLImageElement).style.display = "none";
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-                  <div className="absolute bottom-0 w-full p-3">
-                    <p className="line-clamp-1 text-xs font-bold leading-tight text-white">
-                      {r.title}
-                    </p>
-                    <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-white/85">
-                      {r.text}
-                    </p>
-                    <div className="mt-2 flex items-center gap-1.5">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/90 text-[10px] font-bold text-foreground">
-                        {r.name.charAt(0)}
-                      </span>
-                      <span className="line-clamp-1 text-[11px] font-medium text-white/90">
-                        {r.name}
-                      </span>
-                      <span className="ml-auto text-[11px] text-amber-300">★ {r.rating}</span>
-                    </div>
-                    {r.productLabel && (
-                      <p className="mt-1.5 inline-block rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur">
-                        {r.productLabel}
-                      </p>
-                    )}
-                  </div>
                 </>
               )}
+              {/* Teks panel gelap di bawah kartu */}
+              <div className="absolute inset-x-0 bottom-0 bg-black/60 p-3 backdrop-blur-sm">
+                <p className="text-sm font-bold leading-tight text-white">{r.title}</p>
+                <p className="mt-1 line-clamp-2 text-xs leading-snug text-white">{r.text}</p>
+                <div className="mt-2 flex items-center gap-1.5">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/90 text-[10px] font-bold text-foreground">
+                    {r.name.charAt(0)}
+                  </span>
+                  <span className="line-clamp-1 text-xs font-semibold text-white">{r.name}</span>
+                  <span className="ml-auto text-xs text-amber-300">★ {r.rating}</span>
+                </div>
+                {r.productLabel && (
+                  <p className="mt-1.5 inline-block rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur">
+                    {r.productLabel}
+                  </p>
+                )}
+              </div>
               {r.mediaType === "video" && (
                 <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-bold text-white backdrop-blur">
                   ▶ Video
@@ -121,9 +115,6 @@ export function ReviewReels() {
           ))}
         </div>
       </div>
-      <p className="mt-3 text-center text-xs text-muted-foreground">
-        Tekan & tahan reels untuk berhenti, lepas untuk jalan lagi
-      </p>
     </section>
   );
 }

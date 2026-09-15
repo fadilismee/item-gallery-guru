@@ -112,12 +112,12 @@ function JualPage() {
 
       <HeroCarousel />
 
-      <section className="mx-auto max-w-7xl px-4 pb-8">
+      <section className="mx-auto max-w-7xl px-4 pb-10 pt-8 sm:pb-14 sm:pt-10">
         <h2 className="text-lg font-bold text-foreground">Perkiraan Harga Satuan</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Pilih kategori — detail besar di kanan, klik kiri untuk ganti. Harga final via WA.
+        <p className="mt-2 text-sm text-muted-foreground">
+          Harga final via WA — pilih kategori untuk lihat perkiraan.
         </p>
-        <div className="mt-6 grid gap-6 lg:grid-cols-[320px_1fr] lg:items-stretch">
+        <div className="mt-8 grid gap-6 lg:grid-cols-[320px_1fr] lg:items-stretch lg:gap-8">
           {/* Kiri: 8 item kecil — tinggi samain kanan */}
           <div className="order-2 flex gap-2 overflow-x-auto pb-2 lg:order-1 lg:flex-col lg:overflow-visible">
             {sellPrices.map((p) => {
@@ -201,12 +201,12 @@ function JualPage() {
         </div>
       </section>
 
-      <section id="form-jual" className="mx-auto max-w-7xl px-4 py-8">
+      <section id="form-jual" className="mx-auto max-w-7xl px-4 py-10 sm:py-14">
         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-          <form onSubmit={handleSubmit} className="rounded-2xl border bg-card p-6 shadow-sm">
+          <form onSubmit={handleSubmit} className="rounded-2xl border bg-card p-6 shadow-sm sm:p-8">
             <h2 className="text-lg font-bold text-foreground">Form Jual Barang Rusak</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Isi data sejelas mungkin — foto cukup kirim via WA setelah klik Kirim.
+            <p className="mt-2 text-sm text-muted-foreground">
+              Foto cukup kirim via WA setelah klik Kirim.
             </p>
 
             <div className="mt-6 grid gap-5">

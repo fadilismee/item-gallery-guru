@@ -109,7 +109,7 @@ function ProductDetail() {
       />
       <SiteHeader />
 
-      <div className="mx-auto max-w-7xl px-4 py-4 text-xs text-muted-foreground">
+      <div className="mx-auto max-w-7xl px-4 py-5 text-xs text-muted-foreground">
         <Link to="/" className="hover:text-foreground">
           Katalog
         </Link>
@@ -119,7 +119,7 @@ function ProductDetail() {
         <span className="text-foreground">{product.name}</span>
       </div>
 
-      <section className="mx-auto max-w-7xl px-4 pb-6">
+      <section className="mx-auto max-w-7xl px-4 pb-8">
         <div className="relative grid min-h-36 overflow-hidden rounded-xl border border-primary/20 bg-primary sm:grid-cols-[minmax(0,1fr)_340px] sm:items-center">
           <img
             src={reff1}
@@ -146,7 +146,7 @@ function ProductDetail() {
         </div>
       </section>
 
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 pb-10 lg:grid-cols-[380px_1fr]">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 pb-12 sm:pb-16 lg:grid-cols-[380px_1fr] lg:gap-10">
         <div>
           <div className="aspect-square overflow-hidden rounded-xl border bg-muted">
             <img
@@ -156,7 +156,7 @@ function ProductDetail() {
               loading="eager"
             />
           </div>
-          <div className="mt-3 grid grid-cols-4 gap-2">
+          <div className="mt-4 grid grid-cols-4 gap-2.5">
             {product.gallery.map((src, i) => (
               <button
                 key={src}
@@ -292,9 +292,9 @@ function ProductDetail() {
       </div>
 
       {related.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 pb-8">
+        <section className="mx-auto max-w-7xl px-4 pb-12 sm:pb-16">
           <h2 className="text-lg font-bold text-foreground">Produk Serupa</h2>
-          <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-5">
             {related.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}

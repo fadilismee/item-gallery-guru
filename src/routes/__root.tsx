@@ -135,8 +135,8 @@ const localBusinessJsonLd = {
   },
   geo: {
     "@type": "GeoCoordinates",
-    latitude: -7.8163,
-    longitude: 110.4056,
+    latitude: -7.8372069,
+    longitude: 110.4148331,
   },
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
@@ -145,6 +145,12 @@ const localBusinessJsonLd = {
     closes: "18:00",
   },
   priceRange: "Rp 675.000 - Rp 24.900.000",
+  sameAs: [
+    "https://service.buanacomputer.web.id",
+    "https://jual.buanacomputer.web.id",
+    "https://buanacomputer.web.id/blog",
+    "https://buanacomputer.web.id/about",
+  ],
 };
 
 function RootShell({ children }: { children: ReactNode }) {

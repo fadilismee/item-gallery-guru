@@ -80,12 +80,12 @@ function Index() {
 
       <HeroCarousel />
 
-      <section className="mx-auto max-w-7xl px-4 py-6">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:py-10">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-bold tracking-wide text-foreground">Kategori</h2>
           <span className="text-xs text-muted-foreground">{categories.length} kategori</span>
         </div>
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <div className="mt-4 flex gap-2.5 overflow-x-auto pb-2 scrollbar-none">
           <button
             onClick={() => setCategory("Semua")}
             className={`shrink-0 rounded-full border px-4 py-2 text-xs font-medium transition-colors ${
@@ -118,7 +118,7 @@ function Index() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pb-12">
+      <section className="mx-auto max-w-7xl px-4 pb-14 sm:pb-20">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-bold text-foreground">
             {category === "Semua" ? "Semua Produk" : category}
@@ -146,7 +146,7 @@ function Index() {
         {list.length === 0 ? (
           <p className="mt-10 text-center text-sm text-muted-foreground">Produk tidak ditemukan.</p>
         ) : (
-          <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-5">
             {list.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}

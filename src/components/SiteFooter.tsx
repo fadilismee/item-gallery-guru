@@ -1,77 +1,127 @@
+import iframeHtml from "../../link-embebgmpas.txt?raw";
+
 export function SiteFooter() {
   return (
     <footer id="kontak" className="border-t border-white/10 bg-[#0f0f0f] text-white">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:grid-cols-3 lg:gap-12 lg:py-12">
-        <div>
-          <div className="flex items-center gap-2">
-            <img
-              src="/Buanacomputer-logo.png"
-              alt="Buana Computer"
-              className="h-8 w-auto object-contain brightness-0 invert"
-              loading="lazy"
-            />
-            <span className="text-sm font-bold tracking-tight">BUANA COMPUTER</span>
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:gap-12 lg:grid-cols-[1.5fr_1fr] lg:py-16">
+        <div className="grid gap-8 sm:grid-cols-2">
+          <div>
+            <div className="flex items-center gap-2">
+              <img
+                src="/Buanacomputer-logo.png"
+                alt="Buana Computer"
+                className="h-8 w-auto object-contain brightness-0 invert"
+                loading="lazy"
+              />
+              <span className="text-sm font-bold tracking-tight">BUANA COMPUTER</span>
+            </div>
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/60">
+              Toko laptop, PC rakitan, dan aksesoris komputer. Melayani satuan & korporat. Cek
+              katalog online sebelum ke toko — harga transparan, garansi jelas.
+            </p>
+            <p className="mt-4 text-xs text-white/40">
+              Mertosan Kulon, Potorono, Banguntapan, Bantul 55196
+            </p>
           </div>
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/60">
-            Toko laptop, PC rakitan, dan aksesoris komputer. Melayani satuan & korporat. Cek katalog
-            online sebelum ke toko — harga transparan, garansi jelas.
-          </p>
-          <p className="mt-4 text-xs text-white/40">
-            Mertosan Kulon, Potorono, Banguntapan, Bantul 55196
-          </p>
+
+          <div className="text-sm">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-white/90">
+              Kontak
+            </h4>
+            <ul className="mt-4 space-y-2 text-white/60">
+              <li>
+                WhatsApp:{" "}
+                <a
+                  href="https://wa.me/6285979220599?text=Halo%20Buana%20Computer"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium text-white hover:text-white hover:underline"
+                >
+                  6285979220599
+                </a>
+              </li>
+              <li>Alamat: Mertosan Kulon, Potorono, Kec. Banguntapan, Bantul, DIY 55196</li>
+              <li>
+                <a
+                  href="https://maps.google.com/?q=-7.8372069,110.4148331"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-white"
+                >
+                  Lihat di Google Maps →
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div className="text-sm">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-white/90">
+              Jam Buka & Layanan
+            </h4>
+            <ul className="mt-4 space-y-2 text-white/60">
+              <li>Senin – Sabtu: 09.00 – 20.00 WIB</li>
+              <li>Minggu: 10.00 – 17.00 WIB (janjian WA)</li>
+              <li className="pt-2">
+                <a href="/jual" className="text-white hover:underline">
+                  Jual Barang Rusak →
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div className="text-sm">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-white/90">
+              Tautan & Layanan
+            </h4>
+            <ul className="mt-4 space-y-2 text-white/60">
+              <li>
+                <a
+                  href="https://service.buanacomputer.web.id"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white hover:underline"
+                >
+                  Layanan Service
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://jual.buanacomputer.web.id"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white hover:underline"
+                >
+                  Jual Barang Rusak
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://buanacomputer.web.id/blog"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white hover:underline"
+                >
+                  Blog
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://buanacomputer.web.id/about"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white hover:underline"
+                >
+                  Tentang Kami
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <div className="text-sm">
-          <h4 className="text-xs font-semibold uppercase tracking-widest text-white/90">Kontak</h4>
-          <ul className="mt-4 space-y-2 text-white/60">
-            <li>
-              WhatsApp:{" "}
-              <a
-                href="https://wa.me/6285979220599?text=Halo%20Buana%20Computer"
-                target="_blank"
-                rel="noreferrer"
-                className="font-medium text-white hover:text-white hover:underline"
-              >
-                6285979220599
-              </a>
-            </li>
-            <li>Alamat: Mertosan Kulon, Potorono, Kec. Banguntapan, Bantul, DIY 55196</li>
-            <li>
-              <a
-                href="https://google.com"
-                target="_blank"
-                rel="noreferrer"
-                className="hover:text-white"
-              >
-                Lihat di Google Maps →
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <div className="text-sm">
-          <h4 className="text-xs font-semibold uppercase tracking-widest text-white/90">
-            Jam Buka & Layanan
-          </h4>
-          <ul className="mt-4 space-y-2 text-white/60">
-            <li>Senin – Sabtu: 09.00 – 20.00 WIB</li>
-            <li>Minggu: 10.00 – 17.00 WIB (janjian WA)</li>
-            <li className="pt-2">
-              <a href="/jual" className="text-white hover:underline">
-                Jual Barang Rusak →
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://google.com"
-                target="_blank"
-                rel="noreferrer"
-                className="hover:text-white"
-              >
-                Services & Support
-              </a>
-            </li>
-          </ul>
+        <div className="h-[300px] w-full overflow-hidden rounded-lg sm:h-[360px] lg:h-auto lg:min-h-[340px]">
+          <div className="h-full w-full [&>iframe]:h-full [&>iframe]:w-full [&>iframe]:border-0">
+            <div dangerouslySetInnerHTML={{ __html: iframeHtml }} />
+          </div>
         </div>
       </div>
 
@@ -80,17 +130,17 @@ export function SiteFooter() {
           <p>© {new Date().getFullYear()} Buana Computer. Semua hak dilindungi.</p>
           <div className="flex gap-4">
             <a
-              href="https://google.com"
+              href="https://buanacomputer.web.id/about"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="hover:text-white/70"
             >
               Syarat Layanan
             </a>
             <a
-              href="https://google.com"
+              href="https://buanacomputer.web.id/about"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="hover:text-white/70"
             >
               Kebijakan Privasi

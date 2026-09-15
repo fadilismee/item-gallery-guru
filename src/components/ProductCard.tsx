@@ -46,7 +46,7 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
         )}
       </Link>
-      <div className="flex flex-1 flex-col gap-1 px-3 pb-3">
+      <div className="flex flex-1 flex-col gap-1.5 px-4 pb-4">
         <Link
           to="/produk/$productId"
           params={{ productId: product.id }}
@@ -54,7 +54,7 @@ export function ProductCard({ product }: { product: Product }) {
         >
           {product.name}
         </Link>
-        <div className="mt-auto pt-2">
+        <div className="mt-auto pt-3">
           <p className="text-base font-bold text-foreground">{formatPrice(product.price)}</p>
           {product.oldPrice && (
             <p className="text-xs text-muted-foreground line-through">
