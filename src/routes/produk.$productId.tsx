@@ -39,9 +39,7 @@ export const Route = createFileRoute("/produk/$productId")({
         { name: "twitter:description", content: product.shortDescription },
         { name: "twitter:image", content: product.image },
       ],
-      links: [
-        { rel: "canonical", href: url },
-      ],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   component: ProductDetail,
@@ -64,9 +62,8 @@ function ProductDetail() {
       "@type": "Offer",
       price: product.price,
       priceCurrency: "IDR",
-      availability: product.stock > 0
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
+      availability:
+        product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       url: `https://buanacomputer.web.id/produk/${product.id}`,
     },
     aggregateRating: {

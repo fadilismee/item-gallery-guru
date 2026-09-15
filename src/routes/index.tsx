@@ -43,9 +43,7 @@ export const Route = createFileRoute("/")({
       },
       { name: "twitter:image", content: "https://buanacomputer.web.id/Buanacomputer-logo.png" },
     ],
-    links: [
-      { rel: "canonical", href: "https://buanacomputer.web.id" },
-    ],
+    links: [{ rel: "canonical", href: "https://buanacomputer.web.id" }],
   }),
   component: Index,
 });

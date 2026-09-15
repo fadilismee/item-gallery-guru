@@ -56,9 +56,7 @@ export const Route = createFileRoute("/jual")({
       },
       { name: "twitter:image", content: "https://buanacomputer.web.id/Buanacomputer-logo.png" },
     ],
-    links: [
-      { rel: "canonical", href: "https://buanacomputer.web.id/jual" },
-    ],
+    links: [{ rel: "canonical", href: "https://buanacomputer.web.id/jual" }],
   }),
   component: JualPage,
 });
