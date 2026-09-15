@@ -73,6 +73,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "theme-color", content: "#000000" },
       { title: "Buana Computer - Katalog Laptop, PC Rakitan & Aksesoris" },
       {
         name: "description",
@@ -87,7 +88,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Jelajahi katalog Buana Computer — laptop, PC rakitan, monitor, dan aksesoris lengkap dengan spesifikasi dan harga.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Buana Computer" },
+      { property: "og:locale", content: "id_ID" },
+      { property: "og:image", content: "https://buanacomputer.web.id/Buanacomputer-logo.png" },
+      { property: "og:url", content: "https://buanacomputer.web.id" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Buana Computer - Katalog Laptop & PC" },
+      {
+        name: "twitter:description",
+        content:
+          "Jelajahi katalog Buana Computer — laptop, PC rakitan, monitor, dan aksesoris lengkap dengan spesifikasi dan harga.",
+      },
+      { name: "twitter:image", content: "https://buanacomputer.web.id/Buanacomputer-logo.png" },
     ],
     links: [
       {
@@ -97,6 +109,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "manifest", href: "/manifest.json" },
     ],
   }),
   shellComponent: RootShell,
@@ -104,6 +117,35 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
+
+const localBusinessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: "Buana Computer",
+  image: "https://buanacomputer.web.id/Buanacomputer-logo.png",
+  url: "https://buanacomputer.web.id",
+  telephone: "6285979220599",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Mertosan Kulon, Potorono",
+    addressLocality: "Banguntapan, Bantul",
+    addressRegion: "DI Yogyakarta",
+    postalCode: "55196",
+    addressCountry: "ID",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: -7.8163,
+    longitude: 110.4056,
+  },
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    opens: "09:00",
+    closes: "18:00",
+  },
+  priceRange: "Rp 675.000 - Rp 24.900.000",
+};
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
@@ -113,6 +155,10 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+        />
         <Scripts />
       </body>
     </html>

@@ -45,6 +45,19 @@ export const Route = createFileRoute("/jual")({
         content:
           "Terima barang rusak: laptop, PC, HDD, HP, mainboard, CPU, GPU. Chat WA untuk estimasi cepat.",
       },
+      { property: "og:image", content: "https://buanacomputer.web.id/Buanacomputer-logo.png" },
+      { property: "og:url", content: "https://buanacomputer.web.id/jual" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Jual Barang Rusak - Buana Computer" },
+      {
+        name: "twitter:description",
+        content:
+          "Terima barang rusak: laptop, PC, HDD, HP, mainboard, CPU, GPU. Chat WA untuk estimasi cepat.",
+      },
+      { name: "twitter:image", content: "https://buanacomputer.web.id/Buanacomputer-logo.png" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://buanacomputer.web.id/jual" },
     ],
   }),
   component: JualPage,

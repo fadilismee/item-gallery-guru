@@ -32,6 +32,19 @@ export const Route = createFileRoute("/")({
         content:
           "Jelajahi katalog Buana Computer — laptop, PC rakitan, monitor, dan aksesoris komputer lengkap dengan spesifikasi dan harga.",
       },
+      { property: "og:image", content: "https://buanacomputer.web.id/Buanacomputer-logo.png" },
+      { property: "og:url", content: "https://buanacomputer.web.id" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Buana Computer - Katalog Laptop & PC" },
+      {
+        name: "twitter:description",
+        content:
+          "Jelajahi katalog Buana Computer — laptop, PC rakitan, monitor, dan aksesoris komputer lengkap dengan spesifikasi dan harga.",
+      },
+      { name: "twitter:image", content: "https://buanacomputer.web.id/Buanacomputer-logo.png" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://buanacomputer.web.id" },
     ],
   }),
   component: Index,

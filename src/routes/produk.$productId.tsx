@@ -24,12 +24,23 @@ export const Route = createFileRoute("/produk/$productId")({
     }
     const { product } = loaderData;
     const title = `${product.name} - Buana Computer`;
+    const url = `https://buanacomputer.web.id/produk/${product.id}`;
     return {
       meta: [
         { title },
         { name: "description", content: product.shortDescription },
+        { property: "og:type", content: "product" },
         { property: "og:title", content: title },
         { property: "og:description", content: product.shortDescription },
+        { property: "og:image", content: product.image },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: product.shortDescription },
+        { name: "twitter:image", content: product.image },
+      ],
+      links: [
+        { rel: "canonical", href: url },
       ],
     };
   },
@@ -40,6 +51,30 @@ function ProductDetail() {
   const { product } = Route.useLoaderData();
   const [active, setActive] = useState(0);
   const [qty, setQty] = useState(1);
+
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    image: product.gallery.length > 0 ? product.gallery : [product.image],
+    description: product.description,
+    brand: { "@type": "Brand", name: product.brand },
+    sku: product.id,
+    offers: {
+      "@type": "Offer",
+      price: product.price,
+      priceCurrency: "IDR",
+      availability: product.stock > 0
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      url: `https://buanacomputer.web.id/produk/${product.id}`,
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: product.rating,
+      reviewCount: product.sold,
+    },
+  };
 
   const related = (() => {
     const same = products.filter((p) => p.category === product.category && p.id !== product.id);
@@ -71,6 +106,10 @@ function ProductDetail() {
 
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
       <SiteHeader />
 
       <div className="mx-auto max-w-7xl px-4 py-4 text-xs text-muted-foreground">
