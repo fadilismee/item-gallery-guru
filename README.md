@@ -1,57 +1,68 @@
 # Buana Computer — Katalog Laptop & PC
 
-Katalog toko untuk Buana Computer: menampilkan semua produk laptop, PC rakitan, monitor, komponen, storage, dan aksesoris. Terinspirasi dari microbatam.com dan UX marketplace (Tokopedia/Shopee) dengan 2 halaman utama: katalog & detail produk.
+Katalog online Buana Computer (Bantul, Yogyakarta): laptop & PC rakitan, monitor, komponen, storage, dan aksesoris — plus layanan **buyback hardware bekas/rusak** dan **blog teknisi**. Terinspirasi UX marketplace (Tokopedia/Shopee).
 
-Semua gambar menggunakan placeholder `ImageCanvas` (canvas kosong border-dashed) agar mudah diganti foto asli nanti.
+> **Live:** [buanacomputer.web.id](https://buanacomputer.web.id) · **Deploy:** Vercel (otomatis dari `main`)
 
-## Fitur
+## ✨ Fitur
 
-- **Katalog** (`/`): hero poster, kategori 6 grid, banner promo, search + filter kategori + sort (populer/termurah/termahal), grid responsif 2/3/5 kolom, SEO meta OG
-- **Detail Produk** (`/produk/$productId`): loader `notFound`, galeri canvas, harga + diskon, stok/qty, tombol Hubungi Penjual (WA), spesifikasi & deskripsi, related products
-- **Branding Buana Computer**: header `BC`, footer kontak WA + alamat Bantul, `lang="id"`
-- **Data**: `src/data/products.ts` (12 produk mock, mudah ganti ke API/DB)
+| Halaman | Isi |
+|---|---|
+| `/` Katalog | Hero poster, kategori, banner promo, search + filter + sort, grid responsif, badge "Produk Pilihan" |
+| `/produk/:id` | Galeri, harga + diskon, stok & qty, spesifikasi, produk serupa, tombol WA prefilled |
+| `/jual` Buyback | Hero stack foto fan-out, strip statistik, gallery carousel grade A–D, katalog SKU + filter, tombol **Ajukan Jual** |
+| `/jual/form` | Form taksir hardware (kategori × kondisi) → kirim pengajuan via WhatsApp |
+| `/blog`, `/blog/:slug` | Artikel + CTA diskusi via WA |
+| `/about` | Profil lab servis & buyback |
+| `/admin/*` | Dashboard lokal: kelola produk, blog, harga, review, banner (lihat di bawah) |
 
-## Tech Stack
+Semua transaksi dinegosiasikan via WhatsApp (`6285979220599`) — cek lab 15 menit, dana cair instan (cash/BCA/QRIS).
 
-- TanStack Start + TanStack Router + React 19 + Vite 8 + Nitro (node-server)
-- Tailwind CSS 4 + shadcn/ui (new-york, slate)
-- TypeScript strict, ESLint + Prettier
+## 🛠️ Tech Stack
 
-## Development
+- **TanStack Start** + TanStack Router + React 19 + Vite 8 + Nitro
+- **Tailwind CSS 4** + shadcn/ui (new-york) + Lucide icons
+- TypeScript strict · ESLint + Prettier · Zod (validasi data)
+- Data: JSON statis di `src/data/` (siap pindah ke DB bila perlu)
+- Upload gambar: Catbox (repo hanya menyimpan URL)
+
+## 🚀 Cara Menjalankan
 
 ```sh
 npm i
-npm run dev      # vite dev
-npm run build    # vite build (Nitro)
-npm run preview  # vite preview
-npm run lint     # eslint
-npm run format   # prettier --write .
+npm run dev       # dev server (atau scheduled task buana-dev, port 3000)
+npm run lint      # eslint — harus 0 error
+npm run validate  # validasi 9 file data + keunikan id/slug
+npm run build     # production build (Vite + Nitro)
+npm run preview   # pratinjau hasil build
 ```
 
-## Struktur Penting
+## 📁 Struktur Proyek
 
 ```
-src/routes/index.tsx              -> katalog
-src/routes/produk.$productId.tsx  -> detail
-src/components/ProductCard.tsx, ImageCanvas.tsx, SiteHeader.tsx, SiteFooter.tsx
-src/data/products.ts              -> data produk
-src/server.ts / src/start.ts      -> SSR entry (Opsi A: simple proxy)
-vite.config.ts                    -> vanilla vite (konfigurasi mandiri)
+src/routes/            → halaman (index, produk.$productId, jual.index, jual.form, blog.*, about, admin.*)
+src/components/        → komponen UI (shadcn) + admin/ (AdminIcon, ConfirmDialog, ImageField, JsonEditor)
+src/data/              → products, sellPrices, reviews, blog, banners, jualAssets, uploads (*.json)
+src/lib/               → schemas.ts (Zod), validateAll.ts, adminClient.ts, adminMode.ts
+src/server/admin.ts    → server functions admin (auth, dataset, upload, git, validate)
+scripts/               → validate-data.ts, generate-sitemap.mjs (jalan saat prebuild)
+tools/bot.py           → Bot Telegram pengelola katalog (token di tools/.env — JANGAN commit)
+docs/                  → GIT.md (aturan push) & ALIRAN.md (user & admin flow lengkap)
 ```
 
-## Kontak
+## 🔐 Dashboard Admin (lokal + LAN kantor)
 
-- WhatsApp: 6285979220599
-- Alamat: Mertosan Kulon, Potorono, Kec. Banguntapan, Kabupaten Bantul, DI Yogyakarta 55196
+- Login: `http://localhost:3000/admin-login` (atau `http://<IP-PC>:3000/admin-login` dari HP/PC se-WiFi). Password: `ADMIN_PASSWORD` di `.env`.
+- **Mode Mudah** (default): form + tombol hijau **Terbitkan Perubahan**. **Mode Teknis**: editor JSON + panel git + detail validasi.
+- Gambar: tombol **Upload** (ke Catbox → link terisi otomatis) + **Gallery** (riwayat upload).
+- Alur: Simpan per halaman (tulis JSON lokal, lolos validasi Zod) → Terbitkan (commit + push `src/data` & sitemap → deploy Vercel).
+- ⚠️ Nonaktif di production. Detail lengkap: [`docs/ALIRAN.md`](docs/ALIRAN.md).
 
-## Dashboard Admin (lokal + LAN kantor)
+## 🌐 Deploy & Git
 
-- Login: `http://localhost:3000/admin-login` (atau `http://<IP-PC-kantor>:3000/admin-login` dari HP/PC se-WiFi). Password: `ADMIN_PASSWORD` di `.env` (lihat `.env.example`, dipakai bersama tim).
-- Mode **Mudah** (default): form sederhana + tombol hijau **Terbitkan Perubahan**. Mode **Teknis**: editor JSON mentah + panel git + detail validasi. Toggle di header atas.
-- Gambar: tiap field gambar ada tombol **Upload** (file diupload ke Catbox → link otomatis terisi) + tombol **Gallery** (pilih dari upload-an sebelumnya).
-- Alur: Simpan di tiap halaman (tulis JSON lokal) → Terbitkan (commit + push → deploy Vercel). Dashboard admin nonaktif di production.
+Push ke `main` = deploy otomatis Vercel. Aturan apa yang boleh/tidak boleh di-push ada di [`docs/GIT.md`](docs/GIT.md) — intinya: **jangan pernah commit `.env` / `tools/.env`** (berisi password & token).
 
-## Dokumentasi Operasional
+## 📞 Kontak
 
-- `docs/GIT.md` — apa yang wajib di-commit vs jangan di-push + alur rilis.
-- `docs/ALIRAN.md` — user flow & admin flow lengkap.
+- WhatsApp: `6285979220599`
+- Alamat: Mertosan Kulon, Potorono, Banguntapan, Bantul, DI Yogyakarta 55196
