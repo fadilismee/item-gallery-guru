@@ -1,4 +1,13 @@
-# Logs
+# ================= Dependencies & build =================
+node_modules
+dist
+dist-ssr
+.output
+.tanstack/**
+.vinxi
+.nitro
+
+# ================= Logs =================
 logs
 *.log
 npm-debug.log*
@@ -7,30 +16,41 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-.output
-.vinxi
-.tanstack/**
-.nitro
+# ================= Env & secrets — JANGAN COMMIT =================
+# ADMIN_PASSWORD dashboard, TELEGRAM/GITHUB token bot, dsb.
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ================= Deploy =================
+.vercel
+.vercel/output
+
+# ================= Junk lokal — JANGAN PUSH =================
+# dump sesi dev internal
+session-export.json
+# snippet iframe Google Maps (sudah inline di kode)
+link-embebgmpas.txt
+# referensi desain (~8MB), tidak dipakai aplikasi
+reff-img/**
 *.local
+*.bak
+*.tmp
 
-# Wrangler / Cloudflare
-.wrangler/
-.dev.vars
-
-# Editor directories and files
+# ================= Editor & OS =================
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
+Thumbs.db
+desktop.ini
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
-.vercel
-.vercel/output
-.output
+# Wrangler / Cloudflare
+.wrangler/
+.dev.vars

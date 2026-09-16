@@ -18,28 +18,41 @@ const categoryImages: Record<string, string> = {
 };
 
 export const Route = createFileRoute("/")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    q: typeof search.q === "string" ? search.q : undefined,
+  }),
   head: () => ({
     meta: [
-      { title: "Buana Computer - Katalog Laptop, PC Rakitan & Aksesoris" },
+      {
+        title: "Buana Computer — Toko Komputer Bantul Yogyakarta: Laptop & PC Rakitan",
+      },
       {
         name: "description",
         content:
-          "Katalog lengkap Buana Computer: laptop, PC rakitan, monitor, komponen, dan aksesoris komputer dengan harga terbaik. WA 6285979220599.",
+          "Toko komputer Bantul, Yogyakarta: laptop bekas & baru, PC rakitan, monitor, VGA, komponen dan aksesoris. Harga transparan, garansi jelas. WA 6285979220599.",
       },
-      { property: "og:title", content: "Buana Computer - Katalog Laptop & PC" },
+      {
+        name: "keywords",
+        content:
+          "toko komputer bantul, jual laptop bekas yogyakarta, laptop second jogja, pc rakitan jogja, toko laptop bantul, service komputer yogyakarta, jual vga bantul, toko aksesoris komputer",
+      },
+      {
+        property: "og:title",
+        content: "Buana Computer — Toko Komputer Bantul Yogyakarta",
+      },
       {
         property: "og:description",
         content:
-          "Jelajahi katalog Buana Computer — laptop, PC rakitan, monitor, dan aksesoris komputer lengkap dengan spesifikasi dan harga.",
+          "Jelajahi katalog Buana Computer — laptop bekas & baru, PC rakitan, monitor, VGA dan aksesoris komputer lengkap dengan harga transparan.",
       },
       { property: "og:image", content: "https://buanacomputer.web.id/Buanacomputer-logo.png" },
       { property: "og:url", content: "https://buanacomputer.web.id" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Buana Computer - Katalog Laptop & PC" },
+      { name: "twitter:title", content: "Buana Computer — Toko Komputer Bantul Yogyakarta" },
       {
         name: "twitter:description",
         content:
-          "Jelajahi katalog Buana Computer — laptop, PC rakitan, monitor, dan aksesoris komputer lengkap dengan spesifikasi dan harga.",
+          "Jelajahi katalog Buana Computer — laptop bekas & baru, PC rakitan, monitor, dan aksesoris komputer lengkap dengan harga transparan.",
       },
       { name: "twitter:image", content: "https://buanacomputer.web.id/Buanacomputer-logo.png" },
     ],
@@ -55,7 +68,8 @@ const sorts = [
 ] as const;
 
 function Index() {
-  const [query, setQuery] = useState("");
+  const { q } = Route.useSearch();
+  const [query, setQuery] = useState(q ?? "");
   const [category, setCategory] = useState("Semua");
   const [sort, setSort] = useState<(typeof sorts)[number]["id"]>("populer");
 
@@ -77,6 +91,9 @@ function Index() {
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader query={query} onQueryChange={setQuery} />
+      <h1 className="sr-only">
+        Buana Computer — Toko Komputer &amp; Katalog Laptop, PC Rakitan di Bantul, Yogyakarta
+      </h1>
 
       <HeroCarousel />
 

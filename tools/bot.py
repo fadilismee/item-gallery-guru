@@ -36,6 +36,8 @@ TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "")
 GITHUB_REPO = os.getenv("GITHUB_REPO", "fadilismee/item-gallery-guru")
 GITHUB_BRANCH = os.getenv("GITHUB_BRANCH", "main")
 ALLOWED_CHAT_ID = os.getenv("ALLOWED_CHAT_ID", "")
+DEFAULT_RATING = float(os.getenv("DEFAULT_RATING", "4.5"))
+DEFAULT_LOCATION = os.getenv("DEFAULT_LOCATION", "Bantul, Yogyakarta")
 CATBOX_URL = "https://catbox.moe/user/api.php"
 
 BASE_DIR = Path(__file__).parent.parent
@@ -57,6 +59,40 @@ def load_products():
 
 def save_products(products):
     PRODUCTS_JSON.write_text(json.dumps(products, indent=2, ensure_ascii=False), encoding="utf-8")
+
+def validate_product(p: dict) -> list:
+    """Mirror ringan dari src/lib/schemas.ts (ProductSchema).
+    Kembalikan list pesan error; kosong = valid."""
+    errors = []
+    for key in ["id", "name", "brand", "category", "location",
+                "shortDescription", "description", "image"]:
+        if not isinstance(p.get(key), str) or not p.get(key).strip():
+            errors.append(f"{key} wajib string tidak kosong")
+    for key in ["price", "sold", "stock"]:
+        v = p.get(key)
+        if not isinstance(v, int) or isinstance(v, bool) or v < 0:
+            errors.append(f"{key} wajib integer >= 0")
+    if "oldPrice" in p and (not isinstance(p["oldPrice"], int) or p["oldPrice"] <= 0):
+        errors.append("oldPrice wajib integer > 0")
+    rating = p.get("rating")
+    if not isinstance(rating, (int, float)) or isinstance(rating, bool) or not (0 <= rating <= 5):
+        errors.append("rating wajib angka 0-5")
+    if p.get("condition") not in ["Baru", "Bekas"]:
+        errors.append("condition harus Baru/Bekas")
+    if p.get("category") not in CATEGORIES:
+        errors.append(f"category harus salah satu: {', '.join(CATEGORIES)}")
+    specs = p.get("specs")
+    if not isinstance(specs, list) or len(specs) == 0:
+        errors.append("specs wajib list tidak kosong")
+    else:
+        for s in specs:
+            if not isinstance(s, dict) or not s.get("label") or not s.get("value"):
+                errors.append("tiap spec wajib {label, value}")
+                break
+    gallery = p.get("gallery")
+    if not isinstance(gallery, list) or len(gallery) == 0 or not all(isinstance(g, str) and g for g in gallery):
+        errors.append("gallery wajib list URL tidak kosong")
+    return errors
 
 def upload_catbox(file_path: str) -> str:
     with open(file_path, "rb") as f:
@@ -199,6 +235,10 @@ async def edit_new_value(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     p[field] = ""
                 else:
                     p[field] = val
+            errs = validate_product(p)
+            if errs:
+                await update.message.reply_text("❌ Hasil edit tidak valid, dibatalkan:\n- " + "\n- ".join(errs))
+                return ConversationHandler.END
             save_products(products)
             git_push(f"bot: edit {pid} {field}")
             await update.message.reply_text(f"✅ Edit {pid} {field} → {val} — push done")
@@ -424,11 +464,11 @@ async def confirm_add(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "brand": d["brand"],
         "category": d["category"],
         "price": d["price"],
-        "rating": 4.5,
+        "rating": DEFAULT_RATING,
         "sold": 0,
         "stock": d["stock"],
         "condition": d["condition"],
-        "location": "Batam",
+        "location": DEFAULT_LOCATION,
         "shortDescription": d["shortDescription"],
         "description": d["description"],
         "specs": d["specs"],
@@ -440,6 +480,10 @@ async def confirm_add(update: Update, context: ContextTypes.DEFAULT_TYPE):
     }
     if d.get("oldPrice"):
         new_product["oldPrice"] = d["oldPrice"]
+    errs = validate_product(new_product)
+    if errs:
+        await update.message.reply_text("❌ Data tidak valid, dibatalkan:\n- " + "\n- ".join(errs))
+        return ConversationHandler.END
     products.append(new_product)
     save_products(products)
     try:

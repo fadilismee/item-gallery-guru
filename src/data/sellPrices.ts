@@ -1,61 +1,45 @@
-export type SellPrice = {
-  category: string;
-  range: [number, number];
-  unit: string;
-  example: string;
-  highlight?: boolean;
-};
+import { z } from "zod";
+import sellPricesData from "./sellPrices.json";
+import {
+  AppraisalCategorySchema,
+  AppraisalConditionSchema,
+  BuybackCategorySchema,
+  BuybackItemSchema,
+  SellPriceSchema,
+  SellPricesDataSchema,
+} from "@/lib/schemas";
 
-export const sellPrices: SellPrice[] = [
-  {
-    category: "HP Rusak",
-    range: [80000, 600000],
-    unit: "/unit",
-    example: "Mati total / LCD pecah / bootloop",
-    highlight: true,
+export type SellPrice = z.infer<typeof SellPriceSchema>;
+export type BuybackCategory = z.infer<typeof BuybackCategorySchema>;
+export type BuybackItem = z.infer<typeof BuybackItemSchema>;
+export type AppraisalCategory = z.infer<typeof AppraisalCategorySchema>;
+export type AppraisalCondition = z.infer<typeof AppraisalConditionSchema>;
+
+// Throws at startup/build with a clear message if sellPrices.json is malformed.
+const parsed = SellPricesDataSchema.parse(sellPricesData);
+
+export const sellPrices: SellPrice[] = parsed.sellPrices;
+export const buybackItems: BuybackItem[] = parsed.buybackItems;
+export const appraisalCategories: { id: AppraisalCategory; label: string }[] =
+  parsed.appraisalCategories;
+export const appraisalConditions: { id: AppraisalCondition; label: string }[] =
+  parsed.appraisalConditions;
+export const appraisalRates: Record<
+  AppraisalCategory,
+  Record<AppraisalCondition, string>
+> = parsed.appraisalRates;
+
+// "count" selalu dihitung dari jumlah item aktual supaya tidak drift dari data.
+export const buybackCategoryMeta: Record<
+  BuybackCategory,
+  { title: string; desc: string; count: string }
+> = (Object.keys(parsed.buybackCategoryMeta) as BuybackCategory[]).reduce(
+  (acc, key) => {
+    const meta = parsed.buybackCategoryMeta[key];
+    if (!meta) throw new Error(`buybackCategoryMeta missing key: ${key}`);
+    const n = parsed.buybackItems.filter((i) => i.category === key).length;
+    acc[key] = { title: meta.title, desc: meta.desc, count: `${n} SKU Terdaftar` };
+    return acc;
   },
-  {
-    category: "Laptop Rusak",
-    range: [500000, 2500000],
-    unit: "/unit",
-    example: "Mati total / no display",
-    highlight: true,
-  },
-  {
-    category: "GPU",
-    range: [150000, 2500000],
-    unit: "/pcs",
-    example: "Artefak / no display",
-    highlight: true,
-  },
-  {
-    category: "PC Rakitan Rusak",
-    range: [300000, 1800000],
-    unit: "/unit",
-    example: "Fullset minus VGA / mati",
-  },
-  {
-    category: "Mainboard",
-    range: [70000, 400000],
-    unit: "/pcs",
-    example: "Korslet / mati",
-  },
-  {
-    category: "CPU",
-    range: [50000, 800000],
-    unit: "/pcs",
-    example: "Core i3 - i7 / Ryzen",
-  },
-  {
-    category: "HDD/SSD Rusak",
-    range: [40000, 200000],
-    unit: "/pcs",
-    example: "Bad sector / bunyi",
-  },
-  {
-    category: "Lainnya",
-    range: [30000, 500000],
-    unit: "/pcs",
-    example: "RAM / PSU / Charger",
-  },
-];
+  {} as Record<BuybackCategory, { title: string; desc: string; count: string }>,
+);

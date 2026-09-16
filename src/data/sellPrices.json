@@ -1,0 +1,356 @@
+{
+  "sellPrices": [
+    {
+      "category": "HP Rusak",
+      "range": [
+        80000,
+        600000
+      ],
+      "unit": "/unit",
+      "example": "Mati total / LCD pecah / bootloop",
+      "highlight": true
+    },
+    {
+      "category": "Laptop Rusak",
+      "range": [
+        500000,
+        2500000
+      ],
+      "unit": "/unit",
+      "example": "Mati total / no display",
+      "highlight": true
+    },
+    {
+      "category": "GPU",
+      "range": [
+        150000,
+        2500000
+      ],
+      "unit": "/pcs",
+      "example": "Artefak / no display",
+      "highlight": true
+    },
+    {
+      "category": "PC Rakitan Rusak",
+      "range": [
+        300000,
+        1800000
+      ],
+      "unit": "/unit",
+      "example": "Fullset minus VGA / mati"
+    },
+    {
+      "category": "Mainboard",
+      "range": [
+        70000,
+        400000
+      ],
+      "unit": "/pcs",
+      "example": "Korslet / mati"
+    },
+    {
+      "category": "CPU",
+      "range": [
+        50000,
+        800000
+      ],
+      "unit": "/pcs",
+      "example": "Core i3 - i7 / Ryzen"
+    },
+    {
+      "category": "HDD/SSD Rusak",
+      "range": [
+        40000,
+        200000
+      ],
+      "unit": "/pcs",
+      "example": "Bad sector / bunyi"
+    },
+    {
+      "category": "Lainnya",
+      "range": [
+        30000,
+        500000
+      ],
+      "unit": "/pcs",
+      "example": "RAM / PSU / Charger"
+    }
+  ],
+  "buybackCategoryMeta": {
+    "mobo": {
+      "title": "Motherboard PC & Mainboard Laptop",
+      "desc": "Terima socket Intel LGA1155, 1150, 1151, 1200, 1700 dan AMD AM4/AM5",
+      "count": "2 SKU Terdaftar"
+    },
+    "vga": {
+      "title": "Kartu Grafis (VGA Card / GPU Dedicated)",
+      "desc": "Nvidia GeForce GTX/RTX & AMD Radeon RX series (Normal, Artefak, No Display)",
+      "count": "2 SKU Terdaftar"
+    },
+    "laptop": {
+      "title": "Laptop Bekas, Rusak & Bangkai Unit",
+      "desc": "Dari laptop jadul, unit mati total, casing pecah, hingga laptop bisnis & gaming",
+      "count": "3 SKU Terdaftar"
+    },
+    "proc-ram": {
+      "title": "Processor, RAM DDR4/DDR5 & SSD NVMe",
+      "desc": "Komponen modular PC & laptop dengan proses pengujian cepat 5 menit",
+      "count": "2 SKU Terdaftar"
+    }
+  },
+  "buybackItems": [
+    {
+      "category": "mobo",
+      "grade": "GRADE D / RUSAK",
+      "gradeTone": "tertiary",
+      "socket": "Socket AM4 / LGA1151",
+      "title": "Motherboard LGA1151 / AM4 Mati Total (Asus, MSI, Gigabyte)",
+      "desc": "Kondisi short jalur 12V, no display, no power, atau bekas kena air/petir. Tetap diterima untuk diambil komponen IC PWM, MOSFET, slot PCIe, BIOS chip, dan port I/O.",
+      "specLeft": {
+        "label": "Status Fisik",
+        "value": "PCB Utuh (Tidak Patah)"
+      },
+      "specRight": {
+        "label": "Tujuan Unit",
+        "value": "Kanibal IC & Donatur Part"
+      },
+      "price": "Rp 50.000 - Rp 150.000",
+      "priceTone": "tertiary",
+      "searchText": "motherboard lga1151 am4 mati total rusak asus msi gigabyte asrock mainboard mobo matot"
+    },
+    {
+      "category": "mobo",
+      "grade": "GRADE A/B • NORMAL",
+      "gradeTone": "pri",
+      "socket": "Chipset H61 - B550",
+      "title": "Motherboard H61 / H81 / B250 / B450 / B550 Bekas Normal",
+      "desc": "Unit normal tested, slot RAM dual channel berfungsi, audio jack & LAN on-board sehat. Nilai lebih tinggi jika disertakan backpanel/dus asli.",
+      "specLeft": {
+        "label": "Backpanel",
+        "value": "Ada (Nilai Lebih)"
+      },
+      "specRight": {
+        "label": "Garansi Personal",
+        "value": "3 Hari Cek Lab"
+      },
+      "price": "Rp 250.000 - Rp 850.000",
+      "priceTone": "pri",
+      "searchText": "motherboard h61 h81 b250 b450 b550 normal bekas second pc mainboard mobo"
+    },
+    {
+      "category": "vga",
+      "grade": "GRADE C/D • ARTEFAK/MATI",
+      "gradeTone": "tertiary",
+      "socket": "RTX 30 Series / RX 6000",
+      "title": "RTX 3060 / 3070 / RX 6600 Rusak / Artefak / Mati",
+      "desc": "VGA garis-garis pelangi, kipas berputar kencang tanpa gambar, atau drop tegangan VRAM. Dibeli untuk bahan reballing GPU, kanibal VRAM GDDR6, heatsink, dan fan replacement.",
+      "specLeft": {
+        "label": "Kondisi Chip Core",
+        "value": "Tidak Pecah / Gosong Fatal"
+      },
+      "specRight": {
+        "label": "Fisik Backplate",
+        "value": "Lengkap Heatsink & Fan"
+      },
+      "price": "Rp 450.000 - Rp 1.200.000",
+      "priceTone": "tertiary",
+      "searchText": "rtx 3060 3070 rx 6600 rusak artefak mati matot error 43 reballing vga gpu"
+    },
+    {
+      "category": "vga",
+      "grade": "GRADE A/B • NORMAL TESTED",
+      "gradeTone": "pri",
+      "socket": "GTX 1660S / RTX 2060 6GB",
+      "title": "GTX 1660 Super / RTX 2060 Normal Bekas",
+      "desc": "Lolos tes Furmark 15 menit suhu di bawah 78°C, kipas tidak berisik oblak, display port & HDMI keluar normal. Segel baut utuh dihargai lebih tinggi.",
+      "specLeft": {
+        "label": "Uji Beban Panas",
+        "value": "Furmark 100% Lulus"
+      },
+      "specRight": {
+        "label": "VRAM Diagnostic",
+        "value": "Zero Error Memory"
+      },
+      "price": "Rp 1.400.000 - Rp 2.200.000",
+      "priceTone": "pri",
+      "searchText": "gtx 1660 super rtx 2060 normal bekas second gaming furmark aman vga gpu"
+    },
+    {
+      "category": "laptop",
+      "grade": "GRADE D • MATOT / PECAH",
+      "gradeTone": "tertiary",
+      "socket": "Core i3 / i5 Gen 4-7",
+      "title": "Core i3 / i5 Gen 4 - Gen 7 Matot / Layar Pecah",
+      "desc": "Laptop lama kantor atau pribadi yang mati total bertahun-tahun, engsel hancur, atau LCD pecah. Kami selamatkan keyboard, modul Wi-Fi, heatsink, dan fleksibel.",
+      "specLeft": {
+        "label": "Komponen Tersisa",
+        "value": "Casing, Baterai, Adaptor Charger"
+      },
+      "specRight": {
+        "label": "Penanganan",
+        "value": "Kanibal & Salvage Lab"
+      },
+      "price": "Rp 200.000 - Rp 600.000",
+      "priceTone": "tertiary",
+      "searchText": "laptop core i3 i5 gen 4 gen 7 mati total layar pecah casing hancur asus acer lenovo hp matot"
+    },
+    {
+      "category": "laptop",
+      "grade": "GRADE C/D • GAMING RUSAK",
+      "gradeTone": "tertiary",
+      "socket": "Core i7 / Ryzen 7",
+      "title": "Laptop Gaming Core i7 / Ryzen 7 Rusak / Matot",
+      "desc": "ROG, Legion, TUF, Nitro, Predator yang motherboard short atau GPU discrete rusak. Nilai tinggi karena layar 144Hz, baterai, adaptor 200W+, dan sasis premium.",
+      "specLeft": {
+        "label": "Bonus Taksiran",
+        "value": "Charger Original & Layar Mulus"
+      },
+      "specRight": {
+        "label": "Unit Premium",
+        "value": "ROG / Legion / TUF / Nitro"
+      },
+      "price": "Rp 1.000.000 - Rp 3.500.000",
+      "priceTone": "tertiary",
+      "searchText": "laptop gaming rog tuf legion predator omen core i7 ryzen 7 rusak matot motherboard drop"
+    },
+    {
+      "category": "laptop",
+      "grade": "GRADE A/B • LAPTOP BISNIS",
+      "gradeTone": "pri",
+      "socket": "Core i5 Gen 8+",
+      "title": "ThinkPad / Latitude / ProBook Bekas Normal",
+      "desc": "Laptop ex-operasional kantor atau pribadi (Core i5 Gen 8 ke atas). Kondisi keyboard, webcam, trackpoint, dan display normal. Kami terima eceran maupun lelang borongan kantor.",
+      "specLeft": {
+        "label": "Layanan Tambahan",
+        "value": "Gratis Data Wipe DoD Standar"
+      },
+      "specRight": {
+        "label": "Skema",
+        "value": "Ecer & Borongan Kantor"
+      },
+      "price": "Rp 1.800.000 - Rp 4.200.000",
+      "priceTone": "pri",
+      "searchText": "thinkpad latitude elitebook bisnis laptop normal bekas second t480 x280 t14"
+    },
+    {
+      "category": "proc-ram",
+      "grade": "GRADE A • NORMAL TESTED",
+      "gradeTone": "pri",
+      "socket": "LGA1200/1700 & Socket AM4",
+      "title": "Processor Intel Core i5/i7 Gen 8+ & AMD Ryzen 3000/5000",
+      "desc": "Kondisi pin AMD tidak ada yang patah/bengkok parah, kapasitor SMD di bawah prosesor Intel lengkap. Diuji booting Cinebench R23 di test-bench kami.",
+      "specLeft": {
+        "label": "Waktu Diagnosa",
+        "value": "5-10 Menit Booting"
+      },
+      "specRight": {
+        "label": "Kelengkapan",
+        "value": "Batangan / Lengkap HSF"
+      },
+      "price": "Rp 500.000 - Rp 2.200.000",
+      "priceTone": "pri",
+      "searchText": "processor intel core i5 i7 gen 8 9 10 11 12 amd ryzen 3000 5000 normal pin utuh cpu"
+    },
+    {
+      "category": "proc-ram",
+      "grade": "GRADE A/B • HEALTH TINGGI",
+      "gradeTone": "pri",
+      "socket": "DDR4 2666-3600MHz & Gen 3/4 NVMe",
+      "title": "RAM DDR4 8GB/16GB & SSD M.2 NVMe 256GB - 1TB",
+      "desc": "RAM lulus tes MemTest86 zero error. SSD NVMe/SATA dicek via CrystalDiskInfo (kami juga menerima SSD/HDD health turun/bad sector dengan harga kanibal chip controller).",
+      "specLeft": {
+        "label": "Kesehatan SSD",
+        "value": "Bebas Bad Sector / Drop"
+      },
+      "specRight": {
+        "label": "Penanganan Data",
+        "value": "Zero Data Wipe di Depan Anda"
+      },
+      "price": "Rp 100.000 - Rp 550.000",
+      "priceTone": "pri",
+      "searchText": "ram ddr4 8gb 16gb kingston corsair team ssd nvme m2 256gb 512gb 1tb health 100"
+    }
+  ],
+  "appraisalCategories": [
+    {
+      "id": "laptop",
+      "label": "Laptop"
+    },
+    {
+      "id": "pc_rakitan",
+      "label": "PC Rakitan Lengkap"
+    },
+    {
+      "id": "motherboard",
+      "label": "Motherboard"
+    },
+    {
+      "id": "vga",
+      "label": "Kartu Grafis (VGA)"
+    },
+    {
+      "id": "monitor",
+      "label": "Monitor LCD/IPS"
+    },
+    {
+      "id": "lainnya",
+      "label": "Komponen (RAM/CPU/SSD)"
+    }
+  ],
+  "appraisalConditions": [
+    {
+      "id": "normal",
+      "label": "Normal Mulus 100%"
+    },
+    {
+      "id": "minus_ringan",
+      "label": "Masih Nyala, Ada Minus"
+    },
+    {
+      "id": "rusak_spesifik",
+      "label": "Rusak Komponen Tertentu"
+    },
+    {
+      "id": "matot",
+      "label": "Mati Total"
+    }
+  ],
+  "appraisalRates": {
+    "laptop": {
+      "normal": "Rp 3.500.000 - Rp 6.000.000",
+      "minus_ringan": "Rp 2.800.000 - Rp 4.200.000",
+      "rusak_spesifik": "Rp 1.500.000 - Rp 2.500.000",
+      "matot": "Rp 450.000 - Rp 1.200.000"
+    },
+    "pc_rakitan": {
+      "normal": "Rp 4.000.000 - Rp 8.500.000",
+      "minus_ringan": "Rp 2.500.000 - Rp 5.000.000",
+      "rusak_spesifik": "Rp 1.800.000 - Rp 3.200.000",
+      "matot": "Rp 800.000 - Rp 1.800.000"
+    },
+    "motherboard": {
+      "normal": "Rp 500.000 - Rp 1.800.000",
+      "minus_ringan": "Rp 300.000 - Rp 1.000.000",
+      "rusak_spesifik": "Rp 150.000 - Rp 450.000",
+      "matot": "Rp 80.000 - Rp 200.000"
+    },
+    "vga": {
+      "normal": "Rp 1.800.000 - Rp 4.500.000",
+      "minus_ringan": "Rp 1.200.000 - Rp 2.800.000",
+      "rusak_spesifik": "Rp 500.000 - Rp 1.300.000",
+      "matot": "Rp 250.000 - Rp 700.000"
+    },
+    "monitor": {
+      "normal": "Rp 600.000 - Rp 1.800.000",
+      "minus_ringan": "Rp 350.000 - Rp 900.000",
+      "rusak_spesifik": "Rp 150.000 - Rp 400.000",
+      "matot": "Rp 75.000 - Rp 200.000"
+    },
+    "lainnya": {
+      "normal": "Rp 400.000 - Rp 2.200.000",
+      "minus_ringan": "Rp 200.000 - Rp 1.100.000",
+      "rusak_spesifik": "Rp 100.000 - Rp 400.000",
+      "matot": "Rp 50.000 - Rp 200.000"
+    }
+  }
+}

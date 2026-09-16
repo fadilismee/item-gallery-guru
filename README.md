@@ -43,3 +43,15 @@ vite.config.ts                    -> vanilla vite (konfigurasi mandiri)
 
 - WhatsApp: 6285979220599
 - Alamat: Mertosan Kulon, Potorono, Kec. Banguntapan, Kabupaten Bantul, DI Yogyakarta 55196
+
+## Dashboard Admin (lokal + LAN kantor)
+
+- Login: `http://localhost:3000/admin-login` (atau `http://<IP-PC-kantor>:3000/admin-login` dari HP/PC se-WiFi). Password: `ADMIN_PASSWORD` di `.env` (lihat `.env.example`, dipakai bersama tim).
+- Mode **Mudah** (default): form sederhana + tombol hijau **Terbitkan Perubahan**. Mode **Teknis**: editor JSON mentah + panel git + detail validasi. Toggle di header atas.
+- Gambar: tiap field gambar ada tombol **Upload** (file diupload ke Catbox → link otomatis terisi) + tombol **Gallery** (pilih dari upload-an sebelumnya).
+- Alur: Simpan di tiap halaman (tulis JSON lokal) → Terbitkan (commit + push → deploy Vercel). Dashboard admin nonaktif di production.
+
+## Dokumentasi Operasional
+
+- `docs/GIT.md` — apa yang wajib di-commit vs jangan di-push + alur rilis.
+- `docs/ALIRAN.md` — user flow & admin flow lengkap.

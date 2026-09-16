@@ -10,7 +10,19 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as JualRouteImport } from './routes/jual'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AdminLoginRouteImport } from './routes/admin-login'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminBannerRouteImport } from './routes/admin.banner'
+import { Route as AdminBlogRouteImport } from './routes/admin.blog'
+import { Route as AdminHargaRouteImport } from './routes/admin.harga'
+import { Route as AdminProdukRouteImport } from './routes/admin.produk'
+import { Route as AdminReviewRouteImport } from './routes/admin.review'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as BlogArticleIdRouteImport } from './routes/blog.$articleId'
+import { Route as JualIndexRouteImport } from './routes/jual.index'
+import { Route as JualFormRouteImport } from './routes/jual.form'
 import { Route as ProdukProductIdRouteImport } from './routes/produk.$productId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -18,9 +30,69 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const JualRoute = JualRouteImport.update({
-  id: '/jual',
-  path: '/jual',
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin-login',
+  path: '/admin-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBannerRoute = AdminBannerRouteImport.update({
+  id: '/banner',
+  path: '/banner',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBlogRoute = AdminBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminHargaRoute = AdminHargaRouteImport.update({
+  id: '/harga',
+  path: '/harga',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProdukRoute = AdminProdukRouteImport.update({
+  id: '/produk',
+  path: '/produk',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminReviewRoute = AdminReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => AdminRoute,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogArticleIdRoute = BlogArticleIdRouteImport.update({
+  id: '/blog/$articleId',
+  path: '/blog/$articleId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JualIndexRoute = JualIndexRouteImport.update({
+  id: '/jual/',
+  path: '/jual/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JualFormRoute = JualFormRouteImport.update({
+  id: '/jual/form',
+  path: '/jual/form',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProdukProductIdRoute = ProdukProductIdRouteImport.update({
@@ -31,32 +103,118 @@ const ProdukProductIdRoute = ProdukProductIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/jual': typeof JualRoute
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/admin-login': typeof AdminLoginRoute
+  '/admin/banner': typeof AdminBannerRoute
+  '/admin/blog': typeof AdminBlogRoute
+  '/admin/harga': typeof AdminHargaRoute
+  '/admin/produk': typeof AdminProdukRoute
+  '/admin/review': typeof AdminReviewRoute
+  '/blog/$articleId': typeof BlogArticleIdRoute
+  '/jual/form': typeof JualFormRoute
   '/produk/$productId': typeof ProdukProductIdRoute
+  '/admin/': typeof AdminIndexRoute
+  '/blog/': typeof BlogIndexRoute
+  '/jual/': typeof JualIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/jual': typeof JualRoute
+  '/about': typeof AboutRoute
+  '/admin-login': typeof AdminLoginRoute
+  '/admin/banner': typeof AdminBannerRoute
+  '/admin/blog': typeof AdminBlogRoute
+  '/admin/harga': typeof AdminHargaRoute
+  '/admin/produk': typeof AdminProdukRoute
+  '/admin/review': typeof AdminReviewRoute
+  '/blog/$articleId': typeof BlogArticleIdRoute
+  '/jual/form': typeof JualFormRoute
   '/produk/$productId': typeof ProdukProductIdRoute
+  '/admin': typeof AdminIndexRoute
+  '/blog': typeof BlogIndexRoute
+  '/jual': typeof JualIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/jual': typeof JualRoute
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/admin-login': typeof AdminLoginRoute
+  '/admin/banner': typeof AdminBannerRoute
+  '/admin/blog': typeof AdminBlogRoute
+  '/admin/harga': typeof AdminHargaRoute
+  '/admin/produk': typeof AdminProdukRoute
+  '/admin/review': typeof AdminReviewRoute
+  '/blog/$articleId': typeof BlogArticleIdRoute
+  '/jual/form': typeof JualFormRoute
   '/produk/$productId': typeof ProdukProductIdRoute
+  '/admin/': typeof AdminIndexRoute
+  '/blog/': typeof BlogIndexRoute
+  '/jual/': typeof JualIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/jual' | '/produk/$productId'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/admin-login'
+    | '/admin/banner'
+    | '/admin/blog'
+    | '/admin/harga'
+    | '/admin/produk'
+    | '/admin/review'
+    | '/blog/$articleId'
+    | '/jual/form'
+    | '/produk/$productId'
+    | '/admin/'
+    | '/blog/'
+    | '/jual/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/jual' | '/produk/$productId'
-  id: '__root__' | '/' | '/jual' | '/produk/$productId'
+  to:
+    | '/'
+    | '/about'
+    | '/admin-login'
+    | '/admin/banner'
+    | '/admin/blog'
+    | '/admin/harga'
+    | '/admin/produk'
+    | '/admin/review'
+    | '/blog/$articleId'
+    | '/jual/form'
+    | '/produk/$productId'
+    | '/admin'
+    | '/blog'
+    | '/jual'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/admin-login'
+    | '/admin/banner'
+    | '/admin/blog'
+    | '/admin/harga'
+    | '/admin/produk'
+    | '/admin/review'
+    | '/blog/$articleId'
+    | '/jual/form'
+    | '/produk/$productId'
+    | '/admin/'
+    | '/blog/'
+    | '/jual/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  JualRoute: typeof JualRoute
+  AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  AdminLoginRoute: typeof AdminLoginRoute
+  BlogArticleIdRoute: typeof BlogArticleIdRoute
+  JualFormRoute: typeof JualFormRoute
   ProdukProductIdRoute: typeof ProdukProductIdRoute
+  BlogIndexRoute: typeof BlogIndexRoute
+  JualIndexRoute: typeof JualIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -68,11 +226,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/jual': {
-      id: '/jual'
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-login': {
+      id: '/admin-login'
+      path: '/admin-login'
+      fullPath: '/admin-login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/banner': {
+      id: '/admin/banner'
+      path: '/banner'
+      fullPath: '/admin/banner'
+      preLoaderRoute: typeof AdminBannerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/blog': {
+      id: '/admin/blog'
+      path: '/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AdminBlogRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/harga': {
+      id: '/admin/harga'
+      path: '/harga'
+      fullPath: '/admin/harga'
+      preLoaderRoute: typeof AdminHargaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/produk': {
+      id: '/admin/produk'
+      path: '/produk'
+      fullPath: '/admin/produk'
+      preLoaderRoute: typeof AdminProdukRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/review': {
+      id: '/admin/review'
+      path: '/review'
+      fullPath: '/admin/review'
+      preLoaderRoute: typeof AdminReviewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$articleId': {
+      id: '/blog/$articleId'
+      path: '/blog/$articleId'
+      fullPath: '/blog/$articleId'
+      preLoaderRoute: typeof BlogArticleIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jual/': {
+      id: '/jual/'
       path: '/jual'
-      fullPath: '/jual'
-      preLoaderRoute: typeof JualRouteImport
+      fullPath: '/jual/'
+      preLoaderRoute: typeof JualIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jual/form': {
+      id: '/jual/form'
+      path: '/jual/form'
+      fullPath: '/jual/form'
+      preLoaderRoute: typeof JualFormRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/produk/$productId': {
@@ -85,10 +327,36 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminBannerRoute: typeof AdminBannerRoute
+  AdminBlogRoute: typeof AdminBlogRoute
+  AdminHargaRoute: typeof AdminHargaRoute
+  AdminProdukRoute: typeof AdminProdukRoute
+  AdminReviewRoute: typeof AdminReviewRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminBannerRoute: AdminBannerRoute,
+  AdminBlogRoute: AdminBlogRoute,
+  AdminHargaRoute: AdminHargaRoute,
+  AdminProdukRoute: AdminProdukRoute,
+  AdminReviewRoute: AdminReviewRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  JualRoute: JualRoute,
+  AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
+  AdminLoginRoute: AdminLoginRoute,
+  BlogArticleIdRoute: BlogArticleIdRoute,
+  JualFormRoute: JualFormRoute,
   ProdukProductIdRoute: ProdukProductIdRoute,
+  BlogIndexRoute: BlogIndexRoute,
+  JualIndexRoute: JualIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

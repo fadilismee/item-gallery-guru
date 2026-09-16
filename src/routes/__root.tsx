@@ -74,11 +74,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "theme-color", content: "#000000" },
-      { title: "Buana Computer - Katalog Laptop, PC Rakitan & Aksesoris" },
+      { title: "Buana Computer — Toko Komputer Bantul Yogyakarta" },
       {
         name: "description",
         content:
-          "Katalog lengkap Buana Computer: laptop, PC rakitan, monitor, komponen, dan aksesoris komputer. Hubungi WA 6285979220599.",
+          "Toko komputer Bantul, Yogyakarta: laptop, PC rakitan, monitor, komponen, servis hardware dan jual beli laptop bekas/rusak. Hubungi WA 6285979220599.",
+      },
+      {
+        name: "keywords",
+        content:
+          "buana computer, toko komputer bantul, jual laptop bekas yogyakarta, service komputer bantul, pc rakitan jogja",
       },
       { name: "author", content: "Buana Computer" },
       { property: "og:title", content: "Buana Computer - Katalog Laptop & PC" },
@@ -105,6 +110,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap",
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
@@ -142,7 +157,7 @@ const localBusinessJsonLd = {
     "@type": "OpeningHoursSpecification",
     dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     opens: "09:00",
-    closes: "18:00",
+    closes: "20:00",
   },
   priceRange: "Rp 675.000 - Rp 24.900.000",
   sameAs: [

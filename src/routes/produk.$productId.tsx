@@ -29,6 +29,10 @@ export const Route = createFileRoute("/produk/$productId")({
       meta: [
         { title },
         { name: "description", content: product.shortDescription },
+        {
+          name: "keywords",
+          content: `${product.name}, ${product.brand}, ${product.category}, toko komputer bantul, yogyakarta`,
+        },
         { property: "og:type", content: "product" },
         { property: "og:title", content: title },
         { property: "og:description", content: product.shortDescription },

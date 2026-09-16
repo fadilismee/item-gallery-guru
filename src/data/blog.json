@@ -1,0 +1,410 @@
+{
+  "categories": [
+    "Semua Topik",
+    "Hardware & PC Rakitan",
+    "Periferal & Keyboard",
+    "Laptop & Ultrabook",
+    "Storage & RAM",
+    "Tips & Solusi Servis"
+  ],
+  "articles": [
+    {
+      "slug": "panduan-merakit-pc-2025",
+      "category": "Hardware & PC Rakitan",
+      "tag": "HARDWARE GUIDE",
+      "tagTone": "pri",
+      "serial": "LAB SERIES #42",
+      "title": "Membangun PC Gaming & Kreator 2025: Panduan Arsitektur Komponen, Alur Termal, dan Optimalisasi Budget",
+      "excerpt": "Dari pemilihan PCIe Gen 4 SSD 7000MB/s hingga konfigurasi airflow dual-fan RTX 4070 — panduan praktis merakit workstation tangguh, senyap, dan awet untuk studio maupun gaming kompetitif.",
+      "author": "Budi Santoso",
+      "role": "Senior Hardware Specialist • Buana Lab",
+      "date": "12 Mei 2025",
+      "readMinutes": 8,
+      "readers": "1.4k Pembaca",
+      "image": "https://picsum.photos/seed/buana-rakitpc/1200/520",
+      "labLabel": "Setup ID",
+      "labValue": "#BTR-2025-X",
+      "cta": "Baca Artikel Lengkap",
+      "heroSpecs": [
+        {
+          "label": "Arsitektur",
+          "value": "PCIe 4.0"
+        },
+        {
+          "label": "Target Suhu",
+          "value": "≤ 68°C Peak"
+        },
+        {
+          "label": "Benchmark",
+          "value": "1440p High"
+        }
+      ],
+      "sections": [
+        {
+          "kind": "lead",
+          "text": "Menyusun personal computer di tahun 2025 bukan lagi sekadar mencocokkan soket prosesor pada motherboard dan memasang kartu grafis termahal di etalase. Arsitektur semikonduktor modern mengharuskan kita memperlakukan seluruh sistem sebagai ekosistem termal terpadu. Satu pilihan heatsink yang keliru dapat memangkas clock speed hingga 18% dalam 20 menit sesi komputasi berat."
+        },
+        {
+          "kind": "spec",
+          "title": "Spesifikasi Referensi Benchmark (Buana Build-4070X)",
+          "badge": "Verified 2025",
+          "items": [
+            {
+              "label": "CPU",
+              "value": "Ryzen 7 7700",
+              "sub": "8C/16T • 5.3GHz"
+            },
+            {
+              "label": "GPU",
+              "value": "RTX 4070 12GB",
+              "sub": "Dual-Fan OC Edition"
+            },
+            {
+              "label": "MEMORY",
+              "value": "32GB DDR5",
+              "sub": "6000MHz CL30 EXPO"
+            },
+            {
+              "label": "STORAGE",
+              "value": "1TB Gen4 NVMe",
+              "sub": "7000MB/s Read"
+            }
+          ]
+        },
+        {
+          "kind": "part",
+          "index": "01",
+          "eyebrow": "ARSITEKTUR",
+          "title": "1. Pondasi Performa: Memilih Kombinasi Prosesor dan Motherboard",
+          "paragraphs": [
+            "Fondasi utama efisiensi komputasi bertumpu pada interkoneksi antara CPU dan chipset motherboard. Platform socket AM5 dan LGA1700/1851 telah memperluas jalur PCIe Gen 5 langsung ke CPU, memungkinkan throughput I/O tanpa latensi bagi rendering video ProRes serta komputasi dataset machine learning lokal.",
+            "Dalam pengujian kami di laboratorium Buana Computer, banyak perakit pemula terjebak mengalokasikan anggaran terlalu tinggi pada prosesor unlocked, sementara memangkas motherboard ke seri paling dasar dengan heatsink VRM tipis. Hasilnya? VRM mencapai suhu 98°C setelah 15 menit rendering Premiere Pro, memicu thermal power throttling yang menurunkan frekuensi base clock hingga 3.2 GHz."
+          ]
+        },
+        {
+          "kind": "advice",
+          "title": "Rekomendasi Ahli Buana:",
+          "text": "Pilihlah motherboard dengan konfigurasi minimal 8+2+1 power phase berpendingin aluminium padat (seperti chipset B650 atau B760 berkualitas). Ini memberi headroom voltase stabil selama 5-7 tahun masa pakai harian, bahkan saat Anda meningkatkan CPU ke generasi berikutnya tanpa mengganti motherboard."
+        },
+        {
+          "kind": "part",
+          "index": "02",
+          "eyebrow": "STORAGE",
+          "title": "2. Kecepatan Storage: Mengapa NVMe 7000MB/s Membuat Selisih Nyata",
+          "paragraphs": [
+            "Sering muncul anggapan bahwa SSD SATA standar atau NVMe Gen3 2000MB/s sudah cukup cepat untuk gaming. Hal tersebut valid jika tolok ukurnya semata waktu loading intro game singleplayer. Namun pada ekosistem kreatif — seperti scrubbing video 4K 10-bit di DaVinci Resolve atau streaming tekstur open-world berbasis DirectStorage — kecepatan baca sekuensial dan random 4K adalah penentu bebasnya sistem dari frame stutter."
+          ]
+        },
+        {
+          "kind": "chart",
+          "title": "Uji Komparasi Lab: Alur Kerja Kreator (Detik)",
+          "hint": "Semakin rendah semakin cepat",
+          "caption": "*Data diuji menggunakan ekspor proyek timeline After Effects 4K 60fps dengan 18 layer komposisi di Buana Benchmark Workbench.",
+          "bars": [
+            {
+              "label": "Gen4 NVMe (7000MB/s)",
+              "value": "4.2 detik",
+              "width": 25,
+              "highlight": true
+            },
+            {
+              "label": "Gen3 NVMe (2400MB/s)",
+              "value": "11.8 detik",
+              "width": 55
+            },
+            {
+              "label": "SATA SSD (550MB/s)",
+              "value": "26.4 detik",
+              "width": 95
+            }
+          ]
+        },
+        {
+          "kind": "quote",
+          "text": "Keseimbangan performa bukan diukur dari komponen termahal, melainkan bagaimana setiap subsistem bekerja tanpa bottleneck termal dan pembagian daya yang presisi.",
+          "cite": "— Prinsip Rakit Laboratorium Buana Computer"
+        },
+        {
+          "kind": "part",
+          "index": "03",
+          "eyebrow": "TERMAL",
+          "title": "3. Akustik dan Aliran Udara (Airflow Dynamics)",
+          "paragraphs": [
+            "Di iklim tropis seperti Indonesia, penataan kipas casing jauh lebih kritikal dibanding penambahan pencahayaan RGB. Prinsip dasar yang kami terapkan di bengkel kami di Bantul adalah Positive Air Pressure (tekanan udara positif).",
+            "Dengan menjaga volume udara masuk (intake) sedikit lebih tinggi dibandingkan volume udara buang (exhaust), debu terdorong keluar dari celah sasis yang tidak berfilter. Hal ini memperpanjang siklus pembersihan heatsink dari 3 bulan menjadi 10-12 bulan, sekaligus meredam kebisingan kipas hingga di bawah 28 dBA saat idle."
+          ]
+        },
+        {
+          "kind": "takeaway",
+          "items": [
+            {
+              "title": "Air Cooler Dual Tower",
+              "text": "Ideal untuk TDP di bawah 135W. Nyaris bebas risiko malfungsi mekanikal cairan, masa pakai hingga dekade tanpa degradasi cairan pendingin."
+            },
+            {
+              "title": "AIO Liquid 240 / 360mm",
+              "text": "Pilihan utama workstation render CPU 16-core ke atas. Memindahkan beban termal langsung ke sirip radiator luar secara instan."
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "#Hardware",
+        "#PCRakitan",
+        "#NVMeGen4",
+        "#AirflowSetup",
+        "#TechGuide2025"
+      ]
+    },
+    {
+      "slug": "review-keyboard-mechanical-tkl",
+      "category": "Periferal & Keyboard",
+      "tag": "REVIEW",
+      "tagTone": "pri",
+      "serial": "LAB SERIES #41",
+      "title": "Ulasan Keyboard Mechanical TKL Hot-Swap RGB: Kustomisasi Switch & Kenyamanan Mengetik Harian",
+      "excerpt": "Menganalisis profil akustik gasket mount, ketahanan PCB hot-swap 5-pin, serta rasio performa switch linear pabrikan versus switch kustom berpelumas.",
+      "author": "Tim Riset & Lab Buana",
+      "role": "Hardware Review Desk • Buana Lab",
+      "date": "9 Mei 2025",
+      "readMinutes": 5,
+      "readers": "860 Pembaca",
+      "image": "https://picsum.photos/seed/buana-keyboard/1200/520",
+      "labLabel": "Skor Lab",
+      "labValue": "9.2/10",
+      "cta": "Baca Ulasan",
+      "heroSpecs": [
+        {
+          "label": "Layout",
+          "value": "TKL 87-Key"
+        },
+        {
+          "label": "Socket",
+          "value": "Hot-Swap 5-Pin"
+        },
+        {
+          "label": "Mount",
+          "value": "Gasket"
+        }
+      ],
+      "sections": [
+        {
+          "kind": "lead",
+          "text": "Keyboard tenkeyless hot-swap adalah titik manis antara produktivitas dan kustomisasi: ringkas di meja, namun setiap switch bisa diganti tanpa solder. Unit yang kami uji memakai PCB hot-swap 5-pin dengan dudukan gasket yang meredam getaran berlebih — hasilnya tuts terasa padat tanpa bunyi nyaring khas plat baja murah."
+        },
+        {
+          "kind": "part",
+          "index": "01",
+          "eyebrow": "AKUSTIK",
+          "title": "1. Profil Suara: Gasket Mount vs Tray Mount",
+          "paragraphs": [
+            "Pada pengujian rekaman jarak 30 cm, konfigurasi gasket mount mencatat rata-rata 52 dB saat mengetik cepat, sekitar 6 dB lebih senyap dibanding tray mount sejenis. Perbedaan terasa jelas untuk pemakaian kantor atau streaming tanpa noise gate agresif.",
+            "Keycaps PBT double-shot bawaan unit ini juga berkontribusi: dinding keycaps lebih tebal sehingga nada tuts lebih dalam dan tidak berderak saat bottom-out."
+          ]
+        },
+        {
+          "kind": "part",
+          "index": "02",
+          "eyebrow": "SWITCH",
+          "title": "2. Switch Linear Pabrikan vs Kustom Berpelumas",
+          "paragraphs": [
+            "Switch linear bawaan pabrikan sudah mulus untuk pemakaian harian, namun masih menyisakan gesekan spring yang terdengar pada tuts besar seperti spasi. Switch kustom berpelumas menghilangkan hampir seluruh scratchiness tersebut — dengan catatan Anda rela meluangkan satu sore untuk melumasi 87 switch.",
+            "Kesimpulan lab kami: jika keyboard adalah alat kerja utama, upgrade ke switch berpelumas sepadan. Jika hanya untuk gaming kasual, switch bawaan sudah lebih dari cukup."
+          ]
+        },
+        {
+          "kind": "advice",
+          "title": "Rekomendasi Ahli Buana:",
+          "text": "Pilih varian hot-swap 5-pin (bukan 3-pin) agar kompatibel dengan hampir semua switch aftermarket. Simpan switch cadangan 4-6 pcs — soket hot-swap memang awet, tapi pin switch bengkok adalah kerusakan paling sering kami tangani."
+        },
+        {
+          "kind": "quote",
+          "text": "Keyboard yang baik bukan yang paling berisik atau paling mahal — melainkan yang membuat jari Anda betah mengetik delapan jam sehari.",
+          "cite": "— Catatan Meja Review Buana Lab"
+        }
+      ],
+      "tags": [
+        "#Keyboard",
+        "#Mechanical",
+        "#HotSwap",
+        "#SetupKerja"
+      ]
+    },
+    {
+      "slug": "monitor-qhd-27-vs-fhd-24",
+      "category": "Hardware & PC Rakitan",
+      "tag": "DISPLAY",
+      "tagTone": "sec",
+      "serial": "LAB SERIES #40",
+      "title": "Monitor Gaming 27\" QHD 165Hz vs 24\" FHD IPS: Mana yang Tepat untuk Kerja dan Bermain?",
+      "excerpt": "Perbandingan kepadatan piksel PPI, akurasi cakupan warna sRGB vs DCI-P3, serta efisiensi beban kerja GPU saat beralih dari 1080p ke 1440p.",
+      "author": "Tim Riset & Lab Buana",
+      "role": "Display & Visual Desk • Buana Lab",
+      "date": "7 Mei 2025",
+      "readMinutes": 6,
+      "readers": "1.1k Pembaca",
+      "image": "https://picsum.photos/seed/buana-monitor/1200/520",
+      "labLabel": "Kepadatan Piksel",
+      "labValue": "108 vs 92 PPI",
+      "cta": "Buka Panduan",
+      "heroSpecs": [
+        {
+          "label": "Panel A",
+          "value": "27\" QHD 165Hz"
+        },
+        {
+          "label": "Panel B",
+          "value": "24\" FHD 144Hz"
+        },
+        {
+          "label": "Gamut",
+          "value": "sRGB / DCI-P3"
+        }
+      ],
+      "sections": [
+        {
+          "kind": "lead",
+          "text": "Lompatan dari 24\" FHD ke 27\" QHD bukan sekadar soal ukuran — ini soal ruang kerja. Pada jarak pandang 60 cm, panel 27\" QHD menampilkan teks 33% lebih tajam dan memberi ruang timeline ekstra yang terasa saat editing video maupun multitasking spreadsheet."
+        },
+        {
+          "kind": "part",
+          "index": "01",
+          "eyebrow": "KETAJAMAN",
+          "title": "1. PPI dan Kenyamanan Membaca Seharian",
+          "paragraphs": [
+            "Panel 27 inci QHD (2560×1440) memiliki kepadatan sekitar 108 PPI, berbanding 92 PPI pada 24 inci FHD. Selisih 16 PPI ini membuat font kecil di code editor dan dokumen terlihat bersih tanpa perlu scaling agresif di Windows.",
+            "Untuk kreator, QHD juga berarti preview video 1080p bisa tampil 1:1 dengan ruang tersisa untuk panel tools — sesuatu yang mustahil di FHD tanpa mengorbankan area timeline."
+          ]
+        },
+        {
+          "kind": "chart",
+          "title": "Beban GPU Relatif (Gaming 1440p vs 1080p)",
+          "hint": "Semakin rendah semakin ringan",
+          "caption": "*Rata-rata 5 judul esports & AAA, setting High, diukur dengan RTX 4060 di Buana Benchmark Workbench.",
+          "bars": [
+            {
+              "label": "FHD 1080p (referensi)",
+              "value": "100% load",
+              "width": 55
+            },
+            {
+              "label": "QHD 1440p High",
+              "value": "~135% load",
+              "width": 78
+            },
+            {
+              "label": "QHD 1440p + DLSS Quality",
+              "value": "~112% load",
+              "width": 62,
+              "highlight": true
+            }
+          ]
+        },
+        {
+          "kind": "part",
+          "index": "02",
+          "eyebrow": "KEPUTUSAN",
+          "title": "2. Jadi, Pilih yang Mana?",
+          "paragraphs": [
+            "Pilih 27 inci QHD 165Hz jika GPU Anda setara RTX 4060 / RX 7600 ke atas dan Anda membutuhkan ruang kerja lega. Kombinasi ini adalah titik manis 2025 untuk gaming sekaligus produktivitas.",
+            "Tetap di 24 inci FHD jika GPU masih kelas entry-level atau Anda bermain esports kompetitif yang menuntut framerate setinggi-tingginya dengan budget terbatas."
+          ]
+        },
+        {
+          "kind": "advice",
+          "title": "Rekomendasi Ahli Buana:",
+          "text": "Pastikan panel memakai IPS (bukan VA murahan) bila akurasi warna penting, dan cek keberadaan DisplayPort 1.4 — HDMI 2.0 di beberapa monitor budget membatasi 1440p hanya sampai 144Hz."
+        }
+      ],
+      "tags": [
+        "#Monitor",
+        "#QHD",
+        "#GamingSetup",
+        "#DisplayGuide"
+      ]
+    },
+    {
+      "slug": "ssd-nvme-gen4-vs-gen3",
+      "category": "Storage & RAM",
+      "tag": "STORAGE",
+      "tagTone": "pri",
+      "serial": "LAB SERIES #39",
+      "title": "SSD NVMe Gen4 1TB vs Gen3: Mengapa Transfer Rate 7000MB/s Berpengaruh Besar pada Rendering Video",
+      "excerpt": "Pengujian nyata ekspor timeline 4K di Premiere Pro dan DaVinci Resolve. Menelisik buffer cache SLC dan pencegahan thermal throttling tanpa heatsink aktif.",
+      "author": "Budi Santoso",
+      "role": "Senior Hardware Specialist • Buana Lab",
+      "date": "28 April 2025",
+      "readMinutes": 4,
+      "readers": "940 Pembaca",
+      "image": "https://picsum.photos/seed/buana-ssd/1200/520",
+      "labLabel": "Uji Render",
+      "labValue": "-38% Waktu",
+      "cta": "Lihat Hasil",
+      "heroSpecs": [
+        {
+          "label": "Gen4 Read",
+          "value": "7000 MB/s"
+        },
+        {
+          "label": "Gen3 Read",
+          "value": "2400 MB/s"
+        },
+        {
+          "label": "Efisiensi",
+          "value": "-38% Waktu"
+        }
+      ],
+      "sections": [
+        {
+          "kind": "lead",
+          "text": "Angka 7000MB/s di boks SSD Gen4 sering dianggap sekadar gimik marketing. Namun saat kami menguji ekspor timeline 4K dengan belasan layer efek, SSD Gen4 memangkas waktu render hingga 38% dibanding Gen3 — bukan karena sequential semata, melainkan random read dan cache SLC yang jauh lebih agresif."
+        },
+        {
+          "kind": "chart",
+          "title": "Waktu Ekspor Timeline 4K (Detik, Lebih Rendah Lebih Baik)",
+          "hint": "Semakin rendah semakin cepat",
+          "caption": "*Proyek After Effects 4K 60fps, 18 layer komposisi, Buana Benchmark Workbench.",
+          "bars": [
+            {
+              "label": "Gen4 NVMe (7000MB/s)",
+              "value": "4.2 detik",
+              "width": 25,
+              "highlight": true
+            },
+            {
+              "label": "Gen3 NVMe (2400MB/s)",
+              "value": "11.8 detik",
+              "width": 55
+            },
+            {
+              "label": "SATA SSD (550MB/s)",
+              "value": "26.4 detik",
+              "width": 95
+            }
+          ]
+        },
+        {
+          "kind": "part",
+          "index": "01",
+          "eyebrow": "TERMAL",
+          "title": "1. Waspadai Thermal Throttling Tanpa Heatsink",
+          "paragraphs": [
+            "Kecepatan Gen4 datang dengan panas. Tanpa heatsink, controller SSD kami mencatat 81°C saat transfer berkelanjutan 5 menit — cukup untuk memicu throttle yang memangkas kecepatan hingga setengahnya.",
+            "Kabar baiknya: hampir semua motherboard B650/B760 sudah menyertakan heatsink M.2 bawaan yang memadai. Jika motherboard Anda tidak punya, heatsink aftermarket seharga Rp 100 ribuan sudah menyelesaikan masalah ini."
+          ]
+        },
+        {
+          "kind": "advice",
+          "title": "Rekomendasi Ahli Buana:",
+          "text": "Untuk gaming murni, Gen3 masih sangat layak dan lebih hemat. Tapi untuk kreator video, Gen4 1TB adalah upgrade dengan rasio manfaat-per-rupiah terbaik tahun ini — prioritaskan kapasitas 1TB agar cache SLC tidak cepat jenuh."
+        }
+      ],
+      "tags": [
+        "#SSD",
+        "#NVMeGen4",
+        "#StorageGuide",
+        "#VideoEditing"
+      ]
+    }
+  ]
+}

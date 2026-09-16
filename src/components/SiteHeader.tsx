@@ -84,14 +84,12 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
             <Link to="/jual" className="rounded px-2.5 py-2 hover:bg-black/5 hover:text-black">
               Jual
             </Link>
-            <a
-              href="https://google.com"
-              target="_blank"
-              rel="noreferrer"
-              className="rounded px-2.5 py-2 hover:bg-black/5 hover:text-black"
-            >
-              Services
-            </a>
+            <Link to="/blog" className="rounded px-2.5 py-2 hover:bg-black/5 hover:text-black">
+              Blog
+            </Link>
+            <Link to="/about" className="rounded px-2.5 py-2 hover:bg-black/5 hover:text-black">
+              Tentang
+            </Link>
             <a href="#kontak" className="rounded px-2.5 py-2 hover:bg-black/5 hover:text-black">
               Kontak
             </a>
@@ -103,6 +101,12 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
             </Link>
             <Link to="/jual" className="rounded px-2.5 py-2 hover:bg-black/5">
               Jual
+            </Link>
+            <Link to="/blog" className="rounded px-2.5 py-2 hover:bg-black/5">
+              Blog
+            </Link>
+            <Link to="/about" className="rounded px-2.5 py-2 hover:bg-black/5">
+              Tentang
             </Link>
           </nav>
 

@@ -59,6 +59,71 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /*
+   * Stitch "minimalist editorial" tokens (Material 3 Expressive, exact hex
+   * from reff-img DESIGN.md). Namespaced to avoid clobbering the shadcn
+   * tokens above (primary/secondary/background carry marketplace colors).
+   * Usage: bg-surface, text-on-surface, bg-pri, bg-pri-container,
+   * text-sec, bg-tertiary, border-outline-variant, font-heading, ...
+   */
+  --font-heading: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-bodyedit: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-monotech: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --color-surface: #faf8ff;
+  --color-surface-dim: #d2d9f4;
+  --color-surface-bright: #faf8ff;
+  --color-surface-lowest: #ffffff;
+  --color-surface-low: #f2f3ff;
+  --color-surface-container: #eaedff;
+  --color-surface-high: #e2e7ff;
+  --color-surface-highest: #dae2fd;
+  --color-surface-variant: #dae2fd;
+  --color-on-surface: #131b2e;
+  --color-on-surface-variant: #424656;
+  --color-inverse-surface: #283044;
+  --color-inverse-on-surface: #eef0ff;
+  --color-inverse-primary: #b3c5ff;
+  --color-outline: #727687;
+  --color-outline-variant: #c2c6d8;
+  --color-pri: #0050cb;
+  --color-on-pri: #ffffff;
+  --color-pri-container: #0066ff;
+  --color-on-pri-container: #f8f7ff;
+  --color-pri-fixed: #dae1ff;
+  --color-pri-fixed-dim: #b3c5ff;
+  --color-on-pri-fixed: #001849;
+  --color-on-pri-fixed-variant: #003fa4;
+  --color-sec: #00677f;
+  --color-on-sec: #ffffff;
+  --color-sec-container: #00d2ff;
+  --color-on-sec-container: #00566a;
+  --color-sec-fixed: #b6ebff;
+  --color-sec-fixed-dim: #47d6ff;
+  --color-on-sec-fixed: #001f28;
+  --color-on-sec-fixed-variant: #004e60;
+  --color-tertiary: #b3101f;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #d72f34;
+  --color-on-tertiary-container: #fff6f5;
+  --color-tertiary-fixed: #ffdad7;
+  --color-tertiary-fixed-dim: #ffb3ae;
+  --color-on-tertiary-fixed: #410004;
+  --color-on-tertiary-fixed-variant: #930014;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-brand-50: #eef6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-500: #0066ff;
+  --color-brand-600: #0052cc;
+  --color-brand-700: #003fa4;
+  --color-brand-900: #001849;
+  --color-techdark: #080d1a;
+  --color-technavy: #0f172a;
+  --color-techslate: #1e293b;
 }
 
 :root {
@@ -160,4 +225,481 @@
   .animate-marquee {
     animation-duration: 60s;
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* Buana Admin design system (light, reff Dashboard-reff).             */
+/* Kelas .adm-* dipakai khusus area /admin: kartu terang, eyebrow mono */
+/* uppercase, tombol biru, tabel + drawer form. Navbar tetap di atas.  */
+/* ------------------------------------------------------------------ */
+
+.adm-page {
+  min-height: 100vh;
+  background: #f3f6fd;
+  color: #131b2e;
+}
+
+.adm-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f5;
+}
+
+.adm-eyebrow {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #0050cb;
+}
+
+.adm-h1 {
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #131b2e;
+}
+
+.adm-sub {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #5b6478;
+}
+
+.adm-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f5;
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+}
+
+.adm-stat-label {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #5b6478;
+}
+
+.adm-stat-num {
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  font-size: 30px;
+  line-height: 1.1;
+  font-weight: 800;
+  color: #131b2e;
+}
+
+.adm-stat-foot {
+  font-size: 12px;
+  color: #5b6478;
+}
+
+.adm-input {
+  width: 100%;
+  border: 1px solid #d7def0;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #131b2e;
+  outline: none;
+}
+
+.adm-input::placeholder {
+  color: #9aa3b8;
+}
+
+.adm-input:focus {
+  border-color: #0050cb;
+  box-shadow: 0 0 0 3px rgba(0, 80, 203, 0.12);
+}
+
+.adm-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #424656;
+}
+
+.adm-btn-pri {
+  background: #0050cb;
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  transition: background 0.15s;
+}
+
+.adm-btn-pri:hover {
+  background: #0043ad;
+}
+
+.adm-btn-pri:disabled {
+  opacity: 0.5;
+}
+
+.adm-btn-ghost {
+  border: 1px solid #d7def0;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #131b2e;
+  background: #ffffff;
+  transition: background 0.15s;
+}
+
+.adm-btn-ghost:hover {
+  background: #f2f4fb;
+}
+
+.adm-btn-danger {
+  border: 1px solid #f3c2c0;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #b3101f;
+  background: #ffffff;
+}
+
+.adm-btn-danger:hover {
+  background: #fdf0ef;
+}
+
+.adm-btn-danger:disabled {
+  opacity: 0.5;
+}
+
+.adm-btn-green {
+  background: #15803d;
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.adm-btn-green:hover {
+  background: #166534;
+}
+
+.adm-btn-green:disabled {
+  opacity: 0.5;
+}
+
+.adm-pill {
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #eef2fb;
+  color: #424656;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.adm-pill:hover {
+  background: #e2e9fa;
+}
+
+.adm-pill-active {
+  background: #131b2e;
+  color: #ffffff;
+}
+
+.adm-chip {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.adm-chip-blue {
+  background: #e3ecff;
+  color: #0050cb;
+}
+
+.adm-chip-green {
+  background: #e6f6ee;
+  color: #0e7a4d;
+}
+
+.adm-chip-red {
+  background: #fdecec;
+  color: #b3101f;
+}
+
+.adm-chip-amber {
+  background: #fef3e2;
+  color: #b45309;
+}
+
+.adm-chip-slate {
+  background: #eef2fb;
+  color: #424656;
+}
+
+.adm-table {
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+}
+
+.adm-table thead tr {
+  border-bottom: 1px solid #e2e8f5;
+}
+
+.adm-table th {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #727687;
+  padding: 10px 12px;
+}
+
+.adm-table td {
+  padding: 12px;
+  border-top: 1px solid #eef1f8;
+  vertical-align: middle;
+}
+
+.adm-table tbody tr:first-child td {
+  border-top: none;
+}
+
+.adm-navlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 8px;
+  padding: 7px 13px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #424656;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.adm-navlink .adm-icon {
+  font-size: 16px;
+}
+
+.adm-navlink:hover {
+  background: #eef2fb;
+  color: #131b2e;
+}
+
+.adm-nav-active {
+  background: #0050cb;
+  color: #ffffff;
+}
+
+.adm-nav-active:hover {
+  background: #0050cb;
+  color: #ffffff;
+}
+
+.adm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 24, 40, 0.4);
+  z-index: 40;
+}
+
+.adm-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100dvh;
+  width: min(480px, 100%);
+  background: #ffffff;
+  z-index: 50;
+  box-shadow: -12px 0 32px rgba(16, 24, 40, 0.14);
+  display: flex;
+  flex-direction: column;
+  animation: adm-slide-in 0.2s ease-out;
+}
+
+@keyframes adm-slide-in {
+  from {
+    transform: translateX(40px);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.adm-alert-err {
+  border-radius: 8px;
+  border: 1px solid #f3c2c0;
+  background: #fdf0ef;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #b3101f;
+}
+
+.adm-alert-ok {
+  border-radius: 8px;
+  border: 1px solid #b9e4cd;
+  background: #eefbf3;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #0e7a4d;
+}
+
+/* ---------- dashboard pro (ala reff operational console) ---------- */
+
+.adm-icon {
+  font-family: "Material Symbols Outlined", "Plus Jakarta Sans", sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+.adm-icon-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #e8efff;
+  color: #0050cb;
+  flex-shrink: 0;
+}
+
+.adm-icon-chip .adm-icon {
+  font-size: 21px;
+}
+
+.adm-icon-chip.sm {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+
+.adm-icon-chip.sm .adm-icon {
+  font-size: 17px;
+}
+
+.adm-drawer.wide {
+  width: min(720px, 100%);
+}
+
+.adm-icon-chip.red {
+  background: #fdeceb;
+  color: #b3101f;
+}
+
+.adm-icon-chip.teal {
+  background: #d9f4f6;
+  color: #00677f;
+}
+
+.adm-icon-chip.violet {
+  background: #ece9ff;
+  color: #4f3fb8;
+}
+
+.adm-icon-chip.green {
+  background: #ddf5e8;
+  color: #0e7a4d;
+}
+
+.adm-stat-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px;
+  transition:
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.adm-stat-card:hover {
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.09);
+  transform: translateY(-1px);
+}
+
+.adm-foot-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-top: 1px solid #edf1f9;
+  padding-top: 10px;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.adm-hero {
+  background:
+    radial-gradient(420px 160px at 88% -40px, rgba(0, 80, 203, 0.14), transparent 70%),
+    radial-gradient(320px 140px at 60% 120%, rgba(0, 103, 127, 0.1), transparent 70%),
+    #ffffff;
+}
+
+.adm-bar-track {
+  height: 8px;
+  border-radius: 999px;
+  background: #e7edf8;
+  overflow: hidden;
+}
+
+.adm-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0050cb, #3d7dff);
+  transition: width 0.4s ease;
+}
+
+.adm-bar-fill.teal {
+  background: linear-gradient(90deg, #00677f, #2bb8d4);
+}
+
+.adm-bar-fill.red {
+  background: linear-gradient(90deg, #b3101f, #f0645f);
+}
+
+.adm-mini-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 10px;
+  background: #f4f7fe;
+  padding: 10px 12px;
+}
+
+.adm-tile {
+  transition:
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.adm-tile:hover {
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.09);
+  transform: translateY(-2px);
 }

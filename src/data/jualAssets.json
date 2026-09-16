@@ -1,0 +1,47 @@
+{
+  "hero": "https://picsum.photos/seed/buana-jual-hero/900/1100",
+  "heroStack": [
+    "https://picsum.photos/seed/buana-hero-s1/900/1100",
+    "https://picsum.photos/seed/buana-hero-s2/900/1100",
+    "https://picsum.photos/seed/buana-hero-s3/900/1100"
+  ],
+  "heroCaption": "Lab & Workshop Buana Computer — Bantul",
+  "gallery": [
+    {
+      "img": "https://picsum.photos/seed/buana-gal-matot/640/480",
+      "title": "Bangkai Laptop Core i5 Matot",
+      "chip": "GRADE D • MATOT",
+      "note": "Mati total bertahun-tahun. Keyboard & heatsink di-save, dibayar Rp 200-600rb."
+    },
+    {
+      "img": "https://picsum.photos/seed/buana-gal-layar/640/480",
+      "title": "Layar Pecah / Bergaris",
+      "chip": "GRADE C • RUSAK SEBAGIAN",
+      "note": "Panel retak & artefak display kami hargai per modul."
+    },
+    {
+      "img": "https://picsum.photos/seed/buana-gal-vga/640/480",
+      "title": "VGA Artefak Garis-garis",
+      "chip": "GRADE C/D • ARTEFAK",
+      "note": "VRAM GDDR6 & heatsink jadi bahan reballing, dibayar Rp 450rb-1,2jt."
+    },
+    {
+      "img": "https://picsum.photos/seed/buana-gal-korosi/640/480",
+      "title": "Korosi & Bekas Cairan",
+      "chip": "GRADE D • MATOT",
+      "note": "Jalur korosi parah, IC donor & mosfet masih berharga kanibal."
+    },
+    {
+      "img": "https://picsum.photos/seed/buana-gal-debu/640/480",
+      "title": "Kotor & Berdebu Parah",
+      "chip": "GRADE B • MINUS KOSMETIK",
+      "note": "Unit lama gudangan: kami bersihkan & uji ulang di lab."
+    },
+    {
+      "img": "https://picsum.photos/seed/buana-gal-normal/640/480",
+      "title": "Unit Normal & Mulus",
+      "chip": "GRADE A • NORMAL",
+      "note": "Siap pakai, lengkap dos/box: valuasi paling maksimal."
+    }
+  ]
+}
