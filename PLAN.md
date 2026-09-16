@@ -151,6 +151,7 @@
 > validate (Node dari .nvmrc), tanpa secret. docs/GIT.md tambah bab CI.
 > Run pertama gagal di step validate (Node 20 tak bisa run .ts langsung) →
 > .nvmrc 20→24 (samakan lokal v24.21.0 & Vercel nodejs24.x) → rerun.
+> Run #2 (commit 3db17fd): completed + conclusion SUCCESS — CI hijau.
 
 ## 0. Kesimpulan Arsitektur
 
