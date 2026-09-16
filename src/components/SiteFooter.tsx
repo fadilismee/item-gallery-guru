@@ -1,5 +1,3 @@
-import iframeHtml from "../../link-embebgmpas.txt?raw";
-
 export function SiteFooter() {
   return (
     <footer id="kontak" className="border-t border-white/10 bg-[#0f0f0f] text-white">
@@ -119,9 +117,14 @@ export function SiteFooter() {
         </div>
 
         <div className="h-[300px] w-full overflow-hidden rounded-lg sm:h-[360px] lg:h-auto lg:min-h-[340px]">
-          <div className="h-full w-full [&>iframe]:h-full [&>iframe]:w-full [&>iframe]:border-0">
-            <div dangerouslySetInnerHTML={{ __html: iframeHtml }} />
-          </div>
+          <iframe
+            src="https://maps.google.com/maps?q=-7.8372069,110.4148331&z=17&hl=id&output=embed"
+            title="Lokasi Buana Computer Bantul"
+            className="h-full w-full border-0"
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
         </div>
       </div>
 

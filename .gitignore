@@ -30,6 +30,9 @@ lerna-debug.log*
 # ================= Junk lokal — JANGAN PUSH =================
 # dump sesi dev internal
 session-export.json
+# salinan log build (mis. tempelan log Vercel) — jangan push
+error.txt
+error*.log
 # snippet iframe Google Maps (sudah inline di kode)
 link-embebgmpas.txt
 # referensi desain (~8MB), tidak dipakai aplikasi
