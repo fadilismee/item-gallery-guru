@@ -945,9 +945,32 @@ function VisitCta() {
   );
 }
 
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Beranda",
+      item: "https://buanacomputer.web.id/",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Tentang Lab Buana Computer",
+      item: "https://buanacomputer.web.id/about",
+    },
+  ],
+};
+
 function AboutPage() {
   return (
     <div className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <SiteHeader />
       <AboutHero />
       <TopologySection />

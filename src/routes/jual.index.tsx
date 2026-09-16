@@ -799,6 +799,25 @@ function TradeInCta() {
   );
 }
 
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Beranda",
+      item: "https://buanacomputer.web.id/",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Jual Hardware Bekas & Rusak",
+      item: "https://buanacomputer.web.id/jual",
+    },
+  ],
+};
+
 function JualPage() {
   const navigate = useNavigate();
 
@@ -808,6 +827,10 @@ function JualPage() {
 
   return (
     <div className="min-h-screen bg-surface">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <SiteHeader />
       <JualHero />
       <PromoBonus />

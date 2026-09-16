@@ -296,6 +296,31 @@ function StepHeader({
   );
 }
 
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Beranda",
+      item: "https://buanacomputer.web.id/",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Jual Hardware Bekas",
+      item: "https://buanacomputer.web.id/jual",
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "Formulir Taksiran",
+      item: "https://buanacomputer.web.id/jual/form",
+    },
+  ],
+};
+
 function JualFormPage() {
   const search = Route.useSearch();
   const [category, setCategory] = useState<AppraisalCategory>(() =>
@@ -337,6 +362,10 @@ function JualFormPage() {
 
   return (
     <div className="min-h-screen bg-surface">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <SiteHeader />
 
       <section className="mx-auto w-full max-w-6xl px-4 pb-2 pt-8">

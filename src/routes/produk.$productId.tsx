@@ -77,6 +77,31 @@ function ProductDetail() {
     },
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Katalog",
+        item: "https://buanacomputer.web.id/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: product.category,
+        item: "https://buanacomputer.web.id/",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: product.name,
+        item: `https://buanacomputer.web.id/produk/${product.id}`,
+      },
+    ],
+  };
+
   const related = (() => {
     const same = products.filter((p) => p.category === product.category && p.id !== product.id);
     if (same.length >= 4) return same.slice(0, 4);
@@ -111,6 +136,10 @@ function ProductDetail() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <SiteHeader />
 

@@ -30,6 +30,8 @@ lerna-debug.log*
 # ================= Junk lokal — JANGAN PUSH =================
 # dump sesi dev internal
 session-export.json
+# kode verifikasi Google Search Console lokal
+gs.txt
 # salinan log build (mis. tempelan log Vercel) — jangan push
 error.txt
 error*.log

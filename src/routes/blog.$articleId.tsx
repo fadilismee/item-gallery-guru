@@ -262,8 +262,43 @@ function ArticlePage() {
     return `section-${partCount}`;
   });
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Beranda",
+        item: "https://buanacomputer.web.id/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Buana Journal",
+        item: "https://buanacomputer.web.id/blog",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: article.category,
+        item: "https://buanacomputer.web.id/blog",
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: article.title,
+        item: `https://buanacomputer.web.id/blog/${article.slug}`,
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-surface">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <SiteHeader />
       <ReadingProgress />
 

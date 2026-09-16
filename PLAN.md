@@ -170,6 +170,13 @@
 > - produk.$productId: penanganan stok 0 (badge Stok Habis, stepper & tombol keranjang disabled).
 > - jual.form: deteksi mobile pada submit WA agar tidak terblokir popup blocker, deduplikasi kartu bantuan ke TrustSidebarCards.
 > - Verifikasi: lint 0 error, validate 9/9 OK, build produksi lolos, dev server 200.
+>
+> Google Sitelinks & Verification Setup (2026-09-16):
+> - __root.tsx: pasang google-site-verification meta tag (D9D4lVIRUuQ1KP4nHWeOJWaH5SgfFGUJf1bpLSFjkEY dari gs.txt).
+> - __root.tsx: pasang skema WebSite (nama resmi, alias, deskripsi) & SiteNavigationElement (5 rute utama sitelinks: Katalog, Jual, Form, Blog, About).
+> - .gitignore: ignore file gs.txt agar tidak bocor ke publik.
+> - BreadcrumbList Schema: dipasang di semua subhalaman (/produk/$id, /jual, /jual/form, /blog, /blog/$articleId, /about) untuk memberikan sinyal arsitektur hierarki langsung ke Google bot.
+> - Verifikasi: ESLint 0 error, build lolos, validate 9/9 OK, dev server 200.
 
 ## 0. Kesimpulan Arsitektur
 

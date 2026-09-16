@@ -74,6 +74,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "theme-color", content: "#000000" },
+      {
+        name: "google-site-verification",
+        content: "D9D4lVIRUuQ1KP4nHWeOJWaH5SgfFGUJf1bpLSFjkEY",
+      },
       { title: "Buana Computer — Toko Komputer Bantul Yogyakarta" },
       {
         name: "description",
@@ -133,6 +137,62 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://buanacomputer.web.id/#website",
+  name: "Buana Computer",
+  alternateName: ["Buana Komputer", "Buana Computer Bantul", "Buanacomp"],
+  url: "https://buanacomputer.web.id",
+  inLanguage: "id-ID",
+  description:
+    "Toko komputer Bantul Yogyakarta: katalog laptop bekas & baru, PC rakitan, servis hardware, dan buyback barang rusak.",
+};
+
+const siteNavigationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: [
+    {
+      "@type": "SiteNavigationElement",
+      position: 1,
+      name: "Katalog Laptop & PC",
+      description: "Katalog laptop baru & second, PC rakitan, monitor, dan aksesoris komputer",
+      url: "https://buanacomputer.web.id/",
+    },
+    {
+      "@type": "SiteNavigationElement",
+      position: 2,
+      name: "Jual Hardware Bekas & Rusak",
+      description:
+        "Buyback laptop bekas, motherboard matot, VGA artefak, dan PC mati cair tunai instan",
+      url: "https://buanacomputer.web.id/jual",
+    },
+    {
+      "@type": "SiteNavigationElement",
+      position: 3,
+      name: "Formulir Taksiran Online",
+      description: "Formulir pengajuan jual dan estimasi kilat harga hardware bekas/rusak",
+      url: "https://buanacomputer.web.id/jual/form",
+    },
+    {
+      "@type": "SiteNavigationElement",
+      position: 4,
+      name: "Buana Journal & Tips Servis",
+      description: "Panduan rakit PC, review teardown, dan tips perawatan laptop dari meja teknisi",
+      url: "https://buanacomputer.web.id/blog",
+    },
+    {
+      "@type": "SiteNavigationElement",
+      position: 5,
+      name: "Tentang Laboratorium Buana",
+      description:
+        "Profil laboratorium servis mikro-elektronika, transparansi meja periksa, dan daur ulang e-waste",
+      url: "https://buanacomputer.web.id/about",
+    },
+  ],
+};
+
 const localBusinessJsonLd = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
@@ -176,6 +236,14 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteNavigationJsonLd) }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}

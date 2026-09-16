@@ -280,6 +280,25 @@ function Newsletter() {
   );
 }
 
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Beranda",
+      item: "https://buanacomputer.web.id/",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Buana Journal",
+      item: "https://buanacomputer.web.id/blog",
+    },
+  ],
+};
+
 function BlogPage() {
   const [category, setCategory] = useState<string>("Semua Topik");
   const featured = blogArticles[0]!;
@@ -288,6 +307,10 @@ function BlogPage() {
 
   return (
     <div className="min-h-screen bg-surface">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <SiteHeader />
       <AnnouncementBar />
       <HeroStory article={featured} />
