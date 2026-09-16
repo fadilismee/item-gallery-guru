@@ -177,6 +177,12 @@
 > - .gitignore: ignore file gs.txt agar tidak bocor ke publik.
 > - BreadcrumbList Schema: dipasang di semua subhalaman (/produk/$id, /jual, /jual/form, /blog, /blog/$articleId, /about) untuk memberikan sinyal arsitektur hierarki langsung ke Google bot.
 > - Verifikasi: ESLint 0 error, build lolos, validate 9/9 OK, dev server 200.
+>
+> Admin All-in-One Expansion (2026-09-16):
+> - admin.jual.tsx (Baru): halaman kendali aset /jual (hero stack 3 foto fan-out, hero fallback, hero caption, dan 6 kartu galeri barang terima masuk lab dengan tombol upload/gallery Catbox).
+> - admin.harga.tsx: upgrade katalog SKU buyback dari textarea JSON mentah menjadi editor visual kartu ramah pengguna (kategori dropdown, judul, grade, estimasi harga, warna tone, kata kunci pencarian, dan penghitungan otomatis jumlah SKU terdaftar).
+> - admin.tsx & admin.index.tsx: pembaruan menu navigasi atas dengan rute baru /admin/jual ("Aset Jual") dan penambahan tile pintasan di dashboard utama.
+> - Verifikasi: ESLint 0 error, build produksi Vite+Nitro lolos, validate 9/9 OK, local dev server 200.
 
 ## 0. Kesimpulan Arsitektur
 

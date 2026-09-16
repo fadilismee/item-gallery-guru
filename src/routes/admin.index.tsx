@@ -181,8 +181,16 @@ function AdminDashboard() {
       to: "/admin/harga",
       icon: "currency_exchange",
       chip: "teal",
-      label: "Harga Jual",
-      desc: "Price list buyback & taksiran",
+      label: "Harga Buyback",
+      desc: "Price list buyback & SKU",
+      count: undefined,
+    },
+    {
+      to: "/admin/jual",
+      icon: "recycling",
+      chip: "teal",
+      label: "Aset & Galeri Jual",
+      desc: "Hero stack 3 foto & galeri lab",
       count: undefined,
     },
     {
@@ -233,6 +241,10 @@ function AdminDashboard() {
             <Link to="/admin/produk" className="adm-btn-ghost inline-flex items-center gap-1.5">
               <Icon name="add_shopping_cart" className="text-[18px] text-pri" />
               Tambah Produk
+            </Link>
+            <Link to="/admin/jual" className="adm-btn-ghost inline-flex items-center gap-1.5">
+              <Icon name="recycling" className="text-[18px] text-pri" />
+              Aset /jual
             </Link>
             <Link to="/admin/blog" className="adm-btn-ghost inline-flex items-center gap-1.5">
               <Icon name="edit_note" className="text-[18px] text-pri" />

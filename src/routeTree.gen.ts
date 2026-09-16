@@ -17,6 +17,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminBannerRouteImport } from './routes/admin.banner'
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 import { Route as AdminHargaRouteImport } from './routes/admin.harga'
+import { Route as AdminJualRouteImport } from './routes/admin.jual'
 import { Route as AdminProdukRouteImport } from './routes/admin.produk'
 import { Route as AdminReviewRouteImport } from './routes/admin.review'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
@@ -65,6 +66,11 @@ const AdminHargaRoute = AdminHargaRouteImport.update({
   path: '/harga',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminJualRoute = AdminJualRouteImport.update({
+  id: '/jual',
+  path: '/jual',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminProdukRoute = AdminProdukRouteImport.update({
   id: '/produk',
   path: '/produk',
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/admin/banner': typeof AdminBannerRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/harga': typeof AdminHargaRoute
+  '/admin/jual': typeof AdminJualRoute
   '/admin/produk': typeof AdminProdukRoute
   '/admin/review': typeof AdminReviewRoute
   '/blog/$articleId': typeof BlogArticleIdRoute
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   '/admin/banner': typeof AdminBannerRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/harga': typeof AdminHargaRoute
+  '/admin/jual': typeof AdminJualRoute
   '/admin/produk': typeof AdminProdukRoute
   '/admin/review': typeof AdminReviewRoute
   '/blog/$articleId': typeof BlogArticleIdRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/admin/banner': typeof AdminBannerRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/harga': typeof AdminHargaRoute
+  '/admin/jual': typeof AdminJualRoute
   '/admin/produk': typeof AdminProdukRoute
   '/admin/review': typeof AdminReviewRoute
   '/blog/$articleId': typeof BlogArticleIdRoute
@@ -162,6 +171,7 @@ export interface FileRouteTypes {
     | '/admin/banner'
     | '/admin/blog'
     | '/admin/harga'
+    | '/admin/jual'
     | '/admin/produk'
     | '/admin/review'
     | '/blog/$articleId'
@@ -178,6 +188,7 @@ export interface FileRouteTypes {
     | '/admin/banner'
     | '/admin/blog'
     | '/admin/harga'
+    | '/admin/jual'
     | '/admin/produk'
     | '/admin/review'
     | '/blog/$articleId'
@@ -195,6 +206,7 @@ export interface FileRouteTypes {
     | '/admin/banner'
     | '/admin/blog'
     | '/admin/harga'
+    | '/admin/jual'
     | '/admin/produk'
     | '/admin/review'
     | '/blog/$articleId'
@@ -275,6 +287,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminHargaRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/jual': {
+      id: '/admin/jual'
+      path: '/jual'
+      fullPath: '/admin/jual'
+      preLoaderRoute: typeof AdminJualRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/produk': {
       id: '/admin/produk'
       path: '/produk'
@@ -331,6 +350,7 @@ interface AdminRouteChildren {
   AdminBannerRoute: typeof AdminBannerRoute
   AdminBlogRoute: typeof AdminBlogRoute
   AdminHargaRoute: typeof AdminHargaRoute
+  AdminJualRoute: typeof AdminJualRoute
   AdminProdukRoute: typeof AdminProdukRoute
   AdminReviewRoute: typeof AdminReviewRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -340,6 +360,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBannerRoute: AdminBannerRoute,
   AdminBlogRoute: AdminBlogRoute,
   AdminHargaRoute: AdminHargaRoute,
+  AdminJualRoute: AdminJualRoute,
   AdminProdukRoute: AdminProdukRoute,
   AdminReviewRoute: AdminReviewRoute,
   AdminIndexRoute: AdminIndexRoute,

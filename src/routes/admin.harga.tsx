@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { adminGetDataset, adminSaveDataset } from "@/server/admin";
 import { errMsg, getAdminToken } from "@/lib/adminClient";
 import { AdminIcon } from "@/components/admin/AdminIcon";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { JsonEditor } from "@/components/admin/JsonEditor";
 import { isEasyMode, useAdminMode } from "@/lib/adminMode";
 import type {
   AppraisalCategory,
   AppraisalCondition,
+  BuybackCategory,
   BuybackItem,
   SellPrice,
 } from "@/data/sellPrices";
@@ -29,10 +31,10 @@ const inputCls = "adm-input";
 
 function AdminHarga() {
   const [file, setFile] = useState<SellFile | null>(null);
-  const [itemsText, setItemsText] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [confirmingItemIndex, setConfirmingItemIndex] = useState<number | null>(null);
 
   const token = () => getAdminToken() ?? "";
   const adminMode = useAdminMode((s) => s.mode);
@@ -40,9 +42,7 @@ function AdminHarga() {
   useEffect(() => {
     adminGetDataset({ data: { token: token(), name: "sellPrices" } })
       .then((r) => {
-        const f = r.data as SellFile;
-        setFile(f);
-        setItemsText(f.buybackItems.map((i) => JSON.stringify(i, null, 2)));
+        setFile(r.data as SellFile);
       })
       .catch((e) => setError(errMsg(e)));
   }, []);
@@ -53,14 +53,17 @@ function AdminHarga() {
     setError("");
     setNotice("");
     try {
-      const buybackItems = itemsText.map((t, i) => {
-        try {
-          return JSON.parse(t);
-        } catch {
-          throw new Error(`Buyback item #${i + 1} bukan JSON valid.`);
-        }
-      });
-      const next: SellFile = { ...file, buybackItems };
+      // Hitung jumlah SKU per kategori secara otomatis
+      const counts: Record<string, number> = {};
+      for (const item of file.buybackItems) {
+        counts[item.category] = (counts[item.category] || 0) + 1;
+      }
+      const nextMeta = { ...file.buybackCategoryMeta };
+      for (const [k, v] of Object.entries(nextMeta)) {
+        nextMeta[k] = { ...v, count: `${counts[k] || 0} SKU Terdaftar` };
+      }
+
+      const next: SellFile = { ...file, buybackCategoryMeta: nextMeta };
       await adminSaveDataset({ data: { token: token(), name: "sellPrices", data: next } });
       setFile(next);
       setNotice(
@@ -71,6 +74,27 @@ function AdminHarga() {
     } finally {
       setBusy(false);
     }
+  };
+
+  const updateBuybackItem = (i: number, patch: Partial<BuybackItem>) => {
+    if (!file) return;
+    const next = [...file.buybackItems];
+    next[i] = { ...next[i], ...patch };
+    setFile({ ...file, buybackItems: next });
+  };
+
+  const addBuybackItem = () => {
+    if (!file) return;
+    const newItem: BuybackItem = {
+      category: "mobo",
+      grade: "GRADE D • RUSAK",
+      gradeTone: "tertiary",
+      title: "Komponen Hardware Baru",
+      price: "Rp 50.000 - Rp 150.000",
+      priceTone: "tertiary",
+      searchText: "komponen hardware baru",
+    };
+    setFile({ ...file, buybackItems: [...file.buybackItems, newItem] });
   };
 
   const setPrice = (i: number, patch: Partial<SellPrice>) => {
@@ -237,68 +261,126 @@ function AdminHarga() {
       </section>
 
       <section className="adm-card p-4 sm:p-5">
-        <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
           <div>
-            <p className="adm-eyebrow">Katalog /jual</p>
-            <h2 className="font-heading mt-1 text-lg font-extrabold">
-              Katalog Buyback ({itemsText.length} item)
+            <p className="adm-eyebrow">Katalog SKU /jual</p>
+            <h2 className="font-heading mt-1 text-lg font-extrabold text-on-surface">
+              Katalog SKU Buyback ({file?.buybackItems.length ?? 0} Item)
             </h2>
-            <p className="adm-sub">JSON per item — validasi otomatis saat Simpan Semua.</p>
+            <p className="adm-sub">
+              Daftar kartu estimasi penawaran hardware di halaman /jual. Pengelompokan &amp;
+              hitungan SKU otomatis diperbarui.
+            </p>
           </div>
           <button
-            onClick={() =>
-              setItemsText([
-                ...itemsText,
-                JSON.stringify(
-                  {
-                    category: "mobo",
-                    grade: "",
-                    gradeTone: "tertiary",
-                    socket: "",
-                    title: "",
-                    desc: "",
-                    specLeft: { label: "", value: "" },
-                    specRight: { label: "", value: "" },
-                    price: "",
-                    priceTone: "tertiary",
-                    searchText: "",
-                  },
-                  null,
-                  2,
-                ),
-              ])
-            }
-            className="adm-btn-ghost inline-flex items-center gap-1 py-1 text-xs"
+            onClick={addBuybackItem}
+            className="adm-btn-ghost inline-flex items-center gap-1 py-1.5 text-xs"
           >
             <AdminIcon name="add" className="text-[15px]" />
-            Item
+            Tambah SKU Buyback
           </button>
         </div>
-        {itemsText.map((t, i) => (
-          <div key={i} className="mt-2 rounded-lg border border-slate-200 bg-slate-50/60 p-2.5">
-            <div className="mb-1.5 flex items-center gap-2 text-xs">
-              <span className="adm-chip adm-chip-blue font-mono">#{i + 1}</span>
-              <button
-                onClick={() => setItemsText(itemsText.filter((_, j) => j !== i))}
-                className="adm-btn-danger inline-flex items-center gap-1"
-              >
-                <AdminIcon name="delete" className="text-[14px]" />
-                Hapus
-              </button>
+
+        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {(file?.buybackItems ?? []).map((it, i) => (
+            <div
+              key={i}
+              className="flex flex-col justify-between rounded-xl border border-slate-200 bg-slate-50/60 p-3.5 shadow-sm space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="adm-chip adm-chip-blue font-mono text-[11px]">#{i + 1} SKU</span>
+                  <span
+                    className={`adm-chip font-mono text-[10px] ${it.gradeTone === "pri" ? "adm-chip-green" : "adm-chip-amber"}`}
+                  >
+                    {it.category.toUpperCase()} • {it.grade || "GRADE"}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setConfirmingItemIndex(i)}
+                  className="adm-btn-danger inline-flex items-center gap-1 py-1"
+                >
+                  <AdminIcon name="delete" className="text-[13px]" />
+                  Hapus
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label className="adm-label mb-1">Kategori Hardware</label>
+                  <select
+                    value={it.category}
+                    onChange={(e) =>
+                      updateBuybackItem(i, { category: e.target.value as BuybackCategory })
+                    }
+                    className={inputCls}
+                  >
+                    <option value="mobo">Motherboard &amp; IC</option>
+                    <option value="vga">VGA Card / GPU</option>
+                    <option value="laptop">Laptop &amp; Bangkai</option>
+                    <option value="proc-ram">Processor &amp; RAM/SSD</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="adm-label mb-1">Judul Perangkat</label>
+                  <input
+                    value={it.title}
+                    onChange={(e) => updateBuybackItem(i, { title: e.target.value })}
+                    placeholder="Contoh: Motherboard H61 / B450 Normal"
+                    className={inputCls}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label className="adm-label mb-1">Label Grade</label>
+                  <input
+                    value={it.grade}
+                    onChange={(e) => updateBuybackItem(i, { grade: e.target.value })}
+                    placeholder="Contoh: GRADE D • RUSAK / MATOT"
+                    className={inputCls}
+                  />
+                </div>
+                <div>
+                  <label className="adm-label mb-1">Estimasi Rentang Harga</label>
+                  <input
+                    value={it.price}
+                    onChange={(e) => updateBuybackItem(i, { price: e.target.value })}
+                    placeholder="Contoh: Rp 50.000 - Rp 150.000"
+                    className={inputCls}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label className="adm-label mb-1">Warna Badge Grade &amp; Harga</label>
+                  <select
+                    value={it.gradeTone}
+                    onChange={(e) => {
+                      const tone = e.target.value as "pri" | "tertiary";
+                      updateBuybackItem(i, { gradeTone: tone, priceTone: tone });
+                    }}
+                    className={inputCls}
+                  >
+                    <option value="pri">Biru (Normal / Grade A &amp; B)</option>
+                    <option value="tertiary">Merah (Rusak / Matot / Grade C &amp; D)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="adm-label mb-1">Kata Kunci Pencarian</label>
+                  <input
+                    value={it.searchText}
+                    onChange={(e) => updateBuybackItem(i, { searchText: e.target.value })}
+                    placeholder="Contoh: rtx 3060 vga artefak rusak"
+                    className={inputCls}
+                  />
+                </div>
+              </div>
             </div>
-            <textarea
-              rows={8}
-              value={t}
-              onChange={(e) => {
-                const next = [...itemsText];
-                next[i] = e.target.value;
-                setItemsText(next);
-              }}
-              spellCheck={false}
-              className={`${inputCls} font-mono text-xs`}
-            />
-          </div>
-        ))}
+          ))}
+        </div>
       </section>
 
       {!isEasyMode(adminMode) && file && (
@@ -309,7 +391,23 @@ function AdminHarga() {
           onReloaded={(d) => {
             const f = d as SellFile;
             setFile(f);
-            setItemsText(f.buybackItems.map((i) => JSON.stringify(i, null, 2)));
+          }}
+        />
+      )}
+
+      {confirmingItemIndex !== null && (
+        <ConfirmDialog
+          title={`Hapus Item #${confirmingItemIndex + 1}?`}
+          message="Item SKU buyback ini akan dihapus dari price list. Perubahan tersimpan permanen saat Simpan Semua Harga."
+          onCancel={() => setConfirmingItemIndex(null)}
+          onConfirm={() => {
+            if (file) {
+              setFile({
+                ...file,
+                buybackItems: file.buybackItems.filter((_, j) => j !== confirmingItemIndex),
+              });
+            }
+            setConfirmingItemIndex(null);
           }}
         />
       )}
