@@ -100,6 +100,7 @@ function ProductDetail() {
   const waHref = `https://wa.me/6285979220599?text=${waMessage}`;
 
   const handleAddToCart = () => {
+    if (product.stock <= 0) return;
     add(product, qty);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -188,16 +189,23 @@ function ProductDetail() {
                 ★ 4.5 • Produk Pilihan
               </span>
             )}
-            <span className="rounded-full bg-green-500 px-2.5 py-1 text-xs font-bold text-white">
-              Stok {product.stock}
-            </span>
+            {product.stock > 0 ? (
+              <span className="rounded-full bg-green-500 px-2.5 py-1 text-xs font-bold text-white">
+                Stok {product.stock}
+              </span>
+            ) : (
+              <span className="rounded-full bg-destructive px-2.5 py-1 text-xs font-bold text-destructive-foreground">
+                Stok Habis
+              </span>
+            )}
           </div>
           <p className="mt-2 text-xs font-medium uppercase tracking-widest text-primary">
             {product.brand} &middot; {product.condition}
           </p>
           <h1 className="mt-2 text-2xl font-bold leading-snug text-foreground">{product.name}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            &#9733; {product.rating} &middot; {product.sold} terjual &middot; Stok {product.stock}
+            &#9733; {product.rating} &middot; {product.sold} terjual &middot;{" "}
+            {product.stock > 0 ? `Stok ${product.stock}` : "Stok Habis"}
           </p>
 
           <div className="mt-4 rounded-xl border border-border bg-card p-4">
@@ -225,17 +233,19 @@ function ProductDetail() {
                 <div className="flex items-center rounded-lg border border-input">
                   <button
                     onClick={() => setQty((q) => Math.max(1, q - 1))}
-                    className="flex h-9 w-9 items-center justify-center text-lg text-muted-foreground hover:text-foreground"
+                    disabled={product.stock <= 0}
+                    className="flex h-9 w-9 items-center justify-center text-lg text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                     aria-label="Kurangi jumlah"
                   >
                     -
                   </button>
                   <span className="w-9 text-center text-sm font-semibold text-foreground">
-                    {qty}
+                    {product.stock > 0 ? qty : 0}
                   </span>
                   <button
                     onClick={() => setQty((q) => Math.min(product.stock, q + 1))}
-                    className="flex h-9 w-9 items-center justify-center text-lg text-muted-foreground hover:text-foreground"
+                    disabled={product.stock <= 0 || qty >= product.stock}
+                    className="flex h-9 w-9 items-center justify-center text-lg text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                     aria-label="Tambah jumlah"
                   >
                     +
@@ -251,9 +261,10 @@ function ProductDetail() {
                 <Button
                   variant="outline"
                   className="h-10 flex-1 font-medium truncate"
+                  disabled={product.stock <= 0}
                   onClick={handleAddToCart}
                 >
-                  {added ? "✓ Ditambahkan" : "+ Keranjang"}
+                  {product.stock <= 0 ? "Stok Habis" : added ? "✓ Ditambahkan" : "+ Keranjang"}
                 </Button>
               </div>
             </div>

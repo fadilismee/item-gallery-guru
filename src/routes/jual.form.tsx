@@ -212,6 +212,61 @@ function mapBuybackToAppraisal(raw: string | undefined): AppraisalCategory {
   }
 }
 
+function TrustSidebarCards() {
+  return (
+    <>
+      <div className="space-y-3 rounded-xl bg-surface-high p-5">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-pri text-on-pri">
+            <Headset size={20} />
+          </div>
+          <div>
+            <h3 className="font-heading text-base font-bold leading-tight text-on-surface">
+              Butuh Tanya Cepat Dulu?
+            </h3>
+            <p className="mt-0.5 text-sm text-on-surface-variant">
+              Langsung hubungi meja teknisi appraisal kami via WhatsApp resmi.
+            </p>
+          </div>
+        </div>
+        <div className="font-monotech flex items-center justify-between rounded-lg bg-surface-lowest p-2 px-3 text-[13px] text-on-surface">
+          <span className="text-outline">Hotline:</span>
+          <span className="font-bold tracking-wide text-pri">{WA_NUMBER}</span>
+        </div>
+        <a
+          href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Halo Buana Computer, saya mau konsultasi jual hardware bekas")}`}
+          target="_blank"
+          rel="noreferrer"
+          className="font-heading flex w-full items-center justify-center gap-2 rounded-lg bg-surface-lowest py-2 font-semibold text-pri shadow-sm transition-colors hover:bg-surface"
+        >
+          <MessageCircle size={18} /> Chat Teknisi di WhatsApp
+        </a>
+      </div>
+
+      <div className="space-y-4 rounded-xl bg-surface-lowest p-5 shadow-sm">
+        <h3 className="font-heading font-semibold text-on-surface">
+          Kenapa Jual ke Buana Computer?
+        </h3>
+        <div className="space-y-4">
+          {trustPillars.map((t) => (
+            <div key={t.title} className="flex items-start gap-3">
+              <div
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${t.iconClass}`}
+              >
+                <t.icon size={18} />
+              </div>
+              <div>
+                <h4 className="font-heading text-sm font-semibold text-on-surface">{t.title}</h4>
+                <p className="mt-0.5 text-[13px] leading-snug text-on-surface-variant">{t.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
 function StepHeader({
   n,
   total,
@@ -397,58 +452,7 @@ function JualFormPage() {
 
               {/* Extra help and trust cards — in sidebar on desktop, moved below form on mobile */}
               <div className="hidden space-y-4 lg:block">
-                <div className="space-y-3 rounded-xl bg-surface-high p-5">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-pri text-on-pri">
-                      <Headset size={20} />
-                    </div>
-                    <div>
-                      <h3 className="font-heading text-base font-bold leading-tight text-on-surface">
-                        Butuh Tanya Cepat Dulu?
-                      </h3>
-                      <p className="mt-0.5 text-sm text-on-surface-variant">
-                        Langsung hubungi meja teknisi appraisal kami via WhatsApp resmi.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="font-monotech flex items-center justify-between rounded-lg bg-surface-lowest p-2 px-3 text-[13px] text-on-surface">
-                    <span className="text-outline">Hotline:</span>
-                    <span className="font-bold tracking-wide text-pri">{WA_NUMBER}</span>
-                  </div>
-                  <a
-                    href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Halo Buana Computer, saya mau konsultasi jual hardware bekas")}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-heading flex w-full items-center justify-center gap-2 rounded-lg bg-surface-lowest py-2 font-semibold text-pri shadow-sm transition-colors hover:bg-surface"
-                  >
-                    <MessageCircle size={18} /> Chat Teknisi di WhatsApp
-                  </a>
-                </div>
-
-                <div className="space-y-4 rounded-xl bg-surface-lowest p-5 shadow-sm">
-                  <h3 className="font-heading font-semibold text-on-surface">
-                    Kenapa Jual ke Buana Computer?
-                  </h3>
-                  <div className="space-y-4">
-                    {trustPillars.map((t) => (
-                      <div key={t.title} className="flex items-start gap-3">
-                        <div
-                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${t.iconClass}`}
-                        >
-                          <t.icon size={18} />
-                        </div>
-                        <div>
-                          <h4 className="font-heading text-sm font-semibold text-on-surface">
-                            {t.title}
-                          </h4>
-                          <p className="mt-0.5 text-[13px] leading-snug text-on-surface-variant">
-                            {t.desc}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <TrustSidebarCards />
 
                 <div className="space-y-2 rounded-xl bg-surface-lowest p-5 shadow-sm">
                   <div className="font-monotech flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-sec">
@@ -480,7 +484,12 @@ function JualFormPage() {
               onSubmit={(e) => {
                 e.preventDefault();
                 setSent(true);
-                window.open(waHref, "_blank", "noopener,noreferrer");
+                const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+                if (isMobileDevice) {
+                  window.location.href = waHref;
+                } else {
+                  window.open(waHref, "_blank", "noopener,noreferrer");
+                }
               }}
             >
               <div className="space-y-4 rounded-xl bg-surface-lowest p-6 shadow-sm">
@@ -857,58 +866,7 @@ function JualFormPage() {
 
               {/* Extra help and trust cards for mobile — below the form */}
               <div className="space-y-4 pt-4 lg:hidden">
-                <div className="space-y-3 rounded-xl bg-surface-high p-5">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-pri text-on-pri">
-                      <Headset size={20} />
-                    </div>
-                    <div>
-                      <h3 className="font-heading text-base font-bold leading-tight text-on-surface">
-                        Butuh Tanya Cepat Dulu?
-                      </h3>
-                      <p className="mt-0.5 text-sm text-on-surface-variant">
-                        Langsung hubungi meja teknisi appraisal kami via WhatsApp resmi.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="font-monotech flex items-center justify-between rounded-lg bg-surface-lowest p-2 px-3 text-[13px] text-on-surface">
-                    <span className="text-outline">Hotline:</span>
-                    <span className="font-bold tracking-wide text-pri">{WA_NUMBER}</span>
-                  </div>
-                  <a
-                    href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Halo Buana Computer, saya mau konsultasi jual hardware bekas")}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-heading flex w-full items-center justify-center gap-2 rounded-lg bg-surface-lowest py-2 font-semibold text-pri shadow-sm transition-colors hover:bg-surface"
-                  >
-                    <MessageCircle size={18} /> Chat Teknisi di WhatsApp
-                  </a>
-                </div>
-
-                <div className="space-y-4 rounded-xl bg-surface-lowest p-5 shadow-sm">
-                  <h3 className="font-heading font-semibold text-on-surface">
-                    Kenapa Jual ke Buana Computer?
-                  </h3>
-                  <div className="space-y-4">
-                    {trustPillars.map((t) => (
-                      <div key={t.title} className="flex items-start gap-3">
-                        <div
-                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${t.iconClass}`}
-                        >
-                          <t.icon size={18} />
-                        </div>
-                        <div>
-                          <h4 className="font-heading text-sm font-semibold text-on-surface">
-                            {t.title}
-                          </h4>
-                          <p className="mt-0.5 text-[13px] leading-snug text-on-surface-variant">
-                            {t.desc}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <TrustSidebarCards />
               </div>
             </form>
           </div>

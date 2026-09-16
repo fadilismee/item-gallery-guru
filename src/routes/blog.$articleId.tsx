@@ -10,37 +10,48 @@ export const Route = createFileRoute("/blog/$articleId")({
     if (!article) throw redirect({ to: "/blog" });
     return { article };
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      { title: `${loaderData.article.title} — Buana Journal` },
-      { name: "description", content: loaderData.article.excerpt },
-      {
-        name: "keywords",
-        content: [
-          loaderData.article.category,
-          loaderData.article.tag.toLowerCase(),
-          ...loaderData.article.tags.map((t) => t.replace(/^#/, "")),
-          "buana journal",
-          "bantul",
-          "yogyakarta",
-        ].join(", "),
-      },
-      { property: "og:title", content: loaderData.article.title },
-      { property: "og:description", content: loaderData.article.excerpt },
-      { property: "og:image", content: loaderData.article.image },
-      {
-        property: "og:url",
-        content: `https://buanacomputer.web.id/blog/${loaderData.article.slug}`,
-      },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      {
-        rel: "canonical",
-        href: `https://buanacomputer.web.id/blog/${loaderData.article.slug}`,
-      },
-    ],
-  }),
+  head: ({ loaderData }) => {
+    if (!loaderData || !loaderData.article) {
+      return {
+        meta: [
+          { title: "Artikel tidak ditemukan — Buana Journal" },
+          { name: "robots", content: "noindex" },
+        ],
+      };
+    }
+    const { article } = loaderData;
+    return {
+      meta: [
+        { title: `${article.title} — Buana Journal` },
+        { name: "description", content: article.excerpt },
+        {
+          name: "keywords",
+          content: [
+            article.category,
+            article.tag.toLowerCase(),
+            ...article.tags.map((t) => t.replace(/^#/, "")),
+            "buana journal",
+            "bantul",
+            "yogyakarta",
+          ].join(", "),
+        },
+        { property: "og:title", content: article.title },
+        { property: "og:description", content: article.excerpt },
+        { property: "og:image", content: article.image },
+        {
+          property: "og:url",
+          content: `https://buanacomputer.web.id/blog/${article.slug}`,
+        },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+      links: [
+        {
+          rel: "canonical",
+          href: `https://buanacomputer.web.id/blog/${article.slug}`,
+        },
+      ],
+    };
+  },
   component: ArticlePage,
 });
 

@@ -15,11 +15,12 @@ type Props = {
 
 const desktopImages = [poster1, poster2, poster3];
 const phoneImages = [hp, hp2, hp3];
-const defaultImages = banners.hero && banners.hero.length > 0 ? banners.hero : desktopImages;
+const hasCustomBanners = Array.isArray(banners.hero) && banners.hero.length > 0;
 
 export function HeroCarousel({ images: propImages, interval = 3000 }: Props) {
   const isMobile = useIsMobile();
-  const images = propImages ?? (isMobile ? phoneImages : defaultImages);
+  const fallbackImages = isMobile ? phoneImages : desktopImages;
+  const images = propImages ?? (hasCustomBanners ? banners.hero : fallbackImages);
   const [index, setIndex] = useState(0);
   const timerRef = useRef<number | null>(null);
   const pausedRef = useRef(false);

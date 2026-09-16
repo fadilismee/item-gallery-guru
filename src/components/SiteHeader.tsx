@@ -9,25 +9,22 @@ type SiteHeaderProps = {
   onQueryChange?: (value: string) => void;
 };
 
-type SiteHeaderProps = {
-  query?: string;
-  onQueryChange?: (value: string) => void;
-};
-
 export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps) {
   const navigate = useNavigate();
   const routerState = useRouterState();
   const isHome = routerState.location.pathname === "/";
-  // Samain semua page: search selalu ada, di home pakai prop filter langsung, di page lain redirect ke /?q=
+  // Samain semua page: search selalu ada, di home pakai prop filter langsung, di page lain redirect ke /?q= saat submit/enter
   const [localQuery, setLocalQuery] = useState("");
   const query = propQuery ?? localQuery;
   const handleQueryChange = (value: string) => {
     if (onQueryChange) onQueryChange(value);
-    else setLocalQuery(value);
-    if (!isHome && value.trim()) {
-      navigate({ to: "/", search: { q: value } as never });
-    } else if (!isHome && !value.trim()) {
-      navigate({ to: "/" });
+    setLocalQuery(value);
+  };
+
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!isHome) {
+      navigate({ to: "/", search: { q: query.trim() || undefined } as never });
     }
   };
   const items = useCart((s) => s.items);
@@ -103,7 +100,7 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
           </nav>
 
           {/* Desktop Search */}
-          <div className="mx-4 hidden max-w-md flex-1 lg:flex">
+          <form onSubmit={handleSearchSubmit} className="mx-4 hidden max-w-md flex-1 lg:flex">
             <div className="relative w-full">
               <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-black/40">
                 ⌕
@@ -111,12 +108,15 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
               <input
                 value={query}
                 onChange={(e) => handleQueryChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSearchSubmit();
+                }}
                 placeholder="Cari laptop, VGA, monitor..."
                 aria-label="Cari produk"
                 className="h-9 w-full rounded-full border border-black/10 bg-muted/50 pl-9 pr-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-black/20 focus:bg-white"
               />
             </div>
-          </div>
+          </form>
 
           {/* Mobile Spacer */}
           <div className="flex-1 lg:hidden" />
@@ -156,65 +156,69 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
                     className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px] lg:hidden"
                     onClick={() => setOpen(false)}
                   />
-                  <div className="fixed inset-x-4 top-20 z-50 rounded-2xl border border-black/10 bg-white p-5 shadow-2xl sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80 sm:rounded-xl sm:p-4">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-bold text-foreground">Keranjang Belanja</h4>
-                      <button
-                        onClick={() => setOpen(false)}
-                        className="rounded p-1 text-muted-foreground hover:bg-muted lg:hidden"
-                        aria-label="Tutup keranjang"
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                    {items.length === 0 ? (
-                      <p className="mt-3 text-sm text-muted-foreground">Keranjang masih kosong.</p>
-                    ) : (
-                      <>
-                        <ul className="mt-3 max-h-64 space-y-3 overflow-auto pr-1">
-                          {items.map((it) => (
-                            <li key={it.product.id} className="flex gap-3">
-                              <img
-                                src={it.product.image}
-                                alt={it.product.name}
-                                className="h-12 w-12 rounded-lg object-cover border"
-                              />
-                              <div className="min-w-0 flex-1">
-                                <p className="line-clamp-1 text-xs font-medium text-foreground">
-                                  {it.product.name}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                  {formatPrice(it.product.price)} × {it.qty}
-                                </p>
-                              </div>
-                              <button
-                                onClick={() => remove(it.product.id)}
-                                className="text-xs text-red-500 hover:text-red-600 font-medium"
-                              >
-                                Hapus
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="mt-4 border-t pt-3">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">Subtotal</span>
-                            <span className="font-bold text-foreground">
-                              {formatPrice(subtotal)}
-                            </span>
+                  <div className="fixed inset-x-4 top-20 z-50 sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:w-80 sm:pt-2">
+                    <div className="rounded-2xl border border-black/10 bg-white p-5 shadow-2xl sm:rounded-xl sm:p-4">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-bold text-foreground">Keranjang Belanja</h4>
+                        <button
+                          onClick={() => setOpen(false)}
+                          className="rounded p-1 text-muted-foreground hover:bg-muted lg:hidden"
+                          aria-label="Tutup keranjang"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                      {items.length === 0 ? (
+                        <p className="mt-3 text-sm text-muted-foreground">
+                          Keranjang masih kosong.
+                        </p>
+                      ) : (
+                        <>
+                          <ul className="mt-3 max-h-64 space-y-3 overflow-auto pr-1">
+                            {items.map((it) => (
+                              <li key={it.product.id} className="flex gap-3">
+                                <img
+                                  src={it.product.image}
+                                  alt={it.product.name}
+                                  className="h-12 w-12 rounded-lg object-cover border"
+                                />
+                                <div className="min-w-0 flex-1">
+                                  <p className="line-clamp-1 text-xs font-medium text-foreground">
+                                    {it.product.name}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {formatPrice(it.product.price)} × {it.qty}
+                                  </p>
+                                </div>
+                                <button
+                                  onClick={() => remove(it.product.id)}
+                                  className="text-xs text-red-500 hover:text-red-600 font-medium"
+                                >
+                                  Hapus
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                          <div className="mt-4 border-t pt-3">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-muted-foreground">Subtotal</span>
+                              <span className="font-bold text-foreground">
+                                {formatPrice(subtotal)}
+                              </span>
+                            </div>
+                            <a
+                              href={waCartHref}
+                              target="_blank"
+                              rel="noreferrer"
+                              onClick={() => setOpen(false)}
+                              className="mt-3 flex w-full items-center justify-center rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white hover:bg-black/80"
+                            >
+                              Checkout via WhatsApp
+                            </a>
                           </div>
-                          <a
-                            href={waCartHref}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={() => setOpen(false)}
-                            className="mt-3 flex w-full items-center justify-center rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white hover:bg-black/80"
-                          >
-                            Checkout via WhatsApp
-                          </a>
-                        </div>
-                      </>
-                    )}
+                        </>
+                      )}
+                    </div>
                   </div>
                 </>
               )}
@@ -302,7 +306,7 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
       </div>
       {searchOpen && (
         <div className="border-t border-black/10 bg-white px-4 py-2 lg:hidden">
-          <div className="relative">
+          <form onSubmit={handleSearchSubmit} className="relative">
             <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-black/40">
               ⌕
             </span>
@@ -310,11 +314,14 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
               autoFocus
               value={query}
               onChange={(e) => handleQueryChange(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearchSubmit();
+              }}
               placeholder="Cari laptop, VGA, monitor..."
               aria-label="Cari produk"
               className="h-9 w-full rounded-full border border-black/10 bg-muted/50 pl-9 pr-4 text-sm outline-none placeholder:text-muted-foreground focus:border-black/20 focus:bg-white"
             />
-          </div>
+          </form>
         </div>
       )}
     </header>

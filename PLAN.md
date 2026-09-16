@@ -162,6 +162,14 @@
 > - Form /jual/form: kartu live simulasi taksiran tetap di atas untuk feedback langsung, kartu bantuan sekunder (hotline, trust pillars, deals) dipindah ke bawah form agar form tidak terhalang scroll panjang di HP, tombol submit dibuat proporsional.
 > - Blog & About: gambar hero artikel responsif (16/9 pada HP vs 21/9 desktop), scorecard metrik 2 kolom di HP, layout topbar admin 2 baris rapi.
 > - Verifikasi: ESLint 0 error, build production Vite+Nitro lolos, validate 9/9 OK.
+>
+> Post-Review Bugfixes (2026-09-16):
+> - SiteHeader: hapus deklarasi duplikat SiteHeaderProps, perbaiki hover gap pop-up keranjang (sm:pt-2) agar tidak tertutup saat kursor bergerak ke bawah, perbaiki input search non-home agar tidak redirect tiap ketikan melainkan submit via Enter.
+> - HeroCarousel: prioritaskan banner admin (banners.hero) di mobile maupun desktop jika ada, fallback ke phone/desktop images hanya jika kosong.
+> - blog.$articleId: tambahkan guard aman loaderData?.article pada head meta.
+> - produk.$productId: penanganan stok 0 (badge Stok Habis, stepper & tombol keranjang disabled).
+> - jual.form: deteksi mobile pada submit WA agar tidak terblokir popup blocker, deduplikasi kartu bantuan ke TrustSidebarCards.
+> - Verifikasi: lint 0 error, validate 9/9 OK, build produksi lolos, dev server 200.
 
 ## 0. Kesimpulan Arsitektur
 
