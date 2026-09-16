@@ -144,6 +144,11 @@
 > .gitignore, docs/GIT.md dikoreksi. Verifikasi: eslint 0 error, build lolos
 > tanpa file txt, validate 9/9 OK. Commit 11d5b3a + push ke main (upstream
 > diset) → Vercel auto-rebuild.
+>
+> CI preventif (2026-09-16): Lovable nunjukkin error identik error.txt karena
+> pegang snapshot lama (repo sudah bersih di HEAD 15a39c3). Tambah
+> .github/workflows/ci.yml — tiap push main/PR jalan npm ci → lint → build →
+> validate (Node dari .nvmrc), tanpa secret. docs/GIT.md tambah bab CI.
 
 ## 0. Kesimpulan Arsitektur
 

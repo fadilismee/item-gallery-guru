@@ -45,6 +45,16 @@ Sebelum push, jaga branch `main` selalu buildable:
 npm run lint; npm run build; npm run validate
 ```
 
+## CI otomatis (GitHub Actions)
+
+Setiap push ke `main` dan setiap PR otomatis menjalankan `.github/workflows/ci.yml`:
+
+```text
+npm ci → npm run lint → npm run build → npm run validate
+```
+
+Hasilnya berupa check hijau/merah di commit — error build (mis. import file yang hilang seperti kasus `link-embebgmpas.txt`) ketangkap di GitHub **sebelum** sampai ke Vercel/Lovable. Workflow tanpa secret dan read-only; `ADMIN_PASSWORD` & `tools/.env` tetap tidak ikut.
+
 ## Alur rilis via admin (tombol Terbitkan)
 
 Tombol **Terbitkan Perubahan** di header admin memanggil `adminGitCommitPush` yang **hanya** me-`add` `src/data/` + `public/sitemap.xml`, lalu commit + push. File kode lain (src/routes, dsb) **tidak ikut** — harus lewat terminal/manual di atas. Lihat `docs/ALIRAN.md` bagian Admin Flow untuk detail.
