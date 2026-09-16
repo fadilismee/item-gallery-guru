@@ -132,6 +132,18 @@
 > alur rilis) & docs/ALIRAN.md (user & admin flow lengkap) dibuat; README
 > ditambah pointer docs. Verifikasi: eslint 0 error (6 warning lama shadcn),
 > build lolos, status git sesuai rencana. Commit/push BELUM dilakukan.
+>
+> Identitas git (2026-09-16): user.name fadlismee→fadilismee,
+> user.email→ftahmirz.a06@gmail.com (typo lama bikin contribution tak terhitung).
+> README ditulis ulang rapi (tabel fitur, struktur, admin, deploy, kontak).
+>
+> Fix build Vercel (2026-09-16): commit 90eb1aa menghapus link-embebgmpas.txt
+> dari repo sementara SiteFooter.tsx masih raw-import → UNRESOLVED_IMPORT di
+> Vercel. Perbaikan: iframe maps di-inline sebagai JSX (tanpa
+> dangerouslySetInnerHTML), file txt dihapus dari disk, error.txt masuk
+> .gitignore, docs/GIT.md dikoreksi. Verifikasi: eslint 0 error, build lolos
+> tanpa file txt, validate 9/9 OK. Commit 11d5b3a + push ke main (upstream
+> diset) → Vercel auto-rebuild.
 
 ## 0. Kesimpulan Arsitektur
 
