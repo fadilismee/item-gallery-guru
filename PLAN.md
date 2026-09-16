@@ -152,6 +152,16 @@
 > Run pertama gagal di step validate (Node 20 tak bisa run .ts langsung) →
 > .nvmrc 20→24 (samakan lokal v24.21.0 & Vercel nodejs24.x) → rerun.
 > Run #2 (commit 3db17fd): completed + conclusion SUCCESS — CI hijau.
+>
+> Mobile UI/UX Overhaul (2026-09-16):
+> - SiteHeader: hamburger menu slide-down drawer, backdrop dismiss, modal keranjang responsif (max-width viewport) + tombol close mobile, perbaikan layout logo vs actions.
+> - HeroCarousel: tinggi minimum disesuaikan untuk smartphone (320px vs 420px lama) agar tidak mendominasi layar awal.
+> - ProductCard & Katalog: grid gap proporsional (gap-3 vs gap-4/5), padding kartu p-3 pada mobile, tombol marketplace flex-col / stacked agar teks Tokopedia/Shopee tidak terpotong pada layar sempit.
+> - Halaman Detail (/produk): selector kuantitas rapi, tombol "Hubungi Penjual" + "+ Keranjang" menjadi 2 kolom simetris pada mobile, produk serupa 2 kolom gap rapat.
+> - Halaman /jual: hero 3-stack dibatasi max-w-xs agar proporsional di HP, strip statistik 2 kolom ringkas, katalog buyback menjadi 2 kolom rapi di HP (tidak lagi 1 kolom melar), heading responsif (text-2xl vs 3xl/4xl).
+> - Form /jual/form: kartu live simulasi taksiran tetap di atas untuk feedback langsung, kartu bantuan sekunder (hotline, trust pillars, deals) dipindah ke bawah form agar form tidak terhalang scroll panjang di HP, tombol submit dibuat proporsional.
+> - Blog & About: gambar hero artikel responsif (16/9 pada HP vs 21/9 desktop), scorecard metrik 2 kolom di HP, layout topbar admin 2 baris rapi.
+> - Verifikasi: ESLint 0 error, build production Vite+Nitro lolos, validate 9/9 OK.
 
 ## 0. Kesimpulan Arsitektur
 

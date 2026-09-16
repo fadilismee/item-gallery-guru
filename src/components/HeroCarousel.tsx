@@ -76,7 +76,7 @@ export function HeroCarousel({ images: propImages, interval = 3000 }: Props) {
       onTouchEnd={onTouchEnd}
       aria-label="Hero carousel"
     >
-      <div className="relative w-full overflow-hidden h-[68vh] min-h-[420px] sm:h-[72vh] sm:min-h-[520px] lg:h-[88vh] lg:min-h-[600px] xl:h-[92vh]">
+      <div className="relative w-full overflow-hidden h-[55vh] min-h-[320px] sm:h-[65vh] sm:min-h-[400px] lg:h-[88vh] lg:min-h-[600px] xl:h-[92vh]">
         <div
           className="absolute inset-0 flex transition-transform duration-700 ease-out"
           style={{ transform: `translateX(-${index * 100}%)` }}

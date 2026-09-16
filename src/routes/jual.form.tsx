@@ -305,7 +305,7 @@ function JualFormPage() {
               ESTIMASI KILAT • GRATIS PENGECEKAN
             </span>
           </div>
-          <h1 className="font-heading text-3xl font-bold leading-tight tracking-tight text-on-surface sm:text-4xl">
+          <h1 className="font-heading text-2xl font-bold leading-tight tracking-tight text-on-surface sm:text-4xl">
             Formulir Pengajuan Jual &amp; Taksir Hardware
           </h1>
           <p className="max-w-2xl leading-relaxed text-on-surface-variant">
@@ -395,79 +395,82 @@ function JualFormPage() {
                 </div>
               </div>
 
-              <div className="space-y-3 rounded-xl bg-surface-high p-5">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-pri text-on-pri">
-                    <Headset size={20} />
+              {/* Extra help and trust cards — in sidebar on desktop, moved below form on mobile */}
+              <div className="hidden space-y-4 lg:block">
+                <div className="space-y-3 rounded-xl bg-surface-high p-5">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-pri text-on-pri">
+                      <Headset size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-heading text-base font-bold leading-tight text-on-surface">
+                        Butuh Tanya Cepat Dulu?
+                      </h3>
+                      <p className="mt-0.5 text-sm text-on-surface-variant">
+                        Langsung hubungi meja teknisi appraisal kami via WhatsApp resmi.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-heading text-base font-bold leading-tight text-on-surface">
-                      Butuh Tanya Cepat Dulu?
-                    </h3>
-                    <p className="mt-0.5 text-sm text-on-surface-variant">
-                      Langsung hubungi meja teknisi appraisal kami via WhatsApp resmi.
-                    </p>
+                  <div className="font-monotech flex items-center justify-between rounded-lg bg-surface-lowest p-2 px-3 text-[13px] text-on-surface">
+                    <span className="text-outline">Hotline:</span>
+                    <span className="font-bold tracking-wide text-pri">{WA_NUMBER}</span>
                   </div>
+                  <a
+                    href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Halo Buana Computer, saya mau konsultasi jual hardware bekas")}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-heading flex w-full items-center justify-center gap-2 rounded-lg bg-surface-lowest py-2 font-semibold text-pri shadow-sm transition-colors hover:bg-surface"
+                  >
+                    <MessageCircle size={18} /> Chat Teknisi di WhatsApp
+                  </a>
                 </div>
-                <div className="font-monotech flex items-center justify-between rounded-lg bg-surface-lowest p-2 px-3 text-[13px] text-on-surface">
-                  <span className="text-outline">Hotline:</span>
-                  <span className="font-bold tracking-wide text-pri">{WA_NUMBER}</span>
-                </div>
-                <a
-                  href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Halo Buana Computer, saya mau konsultasi jual hardware bekas")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-heading flex w-full items-center justify-center gap-2 rounded-lg bg-surface-lowest py-2 font-semibold text-pri shadow-sm transition-colors hover:bg-surface"
-                >
-                  <MessageCircle size={18} /> Chat Teknisi di WhatsApp
-                </a>
-              </div>
 
-              <div className="space-y-4 rounded-xl bg-surface-lowest p-5 shadow-sm">
-                <h3 className="font-heading font-semibold text-on-surface">
-                  Kenapa Jual ke Buana Computer?
-                </h3>
-                <div className="space-y-4">
-                  {trustPillars.map((t) => (
-                    <div key={t.title} className="flex items-start gap-3">
+                <div className="space-y-4 rounded-xl bg-surface-lowest p-5 shadow-sm">
+                  <h3 className="font-heading font-semibold text-on-surface">
+                    Kenapa Jual ke Buana Computer?
+                  </h3>
+                  <div className="space-y-4">
+                    {trustPillars.map((t) => (
+                      <div key={t.title} className="flex items-start gap-3">
+                        <div
+                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${t.iconClass}`}
+                        >
+                          <t.icon size={18} />
+                        </div>
+                        <div>
+                          <h4 className="font-heading text-sm font-semibold text-on-surface">
+                            {t.title}
+                          </h4>
+                          <p className="mt-0.5 text-[13px] leading-snug text-on-surface-variant">
+                            {t.desc}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2 rounded-xl bg-surface-lowest p-5 shadow-sm">
+                  <div className="font-monotech flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-sec">
+                    <History size={16} />
+                    <span>Aktivitas Jual Terkini</span>
+                  </div>
+                  <div className="divide-y divide-surface-container pt-1">
+                    {recentDeals.map((d) => (
                       <div
-                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${t.iconClass}`}
+                        key={d.item}
+                        className="flex items-center justify-between pt-2 text-[12px]"
                       >
-                        <t.icon size={18} />
+                        <div>
+                          <p className="font-heading text-[13px] font-medium text-on-surface">
+                            {d.item}
+                          </p>
+                          <span className="font-monotech text-outline">{d.who}</span>
+                        </div>
+                        <span className="font-monotech font-semibold text-pri">{d.price}</span>
                       </div>
-                      <div>
-                        <h4 className="font-heading text-sm font-semibold text-on-surface">
-                          {t.title}
-                        </h4>
-                        <p className="mt-0.5 text-[13px] leading-snug text-on-surface-variant">
-                          {t.desc}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-2 rounded-xl bg-surface-lowest p-5 shadow-sm">
-                <div className="font-monotech flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-sec">
-                  <History size={16} />
-                  <span>Aktivitas Jual Terkini</span>
-                </div>
-                <div className="divide-y divide-surface-container pt-1">
-                  {recentDeals.map((d) => (
-                    <div
-                      key={d.item}
-                      className="flex items-center justify-between pt-2 text-[12px]"
-                    >
-                      <div>
-                        <p className="font-heading text-[13px] font-medium text-on-surface">
-                          {d.item}
-                        </p>
-                        <span className="font-monotech text-outline">{d.who}</span>
-                      </div>
-                      <span className="font-monotech font-semibold text-pri">{d.price}</span>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -820,10 +823,10 @@ function JualFormPage() {
               <div className="space-y-2">
                 <button
                   type="submit"
-                  className="font-heading flex w-full items-center justify-center gap-2 rounded-xl bg-pri-container px-6 py-4 font-bold text-on-pri shadow-lg transition-all hover:bg-pri"
+                  className="font-heading flex w-full items-center justify-center gap-2 rounded-xl bg-pri-container px-4 py-3.5 sm:px-6 sm:py-4 text-sm sm:text-base font-bold text-on-pri shadow-lg transition-all hover:bg-pri"
                 >
-                  <Send size={24} />
-                  <span>Kirim Pengajuan &amp; Dapatkan Taksiran via WhatsApp</span>
+                  <Send size={20} />
+                  <span>Kirim Pengajuan &amp; Taksiran via WhatsApp</span>
                 </button>
                 <div className="font-monotech flex items-center justify-center gap-2 text-center text-[11px] text-outline">
                   <span className="flex items-center gap-1">
@@ -831,7 +834,7 @@ function JualFormPage() {
                     100% Gratis &amp; Tanpa Kewajiban Menjual
                   </span>
                   <span>•</span>
-                  <span>Respon Rata-rata 7 Menit</span>
+                  <span>Respon ~7 Menit</span>
                 </div>
                 {sent && (
                   <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800">
@@ -850,6 +853,62 @@ function JualFormPage() {
                     </a>
                   </div>
                 )}
+              </div>
+
+              {/* Extra help and trust cards for mobile — below the form */}
+              <div className="space-y-4 pt-4 lg:hidden">
+                <div className="space-y-3 rounded-xl bg-surface-high p-5">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-pri text-on-pri">
+                      <Headset size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-heading text-base font-bold leading-tight text-on-surface">
+                        Butuh Tanya Cepat Dulu?
+                      </h3>
+                      <p className="mt-0.5 text-sm text-on-surface-variant">
+                        Langsung hubungi meja teknisi appraisal kami via WhatsApp resmi.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="font-monotech flex items-center justify-between rounded-lg bg-surface-lowest p-2 px-3 text-[13px] text-on-surface">
+                    <span className="text-outline">Hotline:</span>
+                    <span className="font-bold tracking-wide text-pri">{WA_NUMBER}</span>
+                  </div>
+                  <a
+                    href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Halo Buana Computer, saya mau konsultasi jual hardware bekas")}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-heading flex w-full items-center justify-center gap-2 rounded-lg bg-surface-lowest py-2 font-semibold text-pri shadow-sm transition-colors hover:bg-surface"
+                  >
+                    <MessageCircle size={18} /> Chat Teknisi di WhatsApp
+                  </a>
+                </div>
+
+                <div className="space-y-4 rounded-xl bg-surface-lowest p-5 shadow-sm">
+                  <h3 className="font-heading font-semibold text-on-surface">
+                    Kenapa Jual ke Buana Computer?
+                  </h3>
+                  <div className="space-y-4">
+                    {trustPillars.map((t) => (
+                      <div key={t.title} className="flex items-start gap-3">
+                        <div
+                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${t.iconClass}`}
+                        >
+                          <t.icon size={18} />
+                        </div>
+                        <div>
+                          <h4 className="font-heading text-sm font-semibold text-on-surface">
+                            {t.title}
+                          </h4>
+                          <p className="mt-0.5 text-[13px] leading-snug text-on-surface-variant">
+                            {t.desc}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </form>
           </div>

@@ -116,7 +116,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="h-[300px] w-full overflow-hidden rounded-lg sm:h-[360px] lg:h-auto lg:min-h-[340px]">
+        <div className="h-[200px] w-full overflow-hidden rounded-lg sm:h-[260px] lg:h-auto lg:min-h-[300px]">
           <iframe
             src="https://maps.google.com/maps?q=-7.8372069,110.4148331&z=17&hl=id&output=embed"
             title="Lokasi Buana Computer Bantul"

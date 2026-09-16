@@ -29,46 +29,50 @@ export function ProductCard({ product }: { product: Product }) {
           />
         </div>
         {discount > 0 && (
-          <span className="absolute left-4 top-4 rounded-md bg-destructive px-2 py-0.5 text-[11px] font-bold text-destructive-foreground">
+          <span className="absolute left-3 top-3 rounded-md bg-destructive px-1.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-destructive-foreground">
             -{discount}%
           </span>
         )}
         {product.isFeatured && (
           <span
-            className={`absolute left-4 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white shadow ${discount > 0 ? "top-10" : "top-4"}`}
+            className={`absolute left-3 rounded-full bg-amber-500 px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-white shadow ${discount > 0 ? "top-8 sm:top-9" : "top-3"}`}
           >
-            ★ 4.5 • Produk Pilihan
+            <span className="hidden sm:inline">★ 4.5 • </span>Pilihan
           </span>
         )}
         {product.condition === "Bekas" && (
-          <span className="absolute right-4 top-4 rounded-md bg-amber-500 px-2 py-0.5 text-[11px] font-bold text-white">
+          <span className="absolute right-3 top-3 rounded-md bg-amber-500 px-1.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-white">
             Bekas
           </span>
         )}
       </Link>
-      <div className="flex flex-1 flex-col gap-1.5 px-4 pb-4">
+      <div className="flex flex-1 flex-col gap-1 px-3 pb-3 sm:px-4 sm:pb-4">
         <Link
           to="/produk/$productId"
           params={{ productId: product.id }}
-          className="line-clamp-2 text-sm font-medium text-foreground hover:text-primary"
+          className="line-clamp-2 text-xs sm:text-sm font-medium text-foreground hover:text-primary leading-snug"
         >
           {product.name}
         </Link>
-        <div className="mt-auto pt-3">
-          <p className="text-base font-bold text-foreground">{formatPrice(product.price)}</p>
+        <div className="mt-auto pt-2 sm:pt-3">
+          <p className="text-sm sm:text-base font-bold text-foreground">
+            {formatPrice(product.price)}
+          </p>
           {product.oldPrice && (
-            <p className="text-xs text-muted-foreground line-through">
+            <p className="text-[10px] sm:text-xs text-muted-foreground line-through">
               {formatPrice(product.oldPrice)}
             </p>
           )}
-          <p className="mt-1 text-xs text-muted-foreground">
-            ★ {product.rating} · {product.sold} terjual · Stok {product.stock}
+          <p className="mt-1 text-[11px] sm:text-xs text-muted-foreground truncate">
+            ★ {product.rating} · {product.sold} terjual
           </p>
-          <p className="text-xs text-muted-foreground">{product.location}</p>
+          <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
+            {product.location}
+          </p>
           <Button
             size="sm"
             variant="outline"
-            className="mt-3 w-full h-8 text-xs"
+            className="mt-2.5 sm:mt-3 w-full h-7 sm:h-8 text-xs font-medium"
             onClick={(e) => {
               e.preventDefault();
               add(product, 1);
@@ -77,20 +81,25 @@ export function ProductCard({ product }: { product: Product }) {
             + Keranjang
           </Button>
           {(product.tokopediaUrl || product.shopeeUrl) && (
-            <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className="mt-1.5 flex flex-col gap-1 sm:grid sm:grid-cols-2 sm:gap-1.5">
               {product.tokopediaUrl && (
                 <Button
                   asChild
                   size="sm"
-                  className="h-8 bg-[#03AC0E] text-white hover:bg-[#03940C] text-[11px] px-2"
+                  className="h-7 sm:h-8 bg-[#03AC0E] text-white hover:bg-[#03940C] text-[10px] sm:text-[11px] px-1.5"
                 >
-                  <a href={product.tokopediaUrl} target="_blank" rel="noreferrer">
+                  <a
+                    href={product.tokopediaUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-center gap-1"
+                  >
                     <img
                       src="https://cdn.simpleicons.org/tokopedia/FFFFFF"
                       alt="Tokopedia"
-                      className="h-3.5 w-3.5"
+                      className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0"
                     />
-                    Tokopedia
+                    <span className="truncate">Tokopedia</span>
                   </a>
                 </Button>
               )}
@@ -98,15 +107,20 @@ export function ProductCard({ product }: { product: Product }) {
                 <Button
                   asChild
                   size="sm"
-                  className="h-8 bg-[#EE4D2D] text-white hover:bg-[#D73211] text-[11px] px-2"
+                  className="h-7 sm:h-8 bg-[#EE4D2D] text-white hover:bg-[#D73211] text-[10px] sm:text-[11px] px-1.5"
                 >
-                  <a href={product.shopeeUrl} target="_blank" rel="noreferrer">
+                  <a
+                    href={product.shopeeUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-center gap-1"
+                  >
                     <img
                       src="https://cdn.simpleicons.org/shopee/FFFFFF"
                       alt="Shopee"
-                      className="h-3.5 w-3.5"
+                      className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0"
                     />
-                    Shopee
+                    <span className="truncate">Shopee</span>
                   </a>
                 </Button>
               )}

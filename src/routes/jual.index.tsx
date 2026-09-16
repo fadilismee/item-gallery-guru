@@ -224,7 +224,7 @@ function JualHero() {
             <p className="font-monotech text-[13px] uppercase tracking-wider text-sec">
               Katalog Terima &amp; Buyback Komponen
             </p>
-            <h1 className="font-heading text-3xl font-bold leading-[1.1] tracking-tight text-on-surface sm:text-4xl lg:text-5xl">
+            <h1 className="font-heading text-2xl sm:text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight text-on-surface">
               Jual Hardware Bekas &amp; Rusak Jadi{" "}
               <span className="text-pri underline decoration-sec-container decoration-wavy underline-offset-8">
                 Rupiah
@@ -253,7 +253,7 @@ function JualHero() {
           </div>
         </div>
         <div className="lg:col-span-4">
-          <div className="group relative aspect-[3/4] w-full">
+          <div className="group relative aspect-[3/4] w-full max-w-[260px] sm:max-w-xs mx-auto lg:max-w-none">
             {heroStack.map((src, i) => (
               <img
                 key={`${i}-${src}`}
@@ -266,30 +266,32 @@ function JualHero() {
           </div>
         </div>
       </div>
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-4 px-4 pb-10 sm:grid-cols-2 sm:pb-14 lg:grid-cols-4">
-        <div className="flex items-center gap-3 rounded-xl bg-surface-lowest p-4 shadow-sm">
-          <span className="font-heading text-2xl font-bold tracking-tight text-pri">1,840+</span>
-          <p className="text-sm leading-tight text-on-surface-variant">
+      <div className="relative mx-auto grid max-w-7xl grid-cols-2 gap-2.5 px-4 pb-10 sm:gap-4 sm:pb-14 lg:grid-cols-4">
+        <div className="flex items-center gap-2.5 rounded-xl bg-surface-lowest p-3 sm:p-4 shadow-sm">
+          <span className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-pri">
+            1,840+
+          </span>
+          <p className="text-xs sm:text-sm leading-tight text-on-surface-variant">
             Komponen Rusak Di-salvage 2024
           </p>
         </div>
-        <div className="flex items-center gap-3 rounded-xl bg-surface-lowest p-4 shadow-sm">
-          <span className="font-heading text-2xl font-bold tracking-tight text-on-surface">
+        <div className="flex items-center gap-2.5 rounded-xl bg-surface-lowest p-3 sm:p-4 shadow-sm">
+          <span className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-on-surface">
             15 Mnt
           </span>
-          <p className="text-sm leading-tight text-on-surface-variant">
-            Rata-rata Durasi Uji Multi-tester
+          <p className="text-xs sm:text-sm leading-tight text-on-surface-variant">
+            Rata-rata Uji Multi-tester
           </p>
         </div>
-        <div className="flex items-center gap-3 rounded-xl bg-surface-lowest p-4 shadow-sm">
-          <Store size={22} className="shrink-0 text-sec" />
-          <p className="text-sm leading-tight text-on-surface-variant">
-            Mertosan Kulon, Potorono, Banguntapan, Bantul DIY (COD Jogja &amp; Sekitarnya)
+        <div className="col-span-2 sm:col-span-1 flex items-center gap-2.5 rounded-xl bg-surface-lowest p-3 sm:p-4 shadow-sm">
+          <Store size={20} className="shrink-0 text-sec" />
+          <p className="text-xs sm:text-sm leading-tight text-on-surface-variant">
+            Mertosan Kulon, Banguntapan, Bantul DIY (COD Jogja)
           </p>
         </div>
         <a
           href="#tabel-harga"
-          className="font-heading flex items-center justify-center gap-2 rounded-xl bg-pri px-4 py-3 text-sm font-semibold text-on-pri shadow-sm transition-all hover:bg-pri-container"
+          className="col-span-2 sm:col-span-1 font-heading flex items-center justify-center gap-2 rounded-xl bg-pri px-4 py-3 text-xs sm:text-sm font-semibold text-on-pri shadow-sm transition-all hover:bg-pri-container text-center"
         >
           Jelajahi Price List Lengkap <span aria-hidden>↓</span>
         </a>
@@ -344,7 +346,7 @@ function GradeGuide() {
           <span aria-hidden>⚙</span>
           <span>Standar Penilaian Objektif</span>
         </div>
-        <h2 className="font-heading text-3xl font-bold text-on-surface sm:text-4xl">
+        <h2 className="font-heading text-2xl font-bold text-on-surface sm:text-3xl lg:text-4xl">
           Pedoman Grade Kondisi Hardware
         </h2>
         <p className="max-w-2xl text-on-surface-variant">
@@ -425,7 +427,7 @@ function GalleryTerima() {
             <span aria-hidden>📦</span>
             <span>Galeri Barang Masuk Lab Buana</span>
           </div>
-          <h2 className="font-heading text-3xl font-bold text-on-surface sm:text-4xl">
+          <h2 className="font-heading text-2xl font-bold text-on-surface sm:text-3xl lg:text-4xl">
             Contoh Barang yang Pernah Dijual ke Kami
           </h2>
           <p className="text-on-surface-variant">
@@ -617,7 +619,7 @@ function BuybackCatalog({
           </p>
         )}
         {filter === "all" ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
             {flat.map(({ it, sku }) => (
               <BuybackCard
                 key={`${it.category}-${it.title}`}
@@ -641,17 +643,17 @@ function BuybackCatalog({
                       <Icon size={20} />
                     </div>
                     <div>
-                      <h3 className="font-heading text-xl font-semibold text-on-surface">
+                      <h3 className="font-heading text-lg sm:text-xl font-semibold text-on-surface">
                         {meta.title}
                       </h3>
-                      <p className="text-sm text-on-surface-variant">{meta.desc}</p>
+                      <p className="text-xs sm:text-sm text-on-surface-variant">{meta.desc}</p>
                     </div>
                   </div>
                   <span className="font-monotech hidden text-[11px] text-outline sm:inline-block">
                     {meta.count}
                   </span>
                 </div>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
                   {rows.map(({ it, sku }) => (
                     <BuybackCard key={it.title} item={it} sku={sku} onAjukan={onAjukan} />
                   ))}
@@ -673,7 +675,7 @@ function StepsSection() {
           <span className="font-monotech text-[11px] font-semibold uppercase tracking-widest text-pri">
             Prosedur Cepat &amp; Aman
           </span>
-          <h2 className="font-heading text-3xl font-bold text-on-surface sm:text-4xl">
+          <h2 className="font-heading text-2xl font-bold text-on-surface sm:text-3xl lg:text-4xl">
             Alur Mudah Jual Hardware Anda ke Buana Computer
           </h2>
           <p className="text-on-surface-variant">
@@ -725,7 +727,7 @@ function JualFaq() {
         <span className="font-monotech text-[11px] font-semibold uppercase tracking-widest text-pri">
           Tanya Jawab Seputar Jual Beli
         </span>
-        <h2 className="font-heading text-3xl font-bold text-on-surface sm:text-4xl">
+        <h2 className="font-heading text-2xl font-bold text-on-surface sm:text-3xl lg:text-4xl">
           Frequently Asked Questions
         </h2>
         <p className="text-on-surface-variant">

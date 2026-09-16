@@ -279,10 +279,12 @@ function ArticlePage() {
               VERIFIKASI BENCHMARK
             </span>
           </div>
-          <h1 className="font-heading pt-1 text-3xl font-bold leading-tight tracking-tight text-on-surface sm:text-4xl">
+          <h1 className="font-heading pt-1 text-2xl font-bold leading-tight tracking-tight text-on-surface sm:text-4xl">
             {article.title}
           </h1>
-          <p className="text-lg leading-relaxed text-on-surface-variant">{article.excerpt}</p>
+          <p className="text-base sm:text-lg leading-relaxed text-on-surface-variant">
+            {article.excerpt}
+          </p>
 
           <div className="flex flex-col justify-between gap-4 rounded-xl bg-surface-lowest p-4 shadow-sm md:flex-row md:items-center">
             <div className="flex items-center gap-3">
@@ -308,8 +310,8 @@ function ArticlePage() {
           </div>
         </header>
 
-        <figure className="my-8 w-full">
-          <div className="relative aspect-[21/9] w-full overflow-hidden rounded-xl bg-surface-container shadow-sm">
+        <figure className="my-6 sm:my-8 w-full">
+          <div className="relative aspect-[16/9] sm:aspect-[21/9] w-full overflow-hidden rounded-xl bg-surface-container shadow-sm">
             <img
               src={article.image}
               alt={article.title}
@@ -317,12 +319,12 @@ function ArticlePage() {
               className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-4 left-6 right-6 flex flex-col items-start justify-between gap-2 text-white sm:flex-row sm:items-center">
-              <div className="font-monotech flex items-center gap-2 text-[11px]">
+            <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-6 sm:right-6 flex flex-col items-start justify-between gap-1.5 sm:gap-2 text-white sm:flex-row sm:items-center">
+              <div className="font-monotech flex items-center gap-2 text-[10px] sm:text-[11px]">
                 <span aria-hidden>📷</span>
-                <span>Dokumentasi perakitan di lab Buana Computer Bantul.</span>
+                <span>Dokumentasi lab Buana Computer Bantul.</span>
               </div>
-              <span className="font-monotech rounded bg-black/40 px-3 py-0.5 text-[11px] text-slate-200 backdrop-blur-md">
+              <span className="font-monotech rounded bg-black/40 px-2.5 py-0.5 text-[10px] sm:text-[11px] text-slate-200 backdrop-blur-md">
                 {article.labLabel}: {article.labValue}
               </span>
             </div>

@@ -277,7 +277,7 @@ function AboutHero() {
           <span className="h-2 w-2 animate-pulse rounded-full bg-brand-500" />
           Tentang Buana Computer • Yogyakarta
         </div>
-        <h1 className="font-heading text-3xl font-bold leading-[1.15] tracking-tight sm:text-5xl lg:text-6xl">
+        <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-tight sm:text-5xl lg:text-6xl">
           Membangun Ekosistem Hardware Sirkular &amp;{" "}
           <span className="bg-gradient-to-r from-brand-200 via-sky-300 to-teal-200 bg-clip-text text-transparent">
             Riset Presisi Pertama di Indonesia
@@ -643,33 +643,35 @@ function MetricsSection() {
   return (
     <section className="border-y border-slate-200 bg-white py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative grid grid-cols-1 items-center gap-12 overflow-hidden rounded-3xl border border-slate-200 bg-surface-low p-8 sm:p-12 lg:grid-cols-12 lg:p-16">
-          <div className="relative z-10 space-y-4 lg:col-span-5">
+        <div className="relative grid grid-cols-1 items-center gap-8 overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200 bg-surface-low p-5 sm:p-12 lg:grid-cols-12 lg:p-16">
+          <div className="relative z-10 space-y-3 sm:space-y-4 lg:col-span-5">
             <div className="inline-flex items-center gap-2 rounded-md bg-brand-100 px-3 py-1 font-monotech text-xs font-semibold uppercase text-brand-700">
               Audited Performance
             </div>
-            <h2 className="font-heading text-3xl font-bold tracking-tight text-technavy sm:text-4xl">
+            <h2 className="font-heading text-2xl font-bold tracking-tight text-technavy sm:text-4xl">
               Dampak Kuantitatif dan Rekam Jejak Lapangan
             </h2>
-            <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
+            <p className="text-xs sm:text-base leading-relaxed text-slate-600">
               Metrik operasional riil laboratorium Buana Computer dalam melayani mahasiswa,
               profesional kreatif, instansi riset kampus, dan pelaku UMKM di DIY &amp; Jawa Tengah.
             </p>
           </div>
-          <div className="relative z-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:col-span-7 lg:grid-cols-3">
+          <div className="relative z-10 grid grid-cols-2 gap-2.5 sm:gap-6 lg:col-span-7 lg:grid-cols-3">
             {metrics.map((m) => (
               <div
                 key={m.label}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                className="rounded-xl sm:rounded-2xl border border-slate-200 bg-white p-3.5 sm:p-5 shadow-sm"
               >
-                <div className="font-heading flex items-baseline text-3xl font-bold text-technavy">
+                <div className="font-heading flex items-baseline text-2xl sm:text-3xl font-bold text-technavy">
                   {m.value}
-                  <span className="text-xl font-bold text-brand-500">{m.unit}</span>
+                  <span className="text-lg sm:text-xl font-bold text-brand-500">{m.unit}</span>
                 </div>
-                <p className="mt-1 text-xs font-semibold text-slate-800">{m.label}</p>
-                <div className="font-monotech mt-3 flex items-center justify-between border-t border-slate-100 pt-2 text-[11px] text-slate-500">
-                  <span>{m.foot}</span>
-                  <span className="font-bold text-emerald-600">{m.footValue}</span>
+                <p className="mt-1 text-[11px] sm:text-xs font-semibold text-slate-800 leading-snug">
+                  {m.label}
+                </p>
+                <div className="font-monotech mt-2 sm:mt-3 flex items-center justify-between border-t border-slate-100 pt-1.5 sm:pt-2 text-[10px] sm:text-[11px] text-slate-500">
+                  <span className="truncate">{m.foot}</span>
+                  <span className="font-bold text-emerald-600 truncate ml-1">{m.footValue}</span>
                 </div>
               </div>
             ))}

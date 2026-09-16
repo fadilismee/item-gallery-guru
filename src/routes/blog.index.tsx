@@ -72,9 +72,9 @@ function AnnouncementBar() {
 
 function HeroStory({ article }: { article: BlogArticle }) {
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:py-10">
-      <div className="rounded-xl bg-surface-lowest p-6 shadow-md transition-all duration-300 hover:shadow-xl md:p-10">
-        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-10">
+    <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-10">
+      <div className="rounded-xl bg-surface-lowest p-5 sm:p-6 md:p-10 shadow-md transition-all duration-300 hover:shadow-xl">
+        <div className="grid grid-cols-1 items-center gap-6 sm:gap-8 lg:grid-cols-12 lg:gap-10">
           <div className="flex flex-col items-start lg:col-span-7">
             <div className="font-monotech mb-3 flex items-center gap-2 text-[11px]">
               <span className="rounded-full bg-pri px-3 py-0.5 font-semibold uppercase tracking-wider text-on-pri">
@@ -83,29 +83,29 @@ function HeroStory({ article }: { article: BlogArticle }) {
               <span className="text-outline">•</span>
               <span className="text-outline">LAB TESTED</span>
             </div>
-            <h1 className="font-heading mb-4 text-2xl font-bold leading-tight tracking-tight text-on-surface sm:text-3xl lg:text-4xl">
+            <h1 className="font-heading mb-3 sm:mb-4 text-xl sm:text-3xl lg:text-4xl font-bold leading-tight tracking-tight text-on-surface">
               {article.title}
             </h1>
-            <p className="mb-6 text-base leading-relaxed text-on-surface-variant sm:text-lg">
+            <p className="mb-5 sm:mb-6 text-sm sm:text-base leading-relaxed text-on-surface-variant">
               {article.excerpt}
             </p>
             {article.heroSpecs && (
-              <div className="mb-6 grid w-full grid-cols-3 gap-2 rounded-lg bg-surface-low p-4">
+              <div className="mb-5 sm:mb-6 grid w-full grid-cols-3 gap-1.5 sm:gap-2 rounded-lg bg-surface-low p-3 sm:p-4">
                 {article.heroSpecs.map((s) => (
                   <div key={s.label}>
-                    <span className="font-monotech block text-[11px] uppercase tracking-wider text-outline">
+                    <span className="font-monotech block text-[10px] sm:text-[11px] uppercase tracking-wider text-outline truncate">
                       {s.label}
                     </span>
-                    <span className="font-heading text-base font-semibold text-on-surface sm:text-xl">
+                    <span className="font-heading text-sm sm:text-base lg:text-xl font-semibold text-on-surface truncate block">
                       {s.value}
                     </span>
                   </div>
                 ))}
               </div>
             )}
-            <div className="flex w-full flex-wrap items-center justify-between gap-4">
+            <div className="flex w-full flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="font-monotech flex h-10 w-10 items-center justify-center rounded-full bg-surface-high text-xs font-bold text-pri">
+                <div className="font-monotech flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-surface-high text-xs font-bold text-pri shrink-0">
                   {article.author
                     .split(" ")
                     .map((w) => w[0])
@@ -113,10 +113,10 @@ function HeroStory({ article }: { article: BlogArticle }) {
                     .join("")}
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-heading text-[15px] font-semibold leading-tight text-on-surface">
+                  <span className="font-heading text-sm sm:text-[15px] font-semibold leading-tight text-on-surface">
                     {article.author}
                   </span>
-                  <span className="font-monotech text-[11px] text-outline">
+                  <span className="font-monotech text-[10px] sm:text-[11px] text-outline">
                     {article.readMinutes} min baca • {article.date}
                   </span>
                 </div>
@@ -124,7 +124,7 @@ function HeroStory({ article }: { article: BlogArticle }) {
               <Link
                 to="/blog/$articleId"
                 params={{ articleId: article.slug }}
-                className="font-heading inline-flex items-center gap-2 rounded-lg bg-pri px-6 py-2.5 text-sm font-semibold text-on-pri shadow-sm transition-all hover:bg-pri-container"
+                className="font-heading inline-flex items-center justify-center gap-2 rounded-lg bg-pri px-5 py-2.5 text-xs sm:text-sm font-semibold text-on-pri shadow-sm transition-all hover:bg-pri-container w-full sm:w-auto"
               >
                 {article.cta} <span aria-hidden>→</span>
               </Link>

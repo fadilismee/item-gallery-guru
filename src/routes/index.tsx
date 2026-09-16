@@ -136,19 +136,19 @@ function Index() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pb-14 sm:pb-20">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-lg font-bold text-foreground">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-base sm:text-lg font-bold text-foreground">
             {category === "Semua" ? "Semua Produk" : category}
-            <span className="ml-2 text-sm font-normal text-muted-foreground">
+            <span className="ml-2 text-xs sm:text-sm font-normal text-muted-foreground">
               {list.length} produk
             </span>
           </h2>
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none sm:gap-2 sm:pb-0">
             {sorts.map((s) => (
               <button
                 key={s.id}
                 onClick={() => setSort(s.id)}
-                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
                   sort === s.id
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-card text-muted-foreground hover:border-primary/40"
@@ -163,7 +163,7 @@ function Index() {
         {list.length === 0 ? (
           <p className="mt-10 text-center text-sm text-muted-foreground">Produk tidak ditemukan.</p>
         ) : (
-          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-5">
+          <div className="mt-5 sm:mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-5">
             {list.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}

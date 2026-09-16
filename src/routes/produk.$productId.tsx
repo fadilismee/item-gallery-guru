@@ -217,32 +217,45 @@ function ProductDetail() {
               )}
             </div>
 
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <div className="flex items-center rounded-lg border border-input">
-                <button
-                  onClick={() => setQty((q) => Math.max(1, q - 1))}
-                  className="h-10 w-10 text-lg text-muted-foreground hover:text-foreground"
-                >
-                  -
-                </button>
-                <span className="w-10 text-center text-sm font-semibold text-foreground">
-                  {qty}
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="flex items-center justify-between gap-3 sm:justify-start">
+                <span className="text-xs font-medium text-muted-foreground sm:hidden">
+                  Kuantitas:
                 </span>
-                <button
-                  onClick={() => setQty((q) => Math.min(product.stock, q + 1))}
-                  className="h-10 w-10 text-lg text-muted-foreground hover:text-foreground"
-                >
-                  +
-                </button>
+                <div className="flex items-center rounded-lg border border-input">
+                  <button
+                    onClick={() => setQty((q) => Math.max(1, q - 1))}
+                    className="flex h-9 w-9 items-center justify-center text-lg text-muted-foreground hover:text-foreground"
+                    aria-label="Kurangi jumlah"
+                  >
+                    -
+                  </button>
+                  <span className="w-9 text-center text-sm font-semibold text-foreground">
+                    {qty}
+                  </span>
+                  <button
+                    onClick={() => setQty((q) => Math.min(product.stock, q + 1))}
+                    className="flex h-9 w-9 items-center justify-center text-lg text-muted-foreground hover:text-foreground"
+                    aria-label="Tambah jumlah"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-              <Button asChild className="h-10 flex-1 px-6 sm:flex-none">
-                <a href={waHref} target="_blank" rel="noreferrer">
-                  Hubungi Penjual
-                </a>
-              </Button>
-              <Button variant="outline" className="h-10 px-6 sm:px-4" onClick={handleAddToCart}>
-                {added ? "✓ Ditambahkan" : "+ Keranjang"}
-              </Button>
+              <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-1">
+                <Button asChild className="h-10 flex-1 font-semibold">
+                  <a href={waHref} target="_blank" rel="noreferrer" className="truncate">
+                    Hubungi Penjual
+                  </a>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-10 flex-1 font-medium truncate"
+                  onClick={handleAddToCart}
+                >
+                  {added ? "✓ Ditambahkan" : "+ Keranjang"}
+                </Button>
+              </div>
             </div>
             {(product.tokopediaUrl || product.shopeeUrl) && (
               <div className="mt-3 grid grid-cols-2 gap-2">
@@ -297,8 +310,8 @@ function ProductDetail() {
 
       {related.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 pb-12 sm:pb-16">
-          <h2 className="text-lg font-bold text-foreground">Produk Serupa</h2>
-          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-5">
+          <h2 className="text-base sm:text-lg font-bold text-foreground">Produk Serupa</h2>
+          <div className="mt-5 sm:mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-5">
             {related.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
