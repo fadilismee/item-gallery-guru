@@ -149,6 +149,8 @@
 > pegang snapshot lama (repo sudah bersih di HEAD 15a39c3). Tambah
 > .github/workflows/ci.yml — tiap push main/PR jalan npm ci → lint → build →
 > validate (Node dari .nvmrc), tanpa secret. docs/GIT.md tambah bab CI.
+> Run pertama gagal di step validate (Node 20 tak bisa run .ts langsung) →
+> .nvmrc 20→24 (samakan lokal v24.21.0 & Vercel nodejs24.x) → rerun.
 
 ## 0. Kesimpulan Arsitektur
 
