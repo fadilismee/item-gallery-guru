@@ -438,36 +438,73 @@ export const adminEnhanceImage = createServerFn({ method: "POST" }).handler(
     const mimeType = contentType.split(";")[0] || "image/jpeg";
     const b64 = imgBuf.toString("base64");
 
-    // Call Nano Banana (Gemini image generation/edit)
-    const gemRes = await fetch(
-      `${GEMINI_API_BASE}/models/gemini-2.5-flash-image:generateContent?key=${encodeURIComponent(key)}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ inlineData: { mimeType, data: b64 } }, { text: userPrompt }],
-            },
-          ],
-        }),
-      },
-    );
-    const gemJson = (await gemRes.json()) as {
-      candidates?: {
-        content?: {
-          parts?: { inlineData?: { mimeType?: string; data?: string }; text?: string }[];
+    // Try each Nano Banana / Gemini image model in sequence
+    const imageModels = [
+      "gemini-2.5-flash-image",
+      "gemini-3.1-flash-image",
+      "gemini-3.1-flash-lite-image",
+      "gemini-3-pro-image",
+      "nano-banana-pro-preview",
+      "gemini-3.1-flash-image-preview",
+    ];
+
+    let outB64: string | undefined;
+    let outMime = "image/jpeg";
+    let isQuotaError = false;
+    let lastErr = "";
+
+    for (const model of imageModels) {
+      try {
+        const gemRes = await fetch(
+          `${GEMINI_API_BASE}/models/${model}:generateContent?key=${encodeURIComponent(key)}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [{ inlineData: { mimeType, data: b64 } }, { text: userPrompt }],
+                },
+              ],
+            }),
+          },
+        );
+        const gemJson = (await gemRes.json()) as {
+          candidates?: {
+            content?: {
+              parts?: { inlineData?: { mimeType?: string; data?: string }; text?: string }[];
+            };
+          }[];
+          error?: { code?: number; message?: string; status?: string };
         };
-      }[];
-      error?: { message?: string };
-    };
-    if (!gemRes.ok)
-      throw new Error(gemJson?.error?.message || `Gemini image error ${gemRes.status}`);
-    const outPart = gemJson.candidates?.[0]?.content?.parts?.find((p) => p.inlineData?.data);
-    const outB64 = outPart?.inlineData?.data;
-    const outMime = outPart?.inlineData?.mimeType || "image/jpeg";
-    if (!outB64)
-      throw new Error("Gemini tidak mengembalikan gambar. Coba prompt lain atau cek kuota API.");
+
+        if (gemRes.ok) {
+          const outPart = gemJson.candidates?.[0]?.content?.parts?.find((p) => p.inlineData?.data);
+          if (outPart?.inlineData?.data) {
+            outB64 = outPart.inlineData.data;
+            outMime = outPart.inlineData.mimeType || "image/jpeg";
+            break; // Succeeded!
+          }
+        } else {
+          if (gemJson?.error?.code === 429 || gemJson?.error?.status === "RESOURCE_EXHAUSTED") {
+            isQuotaError = true;
+          }
+          lastErr = gemJson?.error?.message || `Status ${gemRes.status}`;
+        }
+      } catch (e) {
+        lastErr = e instanceof Error ? e.message : String(e);
+      }
+    }
+
+    if (!outB64) {
+      if (isQuotaError) {
+        throw new Error(
+          "Kuota Google AI Image habis (limit free tier project = 0). Untuk mengaktifkan fitur poles foto AI Nano Banana, hubungkan billing Pay-as-you-go di https://aistudio.google.com. Sementara ini gunakan foto asli yang sudah otomatis terkompres rapi (~200KB).",
+        );
+      }
+      throw new Error(`Gagal memproses gambar dengan AI (${lastErr})`);
+    }
+
     const outBuf = Buffer.from(outB64, "base64");
     // Upload hasil ke Catbox (otomatis terkompres di client, tapi di server tetap cek 10MB)
     if (outBuf.length > MAX_UPLOAD_BYTES) throw new Error("Hasil AI terlalu besar (>10MB).");

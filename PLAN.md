@@ -219,6 +219,7 @@
 > - SEO Host-Aware & Split Sitemap: sitemap.xml (domain utama, 22 URL tanpa /jual) dan sitemap-jual.xml (subdomain, 2 URL: / dan /form). robots.txt merujuk ke kedua sitemap.
 > - Google Nano Banana AI (Gemini Flash): server functions adminPolishText (merapikan deskripsi produk) & adminEnhanceImage (memoles foto produk katalog studio putih 4k). Mendukung key dari .env atau file .env-apikey*.
 > - ImageField & Admin UI: tombol 'Poles AI' di ImageField dengan pengaturan prompt konsistensi katalog; tombol 'Poles Singkat AI' & 'Poles Deskripsi AI' di form produk. Hasil foto AI tetap melewati kompresi Canvas agar tidak pernah 2MB+.
+> - Fallback Chain Image AI (2026-09-17): adminEnhanceImage mencoba 6 model gambar secara sekuensial (gemini-2.5-flash-image, 3.1-flash-image, 3.1-flash-lite, 3-pro-image, nano-banana-pro, 3.1-flash-image-preview). Tombol 'Poles Studio Lokal' ditambahkan di ImageField sebagai alternatif instan bebas kuota.
 > - Verifikasi: ESLint 0 error, validate 9/9 OK, build produksi lolos, live test redirect 308 host header OK.
 
 ## 0. Kesimpulan Arsitektur

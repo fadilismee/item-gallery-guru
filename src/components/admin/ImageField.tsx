@@ -136,6 +136,40 @@ export function ImageField({ label, value, onChange, hint, aiPromptDefault }: Pr
     }
   };
 
+  const doLocalStudioEnhance = async () => {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    setBusy(true);
+    setMsg("Memoles foto studio lokal (auto-contrast & brightness)…");
+    try {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = () => reject(new Error("Gagal memuat gambar untuk poles lokal."));
+        img.src = trimmed;
+      });
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Gagal akses canvas.");
+      ctx.filter = "brightness(1.05) contrast(1.08) saturate(1.03)";
+      ctx.drawImage(img, 0, 0);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+      const fileName = `studio-${Date.now()}.jpg`;
+      const r = await adminUploadImage({
+        data: { token: getAdminToken() ?? "", fileName, dataUrl },
+      });
+      onChange(r.url);
+      setMsg("✨ Foto berhasil dipoles filter studio lokal (latar & kontras lebih jernih)!");
+    } catch (e) {
+      setMsg(`Poles lokal gagal: ${errMsg(e)}`);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const doUpload = async (file: File) => {
     setBusy(true);
     setMsg("Mengompresi & mengupload gambar…");
@@ -235,11 +269,23 @@ export function ImageField({ label, value, onChange, hint, aiPromptDefault }: Pr
                 type="button"
                 onClick={doEnhanceAI}
                 disabled={busy}
-                title="Poles foto produk menjadi foto katalog studio latar putih bersih dengan AI"
+                title="Poles foto produk menjadi foto katalog studio latar putih bersih dengan Google Nano Banana AI"
                 className="adm-btn-ghost inline-flex items-center gap-1 border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 px-3 py-1.5 text-xs font-semibold"
               >
                 <AdminIcon name="auto_fix_high" className="text-[15px]" />
                 {busy ? "Memproses AI…" : "Poles AI"}
+              </button>
+            )}
+            {looksLikeImage(trimmed) && (
+              <button
+                type="button"
+                onClick={doLocalStudioEnhance}
+                disabled={busy}
+                title="Poles kontras & kecerahan foto studio otomatis secara lokal tanpa butuh kuota AI"
+                className="adm-btn-ghost inline-flex items-center gap-1 border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 text-xs font-semibold"
+              >
+                <AdminIcon name="tune" className="text-[15px]" />
+                Poles Studio Lokal
               </button>
             )}
             {looksLikeImage(trimmed) && (
