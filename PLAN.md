@@ -205,6 +205,13 @@
 > - ImageField.tsx: menambahkan fungsi kompresi client-side (compressImageClient) berbasis Canvas HTML5. Setiap file foto besar (2-5MB PNG/JPG) otomatis di-resize (maks 1600px) dan dikompresi ke JPEG kualitas 0.82 sebelum dikirim ke Catbox, memangkas ukuran file hingga 80-90% (~150KB) secara instan.
 > - Kompresi Aset Statis Poster & Banner (2026-09-17): Seluruh poster dan banner besar di src/img/ (Buanacomputer-poster1/2/3, footer, hp1/2/3, katalog) dikompresi dengan rasio hemat 90%, menurunkan total payload aset statis dari ~15.5 MB menjadi ~1.4 MB.
 > - Verifikasi: ESLint 0 error, validate 9/9 OK, build produksi lolos, local server 200.
+>
+> Pembersihan Gallery & Re-kompresi Katalog 2MB (2026-09-17):
+> - Gallery uploads.json dikosongkan total (reset mulai dari awal) sesuai instruksi — tidak ada lagi histori gambar 2MB tersimpan.
+> - 34 foto Catalog Assets asli (2-4.7MB) dikompresi ulang client-side (max 1600px, JPEG quality 78) menjadi 126-336KB (hemat ~92% rata-rata) dan re-upload ke Catbox dengan URL baru.
+> - products.json 11 produk diperbarui: 45 URL lama 2MB diganti dengan URL baru terkompresi (contoh: zodch2 -> z0yf7i).
+> - Dijaga agar tidak ada lagi katalog di atas 2MB; produk test "makna" dipertahankan sebagai test.
+> - Verifikasi: validate 9/9 OK, lint 0 error, build lolos, sitemap 24 URL, dev server 200.
 
 ## 0. Kesimpulan Arsitektur
 
