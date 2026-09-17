@@ -1,29 +1,546 @@
 [
   {
-    "id": "hdd-laptop",
-    "name": "Hardisk Laptop",
-    "brand": "Seagate",
-    "category": "Storage",
-    "price": 250000,
-    "rating": 4.5,
-    "sold": 0,
-    "stock": 8,
+    "id": "laptop-asus-x540ya",
+    "name": "Laptop ASUS X540YA 15.6 Inch AMD",
+    "brand": "ASUS",
+    "category": "Laptop",
+    "price": 1650000,
+    "oldPrice": 2200000,
+    "rating": 4.6,
+    "sold": 2,
+    "stock": 1,
     "condition": "Bekas",
     "location": "Bantul, Yogyakarta",
-    "shortDescription": "apa aja nanti",
-    "description": "Centinel pasti nya 100%",
+    "shortDescription": "Laptop 15.6 inch lega dengan keyboard numpad, audio SonicMaster, processor AMD E1-7010 APU Radeon R2.",
+    "description": "Laptop ASUS X540YA layar 15.6 inch lega dengan keyboard numerik penuh (numpad), sangat cocok untuk pengetikan kantor, kasir, kuliah, dan multimedia sehari-hari. Didukung audio SonicMaster jernih, bodi silver hairline brush elegan, kondisi normal tested siap pakai.",
     "specs": [
       {
+        "label": "Processor",
+        "value": "AMD E1-7010 APU @ 1.50 GHz"
+      },
+      {
+        "label": "Grafis",
+        "value": "AMD Radeon R2 Graphics"
+      },
+      {
+        "label": "RAM",
+        "value": "2 GB DDR3 (Expandable)"
+      },
+      {
+        "label": "Layar",
+        "value": "15.6 Inch HD (1366 x 768)"
+      },
+      {
+        "label": "Fitur",
+        "value": "Keyboard Numpad, SonicMaster, USB 3.0, HDMI, VGA"
+      },
+      {
+        "label": "Kondisi",
+        "value": "Normal Tested Siap Pakai"
+      }
+    ],
+    "images": 8,
+    "image": "https://files.catbox.moe/nf027o.jpg",
+    "gallery": [
+      "https://files.catbox.moe/nf027o.jpg",
+      "https://files.catbox.moe/i8fb6g.jpg",
+      "https://files.catbox.moe/77vvm0.jpg",
+      "https://files.catbox.moe/8yw5c8.jpg",
+      "https://files.catbox.moe/wiesx6.jpg",
+      "https://files.catbox.moe/u3q4n7.jpg",
+      "https://files.catbox.moe/fv1sfk.jpg",
+      "https://files.catbox.moe/qnjdij.jpg"
+    ],
+    "isFeatured": true
+  },
+  {
+    "id": "laptop-dell-vostro-v131",
+    "name": "Laptop Dell Vostro V131 Core i5",
+    "brand": "Dell",
+    "category": "Laptop",
+    "price": 1150000,
+    "oldPrice": 1600000,
+    "rating": 4.5,
+    "sold": 1,
+    "stock": 1,
+    "condition": "Bekas",
+    "location": "Bantul, Yogyakarta",
+    "shortDescription": "Intel Core i5-2430M, RAM 2GB DDR3, HDD Seagate 250GB 7200 RPM, Windows 7 Pro Original.",
+    "description": "Dell Vostro V131 bodi aluminium silver kokoh, ditenagai prosesor kencang Intel Core i5-2430M @ 2.40 GHz. Mesin, keyboard, touchpad, dan layar normal lancar. Minus kosmetik pada penutup engsel (sudah dirapikan lakban). Lisensi Windows 7 Pro Original tertempel di bawah bodi.",
+    "specs": [
+      {
+        "label": "Processor",
+        "value": "Intel Core i5-2430M @ 2.40 GHz (Turbo 3.00 GHz)"
+      },
+      {
+        "label": "RAM",
+        "value": "2 GB DDR3 Nanya (Dual Slot Expandable)"
+      },
+      {
         "label": "Storage",
-        "value": "1 TB"
+        "value": "HDD Seagate Momentus 7200 RPM 250 GB"
+      },
+      {
+        "label": "Layar",
+        "value": "13.3 Inch Anti-Glare HD"
+      },
+      {
+        "label": "OS",
+        "value": "Windows 7 Pro OA Original (Tag: 7YXRBR1)"
+      },
+      {
+        "label": "Minus",
+        "value": "Casing/engsel diperkuat lakban (mesin & display normal)"
+      }
+    ],
+    "images": 9,
+    "image": "https://files.catbox.moe/zodch2.jpg",
+    "gallery": [
+      "https://files.catbox.moe/zodch2.jpg",
+      "https://files.catbox.moe/i2mnvx.jpg",
+      "https://files.catbox.moe/pj6pd7.jpg",
+      "https://files.catbox.moe/xdstxq.jpg",
+      "https://files.catbox.moe/ox0rx5.jpg",
+      "https://files.catbox.moe/bhuttt.jpg",
+      "https://files.catbox.moe/s2a20s.jpg",
+      "https://files.catbox.moe/x4xr0n.jpg",
+      "https://files.catbox.moe/pdiqan.jpg"
+    ],
+    "isFeatured": true
+  },
+  {
+    "id": "laptop-acer-aspire-e15",
+    "name": "Acer Aspire E 15 (E5-576G) Core i7 8th Gen + MX150",
+    "brand": "Acer",
+    "category": "Laptop",
+    "price": 1950000,
+    "oldPrice": 2800000,
+    "rating": 4.8,
+    "sold": 1,
+    "stock": 1,
+    "condition": "Bekas",
+    "location": "Bantul, Yogyakarta",
+    "shortDescription": "Mesin Baseboard Intel Core i7-8550U, NVIDIA GeForce MX150 2GB, RAM 8GB DDR3L.",
+    "description": "Unit mesin baseboard bawah Acer Aspire E5-576G dengan prosesor monster Intel Core i7-8550U (8th Gen Turbo 4.0GHz) dan dedicated graphics NVIDIA GeForce MX150 2GB VRAM. Sudah terpasang RAM 8GB DDR3L dan motherboard DAZAARMB6E0 REV E. Sangat cocok dijadikan bahan kanibal, upgrade mesin, atau PC mini headless.",
+    "specs": [
+      {
+        "label": "Processor",
+        "value": "Intel Core i7-8550U up to 4.00 GHz (4C / 8T)"
+      },
+      {
+        "label": "Grafis",
+        "value": "NVIDIA GeForce MX150 2 GB GDDR5"
+      },
+      {
+        "label": "RAM",
+        "value": "8 GB DDR3L Memory"
+      },
+      {
+        "label": "Motherboard",
+        "value": "DAZAARMB6E0 REV: E (Model N16Q2)"
+      },
+      {
+        "label": "Kondisi",
+        "value": "Unit bawah / mesin aktif, keyboard terpasang"
+      }
+    ],
+    "images": 2,
+    "image": "https://files.catbox.moe/mq6fuw.jpg",
+    "gallery": [
+      "https://files.catbox.moe/mq6fuw.jpg",
+      "https://files.catbox.moe/ehj1ei.jpg"
+    ],
+    "isFeatured": true
+  },
+  {
+    "id": "mobo-acer-nitro-5",
+    "name": "Motherboard Gaming Acer Nitro 5 / Helios Series",
+    "brand": "Acer",
+    "category": "Komponen",
+    "price": 1450000,
+    "oldPrice": 2200000,
+    "rating": 4.7,
+    "sold": 3,
+    "stock": 2,
+    "condition": "Bekas",
+    "location": "Bantul, Yogyakarta",
+    "shortDescription": "Motherboard laptop gaming Acer Nitro 5 lengkap dengan heatsink tembaga dual blower fan.",
+    "description": "Mainboard laptop gaming Acer Nitro 5 / Predator Helios (Part Number FH51S LA-K181P / FH51M LA-J871P / DABKLMB28A0 REV A). Dilengkapi heatsink tembaga tebal dan dual blower cooling fan original. Memiliki dual slot RAM DDR4 SODIMM dan dual slot SSD M.2 PCIe NVMe. Cocok untuk penggantian motherboard laptop gaming atau donor komponen IC power/VRAM.",
+    "specs": [
+      {
+        "label": "Part Number",
+        "value": "FH51S LA-K181P / FH51M LA-J871P"
+      },
+      {
+        "label": "Kompatibilitas",
+        "value": "Acer Nitro 5 AN515 / Helios 300"
+      },
+      {
+        "label": "Pendingin",
+        "value": "Dual Blower Fan & Copper Heatpipes Included"
+      },
+      {
+        "label": "Slot RAM",
+        "value": "Dual Slot DDR4 SODIMM"
+      },
+      {
+        "label": "Slot Storage",
+        "value": "Dual M.2 PCIe NVMe + Port SATA"
+      },
+      {
+        "label": "Kondisi",
+        "value": "Part komponen utuh siap riset & servis"
+      }
+    ],
+    "images": 4,
+    "image": "https://files.catbox.moe/8fyvlj.jpg",
+    "gallery": [
+      "https://files.catbox.moe/8fyvlj.jpg",
+      "https://files.catbox.moe/d5v69g.jpg",
+      "https://files.catbox.moe/iy5uvx.jpg",
+      "https://files.catbox.moe/s7kqlf.jpg"
+    ],
+    "isFeatured": true
+  },
+  {
+    "id": "mobo-lenovo-legion-gaming",
+    "name": "Motherboard Gaming Lenovo Legion / IdeaPad Gaming",
+    "brand": "Lenovo",
+    "category": "Komponen",
+    "price": 1750000,
+    "oldPrice": 2500000,
+    "rating": 4.8,
+    "sold": 2,
+    "stock": 1,
+    "condition": "Bekas",
+    "location": "Bantul, Yogyakarta",
+    "shortDescription": "Motherboard gaming Lenovo Model NJJ dengan chip GPU & VRAM GDDR6, dual slot DDR4.",
+    "description": "Original Motherboard Lenovo Gaming Laptop (Model NJJ / DA0NJJMBAG0 REV G). Dilengkapi chipset dedicated GPU dengan modul VRAM GDDR6, dual slot RAM DDR4 SODIMM, serta dual M.2 PCIe SSD slot. Cocok untuk kanibal chip BGA, penggantian board laptop Lenovo gaming, atau teknisi servis.",
+    "specs": [
+      {
+        "label": "Part Number",
+        "value": "DA0NJJMBAG0 REV G (Model NJJ)"
+      },
+      {
+        "label": "Kompatibilitas",
+        "value": "Lenovo Legion / IdeaPad Gaming 3 Series"
+      },
+      {
+        "label": "Grafis",
+        "value": "Dedicated GPU Onboard + VRAM GDDR6"
+      },
+      {
+        "label": "Slot RAM",
+        "value": "Dual Slot DDR4 SODIMM"
+      },
+      {
+        "label": "Port",
+        "value": "HDMI, USB 3.1, Type-C, LAN RJ45"
+      },
+      {
+        "label": "Kondisi",
+        "value": "Unit motherboard utuh siap riset & servis"
       }
     ],
     "images": 1,
-    "image": "https://down-id.img.susercontent.com/file/74ea98417f0063e9f3964acbca3b072c@resize_w900_nl.webp",
+    "image": "https://files.catbox.moe/tht40k.jpg",
     "gallery": [
-      "https://down-id.img.susercontent.com/file/74ea98417f0063e9f3964acbca3b072c@resize_w900_nl.webp"
+      "https://files.catbox.moe/tht40k.jpg"
     ],
+    "isFeatured": true
+  },
+  {
+    "id": "mobo-thinkpad-x260-x240",
+    "name": "Motherboard Lenovo ThinkPad X260 & X240 Series",
+    "brand": "Lenovo",
+    "category": "Komponen",
+    "price": 850000,
+    "oldPrice": 1300000,
+    "rating": 4.9,
+    "sold": 4,
+    "stock": 2,
+    "condition": "Bekas",
+    "location": "Bantul, Yogyakarta",
+    "shortDescription": "Motherboard ThinkPad X260 (NM-A531) DDR4 & X240 (NM-A091) dengan heatsink tembaga.",
+    "description": "Motherboard original laptop bisnis tangguh Lenovo ThinkPad seri X (ThinkPad X260 NM-A531 DDR4 dan ThinkPad X240 / T440s NM-A091 Type 20AM). Lengkap dengan jalur tembaga murni, konektor docking, slot RAM SODIMM, dan port I/O original. Sangat dicari untuk restorasi ThinkPad legendaris.",
+    "specs": [
+      {
+        "label": "Model",
+        "value": "ThinkPad X260 (NM-A531) & X240 (NM-A091)"
+      },
+      {
+        "label": "Tipe RAM",
+        "value": "DDR4 / DDR3L SODIMM"
+      },
+      {
+        "label": "Pendingin",
+        "value": "Copper Heatpipe Heatsink Included"
+      },
+      {
+        "label": "Fitur",
+        "value": "Konektor Docking ThinkPad, UltraNav, Mini DisplayPort"
+      },
+      {
+        "label": "Kondisi",
+        "value": "Normal Tested / Kanibal Original"
+      }
+    ],
+    "images": 2,
+    "image": "https://files.catbox.moe/5i18c1.jpg",
+    "gallery": [
+      "https://files.catbox.moe/5i18c1.jpg",
+      "https://files.catbox.moe/0t268k.jpg"
+    ]
+  },
+  {
+    "id": "mobo-dell-inspiron-14",
+    "name": "Motherboard Dell Inspiron 14 (BAL20 LA-D801P)",
+    "brand": "Dell",
+    "category": "Komponen",
+    "price": 750000,
+    "oldPrice": 1100000,
+    "rating": 4.6,
+    "sold": 1,
+    "stock": 1,
+    "condition": "Bekas",
+    "location": "Bantul, Yogyakarta",
+    "shortDescription": "Motherboard Dell Inspiron 14 DDR4 lengkap dengan kipas blower original.",
+    "description": "Original Mainboard Dell Inspiron 14 (BAL20 LA-D801P Rev 1.0 A00). Dilengkapi kipas pendingin blower original Dell (CN-0789DY), slot RAM DDR4 SODIMM, modul Wi-Fi WLAN, dan port HDMI/USB utuh. Kondisi board bersih terawat.",
+    "specs": [
+      {
+        "label": "Part Number",
+        "value": "BAL20 LA-D801P Rev 1.0 (A00)"
+      },
+      {
+        "label": "Kompatibilitas",
+        "value": "Dell Inspiron 14 3000 / 5000 Series"
+      },
+      {
+        "label": "Tipe RAM",
+        "value": "DDR4 SODIMM"
+      },
+      {
+        "label": "Pendingin",
+        "value": "Original Blower Fan Dell CN-0789DY"
+      },
+      {
+        "label": "Port",
+        "value": "HDMI, 2x USB, SD Card Reader, Audio Jack"
+      }
+    ],
+    "images": 1,
+    "image": "https://files.catbox.moe/a0xdrz.jpg",
+    "gallery": [
+      "https://files.catbox.moe/a0xdrz.jpg"
+    ]
+  },
+  {
+    "id": "laptop-dell-inspiron-bahan",
+    "name": "Laptop Dell Inspiron 14 Bahan Servis & Modul",
+    "brand": "Dell",
+    "category": "Laptop",
+    "price": 650000,
+    "oldPrice": 950000,
+    "rating": 4.4,
+    "sold": 0,
+    "stock": 1,
+    "condition": "Bekas",
+    "location": "Bantul, Yogyakarta",
+    "shortDescription": "Dell Inspiron 14 Service Tag HK9S832, Intel Pentium, casing hitam kokoh.",
+    "description": "Unit laptop Dell Inspiron 14 (Service Tag: HK9S832 / Express Code 38231056622) dengan prosesor Intel Pentium. Casing hitam bertekstur masih kokoh, engsel aman, layar terpasang, tanpa keyboard. Sangat cocok untuk bahan perakitan, penggantian casing/layar, atau kanibal modul.",
+    "specs": [
+      {
+        "label": "Seri",
+        "value": "Dell Inspiron 14 (Service Tag HK9S832)"
+      },
+      {
+        "label": "Processor",
+        "value": "Intel Pentium Processor"
+      },
+      {
+        "label": "Layar",
+        "value": "14.0 Inch LED HD"
+      },
+      {
+        "label": "Casing",
+        "value": "Hitam tekstur diamond grip"
+      },
+      {
+        "label": "Kondisi",
+        "value": "Bahan servis / kanibal modul part"
+      }
+    ],
+    "images": 3,
+    "image": "https://files.catbox.moe/0kqt41.jpg",
+    "gallery": [
+      "https://files.catbox.moe/0kqt41.jpg",
+      "https://files.catbox.moe/gbrwd0.jpg",
+      "https://files.catbox.moe/61todg.jpg"
+    ]
+  },
+  {
+    "id": "casing-laptop-toshiba",
+    "name": "Casing & Kerangka Laptop Toshiba Satellite",
+    "brand": "Toshiba",
+    "category": "Laptop",
+    "price": 350000,
     "oldPrice": 500000,
+    "rating": 4.5,
+    "sold": 1,
+    "stock": 1,
+    "condition": "Bekas",
+    "location": "Bantul, Yogyakarta",
+    "shortDescription": "Casing Toshiba Satellite abu-abu textured, bay RAM DDR3 & HDD SATA utuh.",
+    "description": "Casing laptop Toshiba Satellite original dengan pola diamond texture warna abu-abu silver. Bagian bawah memiliki penutup akses cepat untuk slot RAM DDR3 dan bay hardisk SATA. Engsel dan dudukan baut kokoh, cocok untuk mengganti casing laptop Toshiba yang pecah atau aus.",
+    "specs": [
+      {
+        "label": "Tipe",
+        "value": "Casing Laptop Toshiba Satellite Series"
+      },
+      {
+        "label": "Bahan",
+        "value": "ABS Polycarbonate Textured"
+      },
+      {
+        "label": "Kompatibilitas",
+        "value": "Toshiba Satellite C-Series / L-Series 14\""
+      },
+      {
+        "label": "Kondisi",
+        "value": "Dudukan baut utuh, engsel kokoh"
+      }
+    ],
+    "images": 2,
+    "image": "https://files.catbox.moe/jqs8pl.jpg",
+    "gallery": [
+      "https://files.catbox.moe/jqs8pl.jpg",
+      "https://files.catbox.moe/36oa0e.jpg"
+    ]
+  },
+  {
+    "id": "mobo-sony-vaio-ultrabook",
+    "name": "Logic Board & Baterai Sony VAIO Ultrabook",
+    "brand": "Sony",
+    "category": "Komponen",
+    "price": 450000,
+    "oldPrice": 700000,
+    "rating": 4.7,
+    "sold": 1,
+    "stock": 1,
+    "condition": "Bekas",
+    "location": "Bantul, Yogyakarta",
+    "shortDescription": "Logic board Sony VAIO ultra-slim lengkap dengan baterai original VGP-BPS31 7.4V.",
+    "description": "Internal logic board original Sony VAIO ultrabook lengkap dengan baterai lithium-ion original Sony model VGP-BPS31 (7.4V / 4960mAh / 37Wh). Bodi sirkuit sangat tipis dengan micro-cooling fan dan flex cable utuh. Part langka untuk reparasi dan koleksi Sony VAIO.",
+    "specs": [
+      {
+        "label": "Tipe",
+        "value": "Sony VAIO Ultrabook Logic Board Assembly"
+      },
+      {
+        "label": "Baterai",
+        "value": "Sony Original VGP-BPS31 (7.4V, 4960 mAh, 37 Wh)"
+      },
+      {
+        "label": "Fitur",
+        "value": "Micro Fan Cooling, Flex Cable I/O"
+      },
+      {
+        "label": "Kondisi",
+        "value": "Part kanibal langka original"
+      }
+    ],
+    "images": 1,
+    "image": "https://files.catbox.moe/4g2iy1.jpg",
+    "gallery": [
+      "https://files.catbox.moe/4g2iy1.jpg"
+    ]
+  },
+  {
+    "id": "ssd-m2-sata-internal",
+    "name": "SSD M.2 2280 SATA Internal Storage",
+    "brand": "Intel & Toshiba",
+    "category": "Storage",
+    "price": 125000,
+    "oldPrice": 200000,
+    "rating": 4.9,
+    "sold": 5,
+    "stock": 4,
+    "condition": "Bekas",
+    "location": "Bantul, Yogyakarta",
+    "shortDescription": "SSD M.2 2280 SATA III 6Gbps tested Sentinel 100%, pilihan varian 128GB & 256GB.",
+    "description": "Solid State Drive (SSD) form factor M.2 2280 interface SATA III 6Gbps. Kecepatan baca/tulis kencang dan stabil, sudah lolos uji Sentinel 100% Health & Performance tanpa bad sector. Sangat ideal untuk mempercepat laptop dan PC kerja.",
+    "specs": [
+      {
+        "label": "Form Factor",
+        "value": "M.2 2280 (Single Sided)"
+      },
+      {
+        "label": "Interface",
+        "value": "SATA III 6 Gbps"
+      },
+      {
+        "label": "Kesehatan",
+        "value": "Sentinel 100% Health & Performance Tested"
+      },
+      {
+        "label": "Kompatibilitas",
+        "value": "Laptop & PC Motherboard Slot M.2 SATA"
+      }
+    ],
+    "images": 1,
+    "image": "https://files.catbox.moe/s8qxyk.jpg",
+    "gallery": [
+      "https://files.catbox.moe/s8qxyk.jpg"
+    ],
+    "isFeatured": true,
+    "variants": [
+      {
+        "name": "Toshiba 128 GB",
+        "price": 125000,
+        "oldPrice": 200000,
+        "stock": 2
+      },
+      {
+        "name": "Intel 545s 256 GB",
+        "price": 225000,
+        "oldPrice": 350000,
+        "stock": 2
+      }
+    ]
+  },
+  {
+    "id": "hdd-laptop",
+    "name": "Hardisk Laptop 2.5 Inch",
+    "brand": "Seagate",
+    "category": "Storage",
+    "price": 150000,
+    "oldPrice": 300000,
+    "rating": 4.8,
+    "sold": 6,
+    "stock": 16,
+    "condition": "Bekas",
+    "location": "Bantul, Yogyakarta",
+    "shortDescription": "Hardisk 2.5 inch SATA Seagate tested Sentinel 100%, pilihan varian 500GB, 1TB, 2TB.",
+    "description": "Hardisk internal 2.5 inch SATA Seagate untuk laptop dan PlayStation. Sentinel 100% health tested, no bad sector, performa stabil, cocok untuk penyimpanan data kerja, backup, maupun ekspansi storage laptop.",
+    "specs": [
+      {
+        "label": "Form Factor",
+        "value": "2.5 Inch SATA 6 Gb/s"
+      },
+      {
+        "label": "Kondisi",
+        "value": "Sentinel 100% Health & Performance"
+      },
+      {
+        "label": "Garansi",
+        "value": "Garansi Toko 1 Bulan"
+      }
+    ],
+    "images": 1,
+    "image": "https://files.catbox.moe/s2a20s.jpg",
+    "gallery": [
+      "https://files.catbox.moe/s2a20s.jpg"
+    ],
     "isFeatured": true,
     "variants": [
       {
@@ -48,85 +565,77 @@
   },
   {
     "id": "BMC-btr18650",
-    "name": "Baterai 18650 Tegangan 3,7v - 4,2v",
-    "brand": "Random",
+    "name": "Baterai 18650 Tegangan 3.7V - 4.2V",
+    "brand": "Panasonic / Samsung",
     "category": "Komponen",
     "price": 10000,
-    "rating": 4.5,
-    "sold": 0,
-    "stock": 1000,
+    "oldPrice": 15000,
+    "rating": 4.6,
+    "sold": 24,
+    "stock": 100,
     "condition": "Bekas",
     "location": "Bantul, Yogyakarta",
-    "shortDescription": "itulah",
-    "description": "nyala sudah di cek",
+    "shortDescription": "Baterai 18650 tested tegangan 3.7V - 4.2V, cocok untuk senter, powerbank, DIY project.",
+    "description": "Baterai lithium-ion silinder tipe 18650 original hasil bongkar baterai laptop berkualitas. Tegangan sudah diukur multimeter berada di rentang normal 3.7V hingga 4.2V siap pakai untuk DIY powerbank, lampu darurat, dan senter LED.",
     "specs": [
       {
-        "label": "Baterai 18650",
-        "value": "3,7v - 4,2v"
+        "label": "Tipe",
+        "value": "Lithium-Ion 18650 Cell"
+      },
+      {
+        "label": "Tegangan",
+        "value": "3.7V - 4.2V Tested"
+      },
+      {
+        "label": "Kondisi",
+        "value": "Normal Teruji Multitester"
       }
     ],
     "images": 1,
-    "image": "data:image/webp;base64,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",
+    "image": "https://files.catbox.moe/mm741t.jpg",
     "gallery": [
-      "data:image/webp;base64,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"
+      "https://files.catbox.moe/mm741t.jpg"
     ],
-    "oldPrice": 12000,
-    "tokopediaUrl": "https://www.tokopedia.com/bmccomp/baterai-18650-kondisi-tegangan-3-7v-sampai-4-2v?extParam=whid%3D1552035&aff_unique_id=&channel=others&chain_key=",
+    "tokopediaUrl": "https://www.tokopedia.com/bmccomp/baterai-18650-kondisi-tegangan-3-7v-sampai-4-2v",
     "isFeatured": true
   },
   {
-    "id": "BMC-mobo",
-    "name": "Mobo",
-    "brand": "-",
-    "category": "Komponen",
-    "price": 1000,
-    "rating": 4.5,
-    "sold": 0,
-    "stock": 1,
-    "condition": "Bekas",
-    "location": "Bantul, Yogyakarta",
-    "shortDescription": "Mobo buat pc",
-    "description": "gitu lah",
-    "specs": [
-      {
-        "label": "Mobo",
-        "value": "belum tau"
-      }
-    ],
-    "images": 3,
-    "image": "https://files.catbox.moe/8z77n7.jpg",
-    "gallery": [
-      "https://files.catbox.moe/mm741t.jpg",
-      "https://files.catbox.moe/8z77n7.jpg",
-      "https://files.catbox.moe/gnu4ld.jpg"
-    ],
-    "oldPrice": 15000
-  },
-  {
     "id": "BMC-hddpc",
-    "name": "Hardisk PC",
+    "name": "Hardisk PC 3.5 Inch Seagate 1TB",
     "brand": "Seagate",
     "category": "Storage",
-    "price": 500000,
-    "rating": 4.5,
-    "sold": 0,
+    "price": 280000,
+    "oldPrice": 450000,
+    "rating": 4.7,
+    "sold": 8,
     "stock": 6,
     "condition": "Bekas",
     "location": "Bantul, Yogyakarta",
-    "shortDescription": "yaa gitu",
-    "description": "sentinel 100%",
+    "shortDescription": "Hardisk PC 3.5 inch Seagate 1TB SATA 7200 RPM, Sentinel 100% no bad sector.",
+    "description": "Hardisk internal 3.5 inch kapasitas 1 TB Seagate Barracuda SATA 6Gb/s 7200 RPM. Sentinel 100% health & performance tested, no bad sector, speed baca tulis kencang, ideal untuk PC rakitan dan penyimpanan CCTV/server.",
     "specs": [
       {
-        "label": "Hardisk PC",
-        "value": "1 TB"
+        "label": "Kapasitas",
+        "value": "1 TB (1000 GB)"
+      },
+      {
+        "label": "Form Factor",
+        "value": "3.5 Inch Desktop SATA"
+      },
+      {
+        "label": "Kecepatan",
+        "value": "7200 RPM"
+      },
+      {
+        "label": "Kesehatan",
+        "value": "Sentinel 100% Health"
       }
     ],
     "images": 1,
-    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWt-xbdJYbl1sID0flEh4LQwpStxHMWO5DCiSJSKLqDQ&s=10",
+    "image": "https://files.catbox.moe/8z77n7.jpg",
     "gallery": [
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWt-xbdJYbl1sID0flEh4LQwpStxHMWO5DCiSJSKLqDQ&s=10"
+      "https://files.catbox.moe/8z77n7.jpg"
     ],
-    "oldPrice": 750000,
     "isFeatured": true
   }
 ]

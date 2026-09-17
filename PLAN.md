@@ -192,6 +192,13 @@
 > - cartStore.ts & SiteHeader.tsx: keranjang belanja mendukung pencatatan varian terpilih per item dan rincian checkout WhatsApp mencantumkan nama varian.
 > - admin.produk.tsx: form drawer admin dilengkapi editor visual varian (tambah, edit nama/harga/stok, hapus varian).
 > - Verifikasi: ESLint 0 error, validate 9/9 OK, build produksi Vite+Nitro lolos, dev server 200.
+>
+> Upload Foto Asli & Integrasi 11 Produk Katalog (2026-09-17):
+> - Upload 34 foto asli dari Catalog Assets ke Catbox CDN via upload-catalog-assets.mjs.
+> - Riwayat upload tersimpan di src/data/uploads.json (250 record terbaru).
+> - Integrasi 11 produk baru ke src/data/products.json: Laptop ASUS X540YA, Dell Vostro V131, Acer Aspire E15 i7+MX150, Dell Inspiron 14 bahan, Casing Toshiba, Motherboard Gaming Acer Nitro 5 (dual blower heatsink), Motherboard Lenovo Legion, Motherboard ThinkPad X260/X240, Motherboard Dell Inspiron 14, Logic Board Sony VAIO, dan SSD M.2 2280 SATA (varian Toshiba 128GB & Intel 256GB).
+> - sitemap.xml otomatis mencakup seluruh 14 produk (total 23 URL sitemap).
+> - Verifikasi: validate 9/9 OK, ESLint 0 error, build lolos, local server 200.
 
 ## 0. Kesimpulan Arsitektur
 
