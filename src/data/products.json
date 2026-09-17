@@ -73,5 +73,60 @@
     "oldPrice": 12000,
     "tokopediaUrl": "https://www.tokopedia.com/bmccomp/baterai-18650-kondisi-tegangan-3-7v-sampai-4-2v?extParam=whid%3D1552035&aff_unique_id=&channel=others&chain_key=",
     "isFeatured": true
+  },
+  {
+    "id": "BMC-mobo",
+    "name": "Mobo",
+    "brand": "-",
+    "category": "Komponen",
+    "price": 1000,
+    "rating": 4.5,
+    "sold": 0,
+    "stock": 1,
+    "condition": "Bekas",
+    "location": "Bantul, Yogyakarta",
+    "shortDescription": "Mobo buat pc",
+    "description": "gitu lah",
+    "specs": [
+      {
+        "label": "Mobo",
+        "value": "belum tau"
+      }
+    ],
+    "images": 3,
+    "image": "https://files.catbox.moe/8z77n7.jpg",
+    "gallery": [
+      "https://files.catbox.moe/mm741t.jpg",
+      "https://files.catbox.moe/8z77n7.jpg",
+      "https://files.catbox.moe/gnu4ld.jpg"
+    ],
+    "oldPrice": 15000
+  },
+  {
+    "id": "BMC-hddpc",
+    "name": "Hardisk PC",
+    "brand": "Seagate",
+    "category": "Storage",
+    "price": 500000,
+    "rating": 4.5,
+    "sold": 0,
+    "stock": 6,
+    "condition": "Bekas",
+    "location": "Bantul, Yogyakarta",
+    "shortDescription": "yaa gitu",
+    "description": "sentinel 100%",
+    "specs": [
+      {
+        "label": "Hardisk PC",
+        "value": "1 TB"
+      }
+    ],
+    "images": 1,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWt-xbdJYbl1sID0flEh4LQwpStxHMWO5DCiSJSKLqDQ&s=10",
+    "gallery": [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWt-xbdJYbl1sID0flEh4LQwpStxHMWO5DCiSJSKLqDQ&s=10"
+    ],
+    "oldPrice": 750000,
+    "isFeatured": true
   }
 ]
