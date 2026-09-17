@@ -1,4 +1,4 @@
-import purePoster from "@/img/Buanacomputer-footer.png";
+import purePoster from "@/img/Buanacomputer-footer.jpg";
 import banners from "@/data/banners.json";
 
 type Props = {

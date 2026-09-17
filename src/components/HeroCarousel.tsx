@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import poster1 from "@/img/Buanacomputer-poster1.png";
-import poster2 from "@/img/Buanacomputer-poster2.png";
-import poster3 from "@/img/Buanacomputer-poster3.png";
+import poster1 from "@/img/Buanacomputer-poster1.jpg";
+import poster2 from "@/img/Buanacomputer-poster2.jpg";
+import poster3 from "@/img/Buanacomputer-poster3.jpg";
 import hp from "@/img/Buanacomputer-hp.jpg";
 import hp2 from "@/img/Buanacomputer-hp2.jpg";
 import hp3 from "@/img/Buanacomputer-hp3.jpg";

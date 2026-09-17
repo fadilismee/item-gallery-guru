@@ -203,6 +203,7 @@
 > Perbaikan Link Gambar Asli & Fitur Kompresi Otomatis Upload (2026-09-17):
 > - products.json: memulihkan link gambar asli online (Shopee/Google/Tokopedia) untuk produk Hardisk Laptop (hdd-laptop), Baterai 18650 (BMC-btr18650), dan Hardisk PC (BMC-hddpc).
 > - ImageField.tsx: menambahkan fungsi kompresi client-side (compressImageClient) berbasis Canvas HTML5. Setiap file foto besar (2-5MB PNG/JPG) otomatis di-resize (maks 1600px) dan dikompresi ke JPEG kualitas 0.82 sebelum dikirim ke Catbox, memangkas ukuran file hingga 80-90% (~150KB) secara instan.
+> - Kompresi Aset Statis Poster & Banner (2026-09-17): Seluruh poster dan banner besar di src/img/ (Buanacomputer-poster1/2/3, footer, hp1/2/3, katalog) dikompresi dengan rasio hemat 90%, menurunkan total payload aset statis dari ~15.5 MB menjadi ~1.4 MB.
 > - Verifikasi: ESLint 0 error, validate 9/9 OK, build produksi lolos, local server 200.
 
 ## 0. Kesimpulan Arsitektur
