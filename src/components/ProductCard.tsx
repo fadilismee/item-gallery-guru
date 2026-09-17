@@ -4,6 +4,15 @@ import { useCart } from "@/data/cartStore";
 import { Button } from "@/components/ui/button";
 
 export function ProductCard({ product }: { product: Product }) {
+  const hasVariants = Boolean(product.variants && product.variants.length > 0);
+  const prices = hasVariants ? product.variants!.map((v) => v.price) : [product.price];
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  const priceDisplay =
+    hasVariants && minPrice !== maxPrice
+      ? `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`
+      : formatPrice(minPrice);
+
   const discount = product.oldPrice
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
     : 0;
@@ -55,9 +64,14 @@ export function ProductCard({ product }: { product: Product }) {
           {product.name}
         </Link>
         <div className="mt-auto pt-2 sm:pt-3">
-          <p className="text-sm sm:text-base font-bold text-foreground">
-            {formatPrice(product.price)}
-          </p>
+          {hasVariants && (
+            <div className="mb-1">
+              <span className="rounded bg-pri/10 px-1.5 py-0.5 text-[10px] font-semibold text-pri">
+                {product.variants!.length} Pilihan Varian
+              </span>
+            </div>
+          )}
+          <p className="text-sm sm:text-base font-bold text-foreground">{priceDisplay}</p>
           {product.oldPrice && (
             <p className="text-[10px] sm:text-xs text-muted-foreground line-through">
               {formatPrice(product.oldPrice)}
@@ -69,17 +83,30 @@ export function ProductCard({ product }: { product: Product }) {
           <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
             {product.location}
           </p>
-          <Button
-            size="sm"
-            variant="outline"
-            className="mt-2.5 sm:mt-3 w-full h-7 sm:h-8 text-xs font-medium"
-            onClick={(e) => {
-              e.preventDefault();
-              add(product, 1);
-            }}
-          >
-            + Keranjang
-          </Button>
+          {hasVariants ? (
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="mt-2.5 sm:mt-3 w-full h-7 sm:h-8 text-xs font-medium"
+            >
+              <Link to="/produk/$productId" params={{ productId: product.id }}>
+                Pilih Varian →
+              </Link>
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              variant="outline"
+              className="mt-2.5 sm:mt-3 w-full h-7 sm:h-8 text-xs font-medium"
+              onClick={(e) => {
+                e.preventDefault();
+                add(product, 1);
+              }}
+            >
+              + Keranjang
+            </Button>
+          )}
           {(product.tokopediaUrl || product.shopeeUrl) && (
             <div className="mt-1.5 flex flex-col gap-1 sm:grid sm:grid-cols-2 sm:gap-1.5">
               {product.tokopediaUrl && (

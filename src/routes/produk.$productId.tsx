@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
@@ -49,25 +50,150 @@ export const Route = createFileRoute("/produk/$productId")({
   component: ProductDetail,
 });
 
+function ImageLightbox({
+  images,
+  initialIndex = 0,
+  title,
+  onClose,
+}: {
+  images: string[];
+  initialIndex?: number;
+  title: string;
+  onClose: () => void;
+}) {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+
+  const prev = useCallback(() => {
+    setCurrentIndex((i) => (i - 1 + images.length) % images.length);
+  }, [images.length]);
+
+  const next = useCallback(() => {
+    setCurrentIndex((i) => (i + 1) % images.length);
+  }, [images.length]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [next, onClose, prev]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex flex-col items-center justify-between bg-black/95 p-3 sm:p-6 backdrop-blur-md animate-in fade-in-0 duration-200"
+      onClick={onClose}
+    >
+      {/* Top bar */}
+      <div
+        className="flex w-full max-w-5xl items-center justify-between text-white"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="min-w-0 pr-4">
+          <p className="truncate text-sm sm:text-base font-bold">{title}</p>
+          <p className="text-xs text-white/60">
+            Foto {currentIndex + 1} dari {images.length}
+          </p>
+        </div>
+        <button
+          onClick={onClose}
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+          aria-label="Tutup foto"
+        >
+          <X size={20} />
+        </button>
+      </div>
+
+      {/* Middle stage */}
+      <div
+        className="relative flex flex-1 w-full max-w-5xl items-center justify-center p-2 sm:p-4 min-h-0"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {images.length > 1 && (
+          <button
+            onClick={prev}
+            className="absolute left-2 sm:left-4 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/90 transition-colors shadow-lg"
+            aria-label="Foto sebelumnya"
+          >
+            <ChevronLeft size={24} />
+          </button>
+        )}
+
+        <img
+          src={images[currentIndex]}
+          alt={`${title} foto ${currentIndex + 1}`}
+          className="max-h-[65vh] sm:max-h-[75vh] w-auto max-w-full object-contain rounded-lg shadow-2xl transition-all duration-300 select-none"
+        />
+
+        {images.length > 1 && (
+          <button
+            onClick={next}
+            className="absolute right-2 sm:right-4 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/90 transition-colors shadow-lg"
+            aria-label="Foto selanjutnya"
+          >
+            <ChevronRight size={24} />
+          </button>
+        )}
+      </div>
+
+      {/* Bottom thumbnail strip */}
+      {images.length > 1 && (
+        <div
+          className="flex w-full max-w-5xl items-center justify-center gap-2 overflow-x-auto py-2 scrollbar-none"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {images.map((src, idx) => (
+            <button
+              key={`${src}-${idx}`}
+              onClick={() => setCurrentIndex(idx)}
+              className={`relative h-12 w-12 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
+                currentIndex === idx
+                  ? "border-primary scale-105 shadow-md"
+                  : "border-transparent opacity-60 hover:opacity-100"
+              }`}
+            >
+              <img src={src} alt="" className="h-full w-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ProductDetail() {
   const { product } = Route.useLoaderData();
   const [active, setActive] = useState(0);
   const [qty, setQty] = useState(1);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const galleryImages =
+    product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
+
+  const hasVariants = Boolean(product.variants && product.variants.length > 0);
+  const currentVariant = hasVariants ? product.variants![selectedVariantIndex] : undefined;
+  const currentPrice = currentVariant ? currentVariant.price : product.price;
+  const currentOldPrice = currentVariant?.oldPrice ?? product.oldPrice;
+  const currentStock = currentVariant?.stock ?? product.stock;
 
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    image: product.gallery.length > 0 ? product.gallery : [product.image],
+    image: galleryImages,
     description: product.description,
     brand: { "@type": "Brand", name: product.brand },
     sku: product.id,
     offers: {
       "@type": "Offer",
-      price: product.price,
+      price: currentPrice,
       priceCurrency: "IDR",
       availability:
-        product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        currentStock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       url: `https://buanacomputer.web.id/produk/${product.id}`,
     },
     aggregateRating: {
@@ -112,23 +238,29 @@ function ProductDetail() {
     return [...same, ...others].slice(0, 4);
   })();
 
-  const discount = product.oldPrice
-    ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
+  const discount = currentOldPrice
+    ? Math.round(((currentOldPrice - currentPrice) / currentOldPrice) * 100)
     : 0;
 
   const add = useCart((s) => s.add);
   const [added, setAdded] = useState(false);
 
+  const variantLabel = currentVariant ? ` (Varian: ${currentVariant.name})` : "";
   const waMessage = encodeURIComponent(
-    `Halo Buana Computer, saya tertarik ${product.name} — ${formatPrice(product.price)} x ${qty}. Apakah masih ready? (WA: 6285979220599)`,
+    `Halo Buana Computer, saya tertarik ${product.name}${variantLabel} — ${formatPrice(currentPrice)} x ${qty}. Apakah masih ready? (WA: 6285979220599)`,
   );
   const waHref = `https://wa.me/6285979220599?text=${waMessage}`;
 
   const handleAddToCart = () => {
-    if (product.stock <= 0) return;
-    add(product, qty);
+    if (currentStock <= 0) return;
+    add(product, qty, currentVariant);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
+  };
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
   };
 
   return (
@@ -182,21 +314,34 @@ function ProductDetail() {
 
       <div className="mx-auto grid max-w-7xl gap-8 px-4 pb-12 sm:pb-16 lg:grid-cols-[380px_1fr] lg:gap-10">
         <div>
-          <div className="aspect-square overflow-hidden rounded-xl border bg-muted">
+          <div
+            onClick={() => openLightbox(active)}
+            className="group/main-img relative aspect-square overflow-hidden rounded-xl border bg-muted cursor-zoom-in"
+            title="Klik untuk melihat foto lebih besar"
+          >
             <img
-              src={product.gallery[active] ?? product.image}
+              src={galleryImages[active] ?? product.image}
               alt={`${product.name} foto ${active + 1}`}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover transition-transform duration-300 group-hover/main-img:scale-105"
               loading="eager"
             />
+            <div className="absolute inset-0 flex items-center justify-center bg-black/25 opacity-0 transition-opacity group-hover/main-img:opacity-100 pointer-events-none">
+              <span className="flex items-center gap-1.5 rounded-full bg-black/75 px-3 py-1.5 text-xs font-semibold text-white shadow-lg backdrop-blur-sm">
+                <ZoomIn size={14} /> Klik untuk memperbesar
+              </span>
+            </div>
+            <div className="absolute bottom-2.5 right-2.5 rounded-md bg-black/60 px-2 py-0.5 font-monotech text-[10px] font-semibold text-white backdrop-blur-sm sm:hidden">
+              🔍 Zoom
+            </div>
           </div>
           <div className="mt-4 grid grid-cols-4 gap-2.5">
-            {product.gallery.map((src, i) => (
+            {galleryImages.map((src, i) => (
               <button
                 key={src}
                 onClick={() => setActive(i)}
+                onDoubleClick={() => openLightbox(i)}
                 className={`overflow-hidden rounded-lg border p-0.5 transition-colors ${
-                  active === i ? "border-primary" : "border-transparent"
+                  active === i ? "border-primary ring-2 ring-primary/20" : "border-transparent"
                 }`}
                 aria-label={`Lihat foto ${i + 1}`}
               >
@@ -218,9 +363,9 @@ function ProductDetail() {
                 ★ 4.5 • Produk Pilihan
               </span>
             )}
-            {product.stock > 0 ? (
+            {currentStock > 0 ? (
               <span className="rounded-full bg-green-500 px-2.5 py-1 text-xs font-bold text-white">
-                Stok {product.stock}
+                Stok {currentStock}
               </span>
             ) : (
               <span className="rounded-full bg-destructive px-2.5 py-1 text-xs font-bold text-destructive-foreground">
@@ -234,18 +379,18 @@ function ProductDetail() {
           <h1 className="mt-2 text-2xl font-bold leading-snug text-foreground">{product.name}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             &#9733; {product.rating} &middot; {product.sold} terjual &middot;{" "}
-            {product.stock > 0 ? `Stok ${product.stock}` : "Stok Habis"}
+            {currentStock > 0 ? `Stok ${currentStock}` : "Stok Habis"}
           </p>
 
           <div className="mt-4 rounded-xl border border-border bg-card p-4">
             <div className="flex flex-wrap items-baseline gap-3">
               <span className="text-3xl font-bold text-foreground">
-                {formatPrice(product.price)}
+                {formatPrice(currentPrice)}
               </span>
-              {product.oldPrice && (
+              {currentOldPrice && (
                 <>
                   <span className="text-sm text-muted-foreground line-through">
-                    {formatPrice(product.oldPrice)}
+                    {formatPrice(currentOldPrice)}
                   </span>
                   <span className="rounded-md bg-destructive px-2 py-0.5 text-xs font-bold text-destructive-foreground">
                     -{discount}%
@@ -253,6 +398,42 @@ function ProductDetail() {
                 </>
               )}
             </div>
+
+            {/* Pilihan Varian Produk */}
+            {hasVariants && (
+              <div className="mt-4 border-t border-border pt-4">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Pilihan Varian:
+                  </span>
+                  <span className="text-xs font-bold text-primary">{currentVariant?.name}</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {product.variants!.map((v, i) => {
+                    const activeVariant = selectedVariantIndex === i;
+                    const isOutOfStock = typeof v.stock === "number" && v.stock <= 0;
+                    return (
+                      <button
+                        key={v.name}
+                        type="button"
+                        disabled={isOutOfStock}
+                        onClick={() => setSelectedVariantIndex(i)}
+                        className={`rounded-lg border px-3 py-2 text-xs font-semibold transition-all ${
+                          activeVariant
+                            ? "border-primary bg-primary text-primary-foreground shadow-sm ring-2 ring-primary/20"
+                            : isOutOfStock
+                              ? "border-border bg-muted/40 text-muted-foreground/50 line-through cursor-not-allowed"
+                              : "border-border bg-card text-foreground hover:border-primary/40 hover:bg-accent"
+                        }`}
+                      >
+                        <span>{v.name}</span>
+                        <span className="ml-1.5 opacity-80 font-mono">{formatPrice(v.price)}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
               <div className="flex items-center justify-between gap-3 sm:justify-start">
@@ -262,18 +443,18 @@ function ProductDetail() {
                 <div className="flex items-center rounded-lg border border-input">
                   <button
                     onClick={() => setQty((q) => Math.max(1, q - 1))}
-                    disabled={product.stock <= 0}
+                    disabled={currentStock <= 0}
                     className="flex h-9 w-9 items-center justify-center text-lg text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                     aria-label="Kurangi jumlah"
                   >
                     -
                   </button>
                   <span className="w-9 text-center text-sm font-semibold text-foreground">
-                    {product.stock > 0 ? qty : 0}
+                    {currentStock > 0 ? qty : 0}
                   </span>
                   <button
-                    onClick={() => setQty((q) => Math.min(product.stock, q + 1))}
-                    disabled={product.stock <= 0 || qty >= product.stock}
+                    onClick={() => setQty((q) => Math.min(currentStock, q + 1))}
+                    disabled={currentStock <= 0 || qty >= currentStock}
                     className="flex h-9 w-9 items-center justify-center text-lg text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                     aria-label="Tambah jumlah"
                   >
@@ -290,10 +471,10 @@ function ProductDetail() {
                 <Button
                   variant="outline"
                   className="h-10 flex-1 font-medium truncate"
-                  disabled={product.stock <= 0}
+                  disabled={currentStock <= 0}
                   onClick={handleAddToCart}
                 >
-                  {product.stock <= 0 ? "Stok Habis" : added ? "✓ Ditambahkan" : "+ Keranjang"}
+                  {currentStock <= 0 ? "Stok Habis" : added ? "✓ Ditambahkan" : "+ Keranjang"}
                 </Button>
               </div>
             </div>
@@ -364,6 +545,15 @@ function ProductDetail() {
       <PurePoster />
 
       <SiteFooter />
+
+      {lightboxOpen && (
+        <ImageLightbox
+          images={galleryImages}
+          initialIndex={lightboxIndex}
+          title={product.name}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
     </div>
   );
 }

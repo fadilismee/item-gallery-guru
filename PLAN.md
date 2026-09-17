@@ -183,6 +183,15 @@
 > - admin.harga.tsx: upgrade katalog SKU buyback dari textarea JSON mentah menjadi editor visual kartu ramah pengguna (kategori dropdown, judul, grade, estimasi harga, warna tone, kata kunci pencarian, dan penghitungan otomatis jumlah SKU terdaftar).
 > - admin.tsx & admin.index.tsx: pembaruan menu navigasi atas dengan rute baru /admin/jual ("Aset Jual") dan penambahan tile pintasan di dashboard utama.
 > - Verifikasi: ESLint 0 error, build produksi Vite+Nitro lolos, validate 9/9 OK, local dev server 200.
+>
+> Fitur Varian Produk & Interactive Image Lightbox (2026-09-17):
+> - schemas.ts & products.ts: penambahan ProductVariantSchema (name, price, oldPrice?, stock?) dan field opsional `variants` pada ProductSchema.
+> - products.json: konfigurasi varian kapasitas HDD Laptop Seagate (500GB, 1TB, 2TB) dengan harga dan stok masing-masing.
+> - ProductCard.tsx: format rentang harga dinamis (Opsi A: Rp 150.000 - Rp 450.000) dan badge jumlah pilihan varian.
+> - produk.$productId.tsx: pills selector varian interaktif (harga, diskon, stok & pesan WA dinamis sesuai varian terpilih), serta Image Lightbox (klik foto membesar layar penuh, navigasi panah kiri/kanan, thumbnail strip, keyboard handler Esc/Arrow).
+> - cartStore.ts & SiteHeader.tsx: keranjang belanja mendukung pencatatan varian terpilih per item dan rincian checkout WhatsApp mencantumkan nama varian.
+> - admin.produk.tsx: form drawer admin dilengkapi editor visual varian (tambah, edit nama/harga/stok, hapus varian).
+> - Verifikasi: ESLint 0 error, validate 9/9 OK, build produksi Vite+Nitro lolos, dev server 200.
 
 ## 0. Kesimpulan Arsitektur
 

@@ -4,6 +4,13 @@ import { z } from "zod";
 /* Produk (src/data/products.json)                                     */
 /* ------------------------------------------------------------------ */
 
+export const ProductVariantSchema = z.object({
+  name: z.string().min(1),
+  price: z.number().int().nonnegative(),
+  oldPrice: z.number().int().positive().optional(),
+  stock: z.number().int().nonnegative().optional(),
+});
+
 export const ProductSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
@@ -25,6 +32,7 @@ export const ProductSchema = z.object({
   tokopediaUrl: z.string().optional(),
   shopeeUrl: z.string().optional(),
   isFeatured: z.boolean().optional(),
+  variants: z.array(ProductVariantSchema).optional(),
 });
 
 export const ProductsDataSchema = z.array(ProductSchema).min(1);

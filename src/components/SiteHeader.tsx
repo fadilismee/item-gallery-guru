@@ -38,7 +38,13 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
   const waCartMessage = encodeURIComponent(
     `Halo Buana Computer, saya mau checkout:\n` +
       items
-        .map((it) => `- ${it.product.name} x${it.qty} = ${formatPrice(it.product.price * it.qty)}`)
+        .map((it) => {
+          const itemTitle = it.selectedVariant
+            ? `${it.product.name} (${it.selectedVariant.name})`
+            : it.product.name;
+          const unitPrice = it.selectedVariant?.price ?? it.product.price;
+          return `- ${itemTitle} x${it.qty} = ${formatPrice(unitPrice * it.qty)}`;
+        })
         .join("\n") +
       `\nTotal: ${formatPrice(subtotal)}\nMohon info stok & pembayaran, terima kasih!`,
   );
@@ -175,29 +181,40 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
                       ) : (
                         <>
                           <ul className="mt-3 max-h-64 space-y-3 overflow-auto pr-1">
-                            {items.map((it) => (
-                              <li key={it.product.id} className="flex gap-3">
-                                <img
-                                  src={it.product.image}
-                                  alt={it.product.name}
-                                  className="h-12 w-12 rounded-lg object-cover border"
-                                />
-                                <div className="min-w-0 flex-1">
-                                  <p className="line-clamp-1 text-xs font-medium text-foreground">
-                                    {it.product.name}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    {formatPrice(it.product.price)} × {it.qty}
-                                  </p>
-                                </div>
-                                <button
-                                  onClick={() => remove(it.product.id)}
-                                  className="text-xs text-red-500 hover:text-red-600 font-medium"
-                                >
-                                  Hapus
-                                </button>
-                              </li>
-                            ))}
+                            {items.map((it) => {
+                              const key = it.selectedVariant
+                                ? `${it.product.id}-${it.selectedVariant.name}`
+                                : it.product.id;
+                              const unitPrice = it.selectedVariant?.price ?? it.product.price;
+                              return (
+                                <li key={key} className="flex gap-3">
+                                  <img
+                                    src={it.product.image}
+                                    alt={it.product.name}
+                                    className="h-12 w-12 rounded-lg object-cover border"
+                                  />
+                                  <div className="min-w-0 flex-1">
+                                    <p className="line-clamp-1 text-xs font-medium text-foreground">
+                                      {it.product.name}
+                                    </p>
+                                    {it.selectedVariant && (
+                                      <p className="text-[11px] font-semibold text-pri">
+                                        Varian: {it.selectedVariant.name}
+                                      </p>
+                                    )}
+                                    <p className="text-xs text-muted-foreground">
+                                      {formatPrice(unitPrice)} × {it.qty}
+                                    </p>
+                                  </div>
+                                  <button
+                                    onClick={() => remove(it.product.id, it.selectedVariant?.name)}
+                                    className="text-xs text-red-500 hover:text-red-600 font-medium"
+                                  >
+                                    Hapus
+                                  </button>
+                                </li>
+                              );
+                            })}
                           </ul>
                           <div className="mt-4 border-t pt-3">
                             <div className="flex items-center justify-between text-sm">

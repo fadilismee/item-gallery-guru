@@ -122,6 +122,17 @@ function AdminProduk() {
         tokopediaUrl: editing.tokopediaUrl?.trim() || undefined,
         shopeeUrl: editing.shopeeUrl?.trim() || undefined,
         oldPrice: editing.oldPrice && editing.oldPrice > 0 ? editing.oldPrice : undefined,
+        variants:
+          editing.variants && editing.variants.length > 0
+            ? editing.variants
+                .map((v) => ({
+                  name: v.name.trim(),
+                  price: Number(v.price) || 0,
+                  oldPrice: v.oldPrice && v.oldPrice > 0 ? Number(v.oldPrice) : undefined,
+                  stock: typeof v.stock === "number" && v.stock >= 0 ? Number(v.stock) : undefined,
+                }))
+                .filter((v) => Boolean(v.name))
+            : undefined,
       };
       const next = isNew
         ? [...list, cleaned]
@@ -463,6 +474,148 @@ function AdminProduk() {
                     className="adm-input mt-1"
                   />
                 </label>
+              </div>
+
+              {/* Pilihan Varian Produk (Opsional) */}
+              <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="adm-label">Pilihan Varian Produk (Opsional)</p>
+                    <p className="adm-sub text-xs">
+                      Contoh: kapasitas 500GB / 1TB, opsi RAM, warna, dll.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const variants = editing.variants ? [...editing.variants] : [];
+                      variants.push({
+                        name: "",
+                        price: editing.price,
+                        oldPrice: editing.oldPrice,
+                        stock: editing.stock,
+                      });
+                      setEditing({ ...editing, variants });
+                    }}
+                    className="adm-btn-ghost inline-flex items-center gap-1 py-1 text-xs"
+                  >
+                    <AdminIcon name="add" className="text-[14px]" />
+                    Tambah Varian
+                  </button>
+                </div>
+
+                {(editing.variants ?? []).map((v, idx) => (
+                  <div
+                    key={idx}
+                    className="rounded-lg border border-slate-200 bg-white p-2.5 space-y-2 shadow-xs"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="adm-chip adm-chip-blue font-mono text-[10px]">
+                        Varian #{idx + 1}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const nextVariants = (editing.variants ?? []).filter((_, j) => j !== idx);
+                          setEditing({
+                            ...editing,
+                            variants: nextVariants.length > 0 ? nextVariants : undefined,
+                          });
+                        }}
+                        className="adm-btn-danger inline-flex items-center gap-0.5 py-0.5 px-2 text-[11px]"
+                      >
+                        <AdminIcon name="delete" className="text-[12px]" />
+                        Hapus
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[11px] font-semibold text-slate-600">
+                          Nama Varian *
+                        </label>
+                        <input
+                          value={v.name}
+                          placeholder="Contoh: 500 GB / 1 TB"
+                          onChange={(e) => {
+                            const nextVariants = [...(editing.variants ?? [])];
+                            nextVariants[idx] = { ...nextVariants[idx], name: e.target.value };
+                            setEditing({ ...editing, variants: nextVariants });
+                          }}
+                          className="adm-input text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-semibold text-slate-600">
+                          Harga Varian (Rp) *
+                        </label>
+                        <input
+                          type="number"
+                          min={0}
+                          value={v.price}
+                          onChange={(e) => {
+                            const nextVariants = [...(editing.variants ?? [])];
+                            nextVariants[idx] = {
+                              ...nextVariants[idx],
+                              price: Number(e.target.value),
+                            };
+                            setEditing({ ...editing, variants: nextVariants });
+                          }}
+                          className="adm-input text-xs"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[11px] font-semibold text-slate-600">
+                          Harga Coret (Opsional)
+                        </label>
+                        <input
+                          type="number"
+                          min={0}
+                          value={v.oldPrice ?? ""}
+                          placeholder="Opsional"
+                          onChange={(e) => {
+                            const nextVariants = [...(editing.variants ?? [])];
+                            nextVariants[idx] = {
+                              ...nextVariants[idx],
+                              oldPrice: e.target.value ? Number(e.target.value) : undefined,
+                            };
+                            setEditing({ ...editing, variants: nextVariants });
+                          }}
+                          className="adm-input text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-semibold text-slate-600">
+                          Stok Khusus (Opsional)
+                        </label>
+                        <input
+                          type="number"
+                          min={0}
+                          value={v.stock ?? ""}
+                          placeholder={String(editing.stock)}
+                          onChange={(e) => {
+                            const nextVariants = [...(editing.variants ?? [])];
+                            nextVariants[idx] = {
+                              ...nextVariants[idx],
+                              stock: e.target.value ? Number(e.target.value) : undefined,
+                            };
+                            setEditing({ ...editing, variants: nextVariants });
+                          }}
+                          className="adm-input text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {(!editing.variants || editing.variants.length === 0) && (
+                  <p className="text-xs text-slate-400 italic">
+                    Belum ada varian khusus. Produk akan menggunakan harga dan stok tunggal di atas.
+                  </p>
+                )}
               </div>
 
               <div className="rounded-xl bg-slate-50 p-3">

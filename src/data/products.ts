@@ -1,8 +1,9 @@
 import { z } from "zod";
 import productsData from "./products.json";
-import { ProductSchema, ProductsDataSchema } from "@/lib/schemas";
+import { ProductSchema, ProductVariantSchema, ProductsDataSchema } from "@/lib/schemas";
 
 export type Product = z.infer<typeof ProductSchema>;
+export type ProductVariant = z.infer<typeof ProductVariantSchema>;
 
 // Throws at startup/build with a clear message if products.json is malformed.
 export const products: Product[] = ProductsDataSchema.parse(productsData);
