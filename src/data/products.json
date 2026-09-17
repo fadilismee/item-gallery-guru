@@ -637,5 +637,31 @@
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWt-xbdJYbl1sID0flEh4LQwpStxHMWO5DCiSJSKLqDQ&s=10"
     ],
     "isFeatured": true
+  },
+  {
+    "id": "makan",
+    "name": "makna",
+    "brand": "makan",
+    "category": "Laptop",
+    "price": 5000000,
+    "rating": 4.5,
+    "sold": 0,
+    "stock": 1,
+    "condition": "Baru",
+    "location": "Bantul, Yogyakarta",
+    "shortDescription": "asd",
+    "description": "ads",
+    "specs": [
+      {
+        "label": "asd",
+        "value": "asd"
+      }
+    ],
+    "images": 1,
+    "image": "https://files.catbox.moe/8fd2c5.jpg",
+    "gallery": [
+      "https://files.catbox.moe/8fd2c5.jpg"
+    ],
+    "oldPrice": 70000000
   }
 ]
