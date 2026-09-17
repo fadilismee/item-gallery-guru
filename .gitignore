@@ -17,10 +17,12 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # ================= Env & secrets — JANGAN COMMIT =================
-# ADMIN_PASSWORD dashboard, TELEGRAM/GITHUB token bot, dsb.
+# ADMIN_PASSWORD dashboard, TELEGRAM/GITHUB token bot, GOOGLE_API_KEY dsb.
 .env
 .env.local
 .env.*.local
+.env-apikey*
+*.env-apikey*
 !.env.example
 
 # ================= Deploy =================
@@ -35,6 +37,7 @@ gs.txt
 # salinan log build (mis. tempelan log Vercel) — jangan push
 error.txt
 error*.log
+*model*.txt
 # snippet iframe Google Maps (sudah inline di kode)
 link-embebgmpas.txt
 # referensi desain (~8MB), tidak dipakai aplikasi

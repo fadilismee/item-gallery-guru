@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { adminListUploads, adminUploadImage } from "@/server/admin";
+import { adminEnhanceImage, adminListUploads, adminUploadImage } from "@/server/admin";
 import { errMsg, getAdminToken } from "@/lib/adminClient";
 import { AdminIcon } from "./AdminIcon";
 
@@ -10,6 +10,7 @@ type Props = {
   value: string;
   onChange: (url: string) => void;
   hint?: string;
+  aiPromptDefault?: string;
 };
 
 const inputCls = "adm-input";
@@ -100,13 +101,40 @@ async function compressImageClient(
  * Field gambar admin: preview + input URL manual + tombol Upload (file -> Catbox -> link
  * otomatis terisi) + tombol Gallery (pilih dari upload-an sebelumnya).
  */
-export function ImageField({ label, value, onChange, hint }: Props) {
+export function ImageField({ label, value, onChange, hint, aiPromptDefault }: Props) {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
   const [libOpen, setLibOpen] = useState(false);
   const [lib, setLib] = useState<UploadItem[]>([]);
   const [libBusy, setLibBusy] = useState(false);
+  const [aiCustomOpen, setAiCustomOpen] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState(
+    aiPromptDefault ||
+      "E-commerce catalog photo, pure white background #ffffff, studio softbox lighting, centered product, sharp focus, 4k, clean and tidy",
+  );
   const fileRef = useRef<HTMLInputElement | null>(null);
+
+  const doEnhanceAI = async () => {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    setBusy(true);
+    setMsg("Memproses foto dengan Google Nano Banana AI…");
+    try {
+      const r = await adminEnhanceImage({
+        data: {
+          token: getAdminToken() ?? "",
+          imageUrl: trimmed,
+          prompt: aiPrompt,
+        },
+      });
+      onChange(r.url);
+      setMsg("✨ Foto berhasil dipoles AI & tersimpan ke katalog!");
+    } catch (e) {
+      setMsg(`AI gagal: ${errMsg(e)}`);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const doUpload = async (file: File) => {
     setBusy(true);
@@ -202,7 +230,41 @@ export function ImageField({ label, value, onChange, hint }: Props) {
                 Salin Link
               </button>
             )}
+            {looksLikeImage(trimmed) && (
+              <button
+                type="button"
+                onClick={doEnhanceAI}
+                disabled={busy}
+                title="Poles foto produk menjadi foto katalog studio latar putih bersih dengan AI"
+                className="adm-btn-ghost inline-flex items-center gap-1 border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 px-3 py-1.5 text-xs font-semibold"
+              >
+                <AdminIcon name="auto_fix_high" className="text-[15px]" />
+                {busy ? "Memproses AI…" : "Poles AI"}
+              </button>
+            )}
+            {looksLikeImage(trimmed) && (
+              <button
+                type="button"
+                onClick={() => setAiCustomOpen((v) => !v)}
+                className="text-[11px] text-purple-700 underline hover:text-purple-900 px-1 py-1"
+              >
+                {aiCustomOpen ? "Tutup Prompt" : "Atur Prompt"}
+              </button>
+            )}
           </div>
+          {aiCustomOpen && (
+            <div className="rounded-lg border border-purple-200 bg-purple-50/60 p-2.5 text-xs space-y-1">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-purple-900">
+                Prompt Konsistensi Katalog AI
+              </label>
+              <input
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                className="adm-input text-xs"
+                placeholder="Prompt visual AI..."
+              />
+            </div>
+          )}
           <input
             ref={fileRef}
             type="file"

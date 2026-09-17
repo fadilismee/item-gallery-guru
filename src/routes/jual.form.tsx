@@ -61,11 +61,11 @@ export const Route = createFileRoute("/jual/form")({
         content:
           "Isi detail unit bekas/rusak Anda, dapatkan estimasi taksiran kilat gratis dari teknisi Buana Computer. Gratis, tanpa kewajiban menjual.",
       },
-      { property: "og:image", content: "https://buanacomputer.web.id/Buanacomputer-logo.png" },
-      { property: "og:url", content: "https://buanacomputer.web.id/jual/form" },
+      { property: "og:image", content: "https://jual.buanacomputer.web.id/Buanacomputer-logo.png" },
+      { property: "og:url", content: "https://jual.buanacomputer.web.id/form" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://buanacomputer.web.id/jual/form" }],
+    links: [{ rel: "canonical", href: "https://jual.buanacomputer.web.id/form" }],
   }),
   component: JualFormPage,
 });
@@ -310,13 +310,13 @@ const breadcrumbJsonLd = {
       "@type": "ListItem",
       position: 2,
       name: "Jual Hardware Bekas",
-      item: "https://buanacomputer.web.id/jual",
+      item: "https://jual.buanacomputer.web.id/",
     },
     {
       "@type": "ListItem",
       position: 3,
       name: "Formulir Taksiran",
-      item: "https://buanacomputer.web.id/jual/form",
+      item: "https://jual.buanacomputer.web.id/form",
     },
   ],
 };

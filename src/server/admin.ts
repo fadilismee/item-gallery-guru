@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { ZodError, type ZodTypeAny } from "zod";
 import {
@@ -312,7 +312,7 @@ export const adminGitCommitPush = createServerFn({ method: "POST" }).handler(
   },
 );
 
-/* ---------------- upload gambar (Catbox) + media library ---------------- */
+/* ---------------- Catbox upload constants (shared with AI) ---------------- */
 
 const CATBOX_API = "https://catbox.moe/user/api.php";
 const UPLOADS_FILE = "src/data/uploads.json";
@@ -334,6 +334,159 @@ function readUploads(): UploadRecord[] {
 function writeUploads(list: UploadRecord[]): void {
   writeFileSync(join(ROOT, UPLOADS_FILE), JSON.stringify(list, null, 2) + "\n", "utf-8");
 }
+
+/* ---------------- Google Nano Banana AI (optional) ---------------- */
+
+const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta";
+
+function googleApiKey(): string {
+  const direct = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || "";
+  if (direct.trim()) return direct.trim();
+  // Fallback: read from .env-apikey* file (e.g. .env-apikey.Ab8RN...) — API key bisa diawali AQ. juga
+  try {
+    const files = readdirSync(ROOT).filter((f: string) => f.startsWith(".env-apikey"));
+    for (const f of files) {
+      const txt = readFileSync(join(ROOT, f), "utf-8").trim();
+      const firstLine = txt.split(/\r?\n/)[0]?.trim() || "";
+      const m =
+        /AIza[0-9A-Za-z_-]{20,}/.exec(txt) ||
+        /AQ\.[0-9A-Za-z_-]{20,}/.exec(txt) ||
+        /AIza[0-9A-Za-z_-]{20,}/.exec(firstLine);
+      if (m) return m[0];
+      if (
+        firstLine &&
+        !firstLine.startsWith("curl") &&
+        !firstLine.startsWith("#") &&
+        firstLine.length > 20
+      ) {
+        return firstLine;
+      }
+    }
+  } catch {
+    // ignore
+  }
+  throw new Error(
+    "GOOGLE_API_KEY belum diset. Tambahkan ke .env atau file .env-apikey lalu restart dev server.",
+  );
+}
+
+export const adminPolishText = createServerFn({ method: "POST" }).handler(
+  async ({ data }: { data: { token: string; text: string; context?: string } }) => {
+    assertAuth(data?.token);
+    const text = (data?.text ?? "").trim();
+    if (!text) throw new Error("Teks kosong.");
+    if (text.length > 6000) throw new Error("Teks terlalu panjang (maks 6000 karakter).");
+    const key = googleApiKey();
+    const prompt =
+      `Kamu adalah copywriter katalog e-commerce Indonesia untuk Buana Computer Bantul. ` +
+      `Tugas: rapikan teks produk berikut agar jadi deskripsi katalog yang rapi, jelas, persuasif tapi jujur, ` +
+      `bahasa Indonesia, tanpa hiperbola berlebihan. Perbaiki EYD, struktur paragraf, dan buat mudah dibaca di HP. ` +
+      (data?.context ? `Konteks produk: ${data.context}. ` : "") +
+      `Jangan tambah fakta baru yang tidak ada di teks asli. Hasilkan hanya teks yang sudah dirapikan.\n\nTeks asli:\n${text}`;
+
+    const models = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-flash-latest"];
+    let lastErr = "";
+    for (const model of models) {
+      try {
+        const res = await fetch(
+          `${GEMINI_API_BASE}/models/${model}:generateContent?key=${encodeURIComponent(key)}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: { temperature: 0.6, maxOutputTokens: 1200 },
+            }),
+          },
+        );
+        const json = (await res.json()) as {
+          candidates?: { content?: { parts?: { text?: string }[] } }[];
+          error?: { message?: string };
+        };
+        if (res.ok && json.candidates?.[0]?.content?.parts?.[0]?.text) {
+          const out = json.candidates[0].content.parts
+            .map((p) => p.text || "")
+            .join("")
+            .trim();
+          return { polished: out };
+        }
+        lastErr = json?.error?.message || `Error ${res.status}`;
+      } catch (e) {
+        lastErr = e instanceof Error ? e.message : String(e);
+      }
+    }
+    throw new Error(`Gagal memoles teks dengan AI (${lastErr})`);
+  },
+);
+
+export const adminEnhanceImage = createServerFn({ method: "POST" }).handler(
+  async ({ data }: { data: { token: string; imageUrl: string; prompt?: string } }) => {
+    assertAuth(data?.token);
+    const imageUrl = (data?.imageUrl ?? "").trim();
+    if (!imageUrl || !/^https?:\/\//i.test(imageUrl)) throw new Error("URL gambar tidak valid.");
+    const key = googleApiKey();
+    const userPrompt =
+      (data?.prompt ?? "").trim() ||
+      "E-commerce catalog photo, pure white background #ffffff, studio softbox lighting, centered product, sharp focus, 4k, no shadow, no watermark, clean and tidy";
+
+    // Fetch original image as base64
+    const imgRes = await fetch(imageUrl);
+    if (!imgRes.ok) throw new Error(`Gagal ambil gambar sumber: ${imgRes.status}`);
+    const imgBuf = Buffer.from(await imgRes.arrayBuffer());
+    if (imgBuf.length > MAX_UPLOAD_BYTES) throw new Error("Gambar sumber terlalu besar (>10MB).");
+    const contentType = imgRes.headers.get("content-type") || "image/jpeg";
+    const mimeType = contentType.split(";")[0] || "image/jpeg";
+    const b64 = imgBuf.toString("base64");
+
+    // Call Nano Banana (Gemini image generation/edit)
+    const gemRes = await fetch(
+      `${GEMINI_API_BASE}/models/gemini-2.5-flash-image:generateContent?key=${encodeURIComponent(key)}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [{ inlineData: { mimeType, data: b64 } }, { text: userPrompt }],
+            },
+          ],
+        }),
+      },
+    );
+    const gemJson = (await gemRes.json()) as {
+      candidates?: {
+        content?: {
+          parts?: { inlineData?: { mimeType?: string; data?: string }; text?: string }[];
+        };
+      }[];
+      error?: { message?: string };
+    };
+    if (!gemRes.ok)
+      throw new Error(gemJson?.error?.message || `Gemini image error ${gemRes.status}`);
+    const outPart = gemJson.candidates?.[0]?.content?.parts?.find((p) => p.inlineData?.data);
+    const outB64 = outPart?.inlineData?.data;
+    const outMime = outPart?.inlineData?.mimeType || "image/jpeg";
+    if (!outB64)
+      throw new Error("Gemini tidak mengembalikan gambar. Coba prompt lain atau cek kuota API.");
+    const outBuf = Buffer.from(outB64, "base64");
+    // Upload hasil ke Catbox (otomatis terkompres di client, tapi di server tetap cek 10MB)
+    if (outBuf.length > MAX_UPLOAD_BYTES) throw new Error("Hasil AI terlalu besar (>10MB).");
+    const form = new FormData();
+    const ext = outMime.includes("png") ? "png" : "jpg";
+    const fileName = `ai-enhanced-${Date.now()}.${ext}`;
+    form.append("reqtype", "fileupload");
+    form.append("fileToUpload", new Blob([outBuf], { type: outMime }), fileName);
+    const catRes = await fetch(CATBOX_API, { method: "POST", body: form });
+    const catUrl = (await catRes.text()).trim();
+    if (!catRes.ok || !catUrl.startsWith("http"))
+      throw new Error(`Upload hasil AI gagal: ${catUrl.slice(0, 120)}`);
+    const record: UploadRecord = { url: catUrl, label: fileName, at: new Date().toISOString() };
+    writeUploads([record, ...readUploads().filter((r) => r.url !== catUrl)].slice(0, 200));
+    return { url: catUrl };
+  },
+);
+
+/* ---------------- upload gambar (Catbox) + media library ---------------- */
 
 export const adminUploadImage = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; fileName: string; dataUrl: string } }) => {

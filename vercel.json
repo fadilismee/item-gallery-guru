@@ -1,0 +1,10 @@
+{
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "jual.buanacomputer.web.id" }],
+      "destination": "/jual/$1"
+    }
+  ]
+}

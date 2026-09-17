@@ -54,11 +54,11 @@ export const Route = createFileRoute("/jual/")({
         content:
           "Daripada jadi rongsokan, tukar hardware Anda menjadi rupiah. Terima laptop, PC, motherboard, VGA normal, rusak & matot — taksiran transparan, cair instan.",
       },
-      { property: "og:image", content: "https://buanacomputer.web.id/Buanacomputer-logo.png" },
-      { property: "og:url", content: "https://buanacomputer.web.id/jual" },
+      { property: "og:image", content: "https://jual.buanacomputer.web.id/Buanacomputer-logo.png" },
+      { property: "og:url", content: "https://jual.buanacomputer.web.id/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://buanacomputer.web.id/jual" }],
+    links: [{ rel: "canonical", href: "https://jual.buanacomputer.web.id/" }],
   }),
   component: JualPage,
 });
@@ -813,7 +813,7 @@ const breadcrumbJsonLd = {
       "@type": "ListItem",
       position: 2,
       name: "Jual Hardware Bekas & Rusak",
-      item: "https://buanacomputer.web.id/jual",
+      item: "https://jual.buanacomputer.web.id/",
     },
   ],
 };

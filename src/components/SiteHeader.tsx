@@ -91,9 +91,6 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
             <Link to="/" className="rounded px-2.5 py-2 hover:bg-black/5 hover:text-black">
               Katalog
             </Link>
-            <Link to="/jual" className="rounded px-2.5 py-2 hover:bg-black/5 hover:text-black">
-              Jual
-            </Link>
             <Link to="/blog" className="rounded px-2.5 py-2 hover:bg-black/5 hover:text-black">
               Blog
             </Link>
@@ -102,6 +99,14 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
             </Link>
             <a href="#kontak" className="rounded px-2.5 py-2 hover:bg-black/5 hover:text-black">
               Kontak
+            </a>
+            <a
+              href="https://jual.buanacomputer.web.id"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded bg-pri/10 px-2.5 py-2 text-pri hover:bg-pri hover:text-white"
+            >
+              Jual ↗
             </a>
           </nav>
 
@@ -273,16 +278,18 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
                 <span>Katalog Laptop & PC</span>
                 <span className="text-xs text-muted-foreground">Belanja →</span>
               </Link>
-              <Link
-                to="/jual"
+              <a
+                href="https://jual.buanacomputer.web.id"
+                target="_blank"
+                rel="noreferrer"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-black/5 hover:text-black"
               >
                 <span>Jual Hardware Bekas & Rusak</span>
                 <span className="rounded bg-pri/10 px-2 py-0.5 text-xs font-semibold text-pri">
-                  Cair Instan
+                  Cair Instan ↗
                 </span>
-              </Link>
+              </a>
               <Link
                 to="/blog"
                 onClick={() => setMenuOpen(false)}

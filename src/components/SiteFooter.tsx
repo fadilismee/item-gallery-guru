@@ -60,7 +60,12 @@ export function SiteFooter() {
               <li>Senin – Sabtu: 09.00 – 20.00 WIB</li>
               <li>Minggu: 10.00 – 17.00 WIB (janjian WA)</li>
               <li className="pt-2">
-                <a href="/jual" className="text-white hover:underline">
+                <a
+                  href="https://jual.buanacomputer.web.id"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-white hover:underline"
+                >
                   Jual Barang Rusak →
                 </a>
               </li>

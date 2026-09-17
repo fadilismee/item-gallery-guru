@@ -14,3 +14,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://buanacomputer.web.id/sitemap.xml
+Sitemap: https://jual.buanacomputer.web.id/sitemap-jual.xml

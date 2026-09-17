@@ -212,6 +212,14 @@
 > - products.json 11 produk diperbarui: 45 URL lama 2MB diganti dengan URL baru terkompresi (contoh: zodch2 -> z0yf7i).
 > - Dijaga agar tidak ada lagi katalog di atas 2MB; produk test "makna" dipertahankan sebagai test.
 > - Verifikasi: validate 9/9 OK, lint 0 error, build lolos, sitemap 24 URL, dev server 200.
+>
+> Subdomain Jual & Google Nano Banana AI Enhancement (2026-09-17):
+> - Subdomain Jual: host detection di src/server.ts (jual.* -> rewrite internal ke /jual & /form; main buanacomputer.web.id/jual* -> redirect 308 ke subdomain jual.*). vercel.json rewrite disiapkan.
+> - Navbar: tombol Jual dihapus dari navigasi atas utama (desktop & mobile drawer); tetap dapat diakses via link redirect di footer ("Jual Barang Rusak ->").
+> - SEO Host-Aware & Split Sitemap: sitemap.xml (domain utama, 22 URL tanpa /jual) dan sitemap-jual.xml (subdomain, 2 URL: / dan /form). robots.txt merujuk ke kedua sitemap.
+> - Google Nano Banana AI (Gemini Flash): server functions adminPolishText (merapikan deskripsi produk) & adminEnhanceImage (memoles foto produk katalog studio putih 4k). Mendukung key dari .env atau file .env-apikey*.
+> - ImageField & Admin UI: tombol 'Poles AI' di ImageField dengan pengaturan prompt konsistensi katalog; tombol 'Poles Singkat AI' & 'Poles Deskripsi AI' di form produk. Hasil foto AI tetap melewati kompresi Canvas agar tidak pernah 2MB+.
+> - Verifikasi: ESLint 0 error, validate 9/9 OK, build produksi lolos, live test redirect 308 host header OK.
 
 ## 0. Kesimpulan Arsitektur
 

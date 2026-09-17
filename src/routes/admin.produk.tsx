@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { adminGetDataset, adminSaveDataset } from "@/server/admin";
+import { adminGetDataset, adminPolishText, adminSaveDataset } from "@/server/admin";
 import { errMsg, getAdminToken } from "@/lib/adminClient";
 import { AdminIcon } from "@/components/admin/AdminIcon";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
@@ -106,6 +106,58 @@ function AdminProduk() {
     setIsNew(false);
     setError("");
     setNotice("");
+  };
+
+  const polishDescription = async () => {
+    if (!editing) return;
+    const baseText =
+      editing.description.trim() ||
+      `${editing.name} merk ${editing.brand}, kondisi ${editing.condition}. ${editing.shortDescription}`;
+    if (!baseText) return;
+    setBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      const r = await adminPolishText({
+        data: {
+          token: token(),
+          text: baseText,
+          context: `Produk: ${editing.name}, Brand: ${editing.brand}, Kategori: ${editing.category}, Harga: Rp ${editing.price}`,
+        },
+      });
+      setEditing({ ...editing, description: r.polished });
+      setNotice("✨ Deskripsi berhasil dirapikan AI! Periksa dan simpan.");
+    } catch (e) {
+      setError(`AI Poles Gagal: ${errMsg(e)}`);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const polishShortDesc = async () => {
+    if (!editing) return;
+    const baseText =
+      editing.shortDescription.trim() ||
+      `${editing.name} merk ${editing.brand} kategori ${editing.category}`;
+    if (!baseText) return;
+    setBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      const r = await adminPolishText({
+        data: {
+          token: token(),
+          text: `Buatkan 1 kalimat ringkasan spesifikasi singkat padat untuk katalog: ${baseText}`,
+          context: `Produk: ${editing.name}, Kategori: ${editing.category}`,
+        },
+      });
+      setEditing({ ...editing, shortDescription: r.polished });
+      setNotice("✨ Deskripsi singkat berhasil dirapikan AI!");
+    } catch (e) {
+      setError(`AI Poles Gagal: ${errMsg(e)}`);
+    } finally {
+      setBusy(false);
+    }
   };
 
   const save = async () => {
@@ -627,23 +679,46 @@ function AdminProduk() {
                 />
               </div>
 
-              <label className="adm-label">
-                Deskripsi singkat *
+              <div>
+                <div className="flex items-center justify-between">
+                  <label className="adm-label">Deskripsi singkat *</label>
+                  <button
+                    type="button"
+                    onClick={polishShortDesc}
+                    disabled={busy}
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-purple-700 hover:text-purple-900"
+                  >
+                    <AdminIcon name="auto_awesome" className="text-[13px]" />
+                    Poles Singkat AI
+                  </button>
+                </div>
                 <input
                   value={editing.shortDescription}
                   onChange={(e) => setEditing({ ...editing, shortDescription: e.target.value })}
                   className="adm-input mt-1"
                 />
-              </label>
-              <label className="adm-label">
-                Deskripsi *
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between">
+                  <label className="adm-label">Deskripsi Lengkap *</label>
+                  <button
+                    type="button"
+                    onClick={polishDescription}
+                    disabled={busy}
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-purple-700 hover:text-purple-900"
+                  >
+                    <AdminIcon name="auto_awesome" className="text-[13px]" />
+                    Poles Deskripsi AI
+                  </button>
+                </div>
                 <textarea
-                  rows={3}
+                  rows={4}
                   value={editing.description}
                   onChange={(e) => setEditing({ ...editing, description: e.target.value })}
                   className="adm-input mt-1"
                 />
-              </label>
+              </div>
 
               <div>
                 <p className="adm-label">Spesifikasi</p>

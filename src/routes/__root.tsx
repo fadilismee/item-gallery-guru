@@ -163,28 +163,13 @@ const siteNavigationJsonLd = {
     {
       "@type": "SiteNavigationElement",
       position: 2,
-      name: "Jual Hardware Bekas & Rusak",
-      description:
-        "Buyback laptop bekas, motherboard matot, VGA artefak, dan PC mati cair tunai instan",
-      url: "https://buanacomputer.web.id/jual",
-    },
-    {
-      "@type": "SiteNavigationElement",
-      position: 3,
-      name: "Formulir Taksiran Online",
-      description: "Formulir pengajuan jual dan estimasi kilat harga hardware bekas/rusak",
-      url: "https://buanacomputer.web.id/jual/form",
-    },
-    {
-      "@type": "SiteNavigationElement",
-      position: 4,
       name: "Buana Journal & Tips Servis",
       description: "Panduan rakit PC, review teardown, dan tips perawatan laptop dari meja teknisi",
       url: "https://buanacomputer.web.id/blog",
     },
     {
       "@type": "SiteNavigationElement",
-      position: 5,
+      position: 3,
       name: "Tentang Laboratorium Buana",
       description:
         "Profil laboratorium servis mikro-elektronika, transparansi meja periksa, dan daur ulang e-waste",

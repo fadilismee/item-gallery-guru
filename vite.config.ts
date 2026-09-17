@@ -21,5 +21,6 @@ export default defineConfig({
     // host: true -> dev server bisa diakses admin lain lewat LAN kantor
     // (mis. http://192.168.1.10:3000/admin-login dari HP/PC se-WiFi).
     host: true,
+    allowedHosts: true,
   },
 });
