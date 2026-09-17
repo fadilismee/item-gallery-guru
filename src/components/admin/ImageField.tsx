@@ -19,6 +19,84 @@ function looksLikeImage(url: string): boolean {
 }
 
 /**
+ * Kompresi gambar client-side sebelum upload ke server / Catbox:
+ * - Batasi dimensi maksimum (1600px width/height)
+ * - Ekspor ke JPEG kualitas 0.82
+ * - Mengurangi ukuran file dari 2-5 MB menjadi ~100-250 KB
+ */
+async function compressImageClient(
+  file: File,
+  maxDimension = 1600,
+  quality = 0.82,
+): Promise<{ dataUrl: string; fileName: string; originalSize: number; compressedSize: number }> {
+  const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+  if (ext === "svg" || ext === "gif") {
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(new Error("Gagal membaca file."));
+      reader.readAsDataURL(file);
+    });
+    return {
+      dataUrl,
+      fileName: file.name,
+      originalSize: file.size,
+      compressedSize: file.size,
+    };
+  }
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          return reject(new Error("Gagal membuat canvas kompresi."));
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL("image/jpeg", quality);
+        const baseName = file.name.replace(/\.[^/.]+$/, "");
+        const compressedFileName = `${baseName}.jpg`;
+
+        const head = "data:image/jpeg;base64,";
+        const b64Length = dataUrl.length - head.length;
+        const compressedSize = Math.round((b64Length * 3) / 4);
+
+        resolve({
+          dataUrl,
+          fileName: compressedFileName,
+          originalSize: file.size,
+          compressedSize,
+        });
+      };
+      img.onerror = () => reject(new Error("Gagal memuat gambar untuk dikompresi."));
+      img.src = String(event.target?.result);
+    };
+    reader.onerror = () => reject(new Error("Gagal membaca file gambar."));
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
  * Field gambar admin: preview + input URL manual + tombol Upload (file -> Catbox -> link
  * otomatis terisi) + tombol Gallery (pilih dari upload-an sebelumnya).
  */
@@ -32,19 +110,18 @@ export function ImageField({ label, value, onChange, hint }: Props) {
 
   const doUpload = async (file: File) => {
     setBusy(true);
-    setMsg("");
+    setMsg("Mengompresi & mengupload gambar…");
     try {
-      const dataUrl = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result));
-        reader.onerror = () => reject(new Error("Gagal membaca file."));
-        reader.readAsDataURL(file);
-      });
+      const { dataUrl, fileName, originalSize, compressedSize } = await compressImageClient(file);
       const r = await adminUploadImage({
-        data: { token: getAdminToken() ?? "", fileName: file.name, dataUrl },
+        data: { token: getAdminToken() ?? "", fileName, dataUrl },
       });
       onChange(r.url);
-      setMsg("Upload OK — link sudah terisi otomatis.");
+      const savedPct =
+        originalSize > compressedSize
+          ? ` (Hemat ${Math.round((1 - compressedSize / originalSize) * 100)}%: ${(originalSize / 1024).toFixed(0)}KB → ${(compressedSize / 1024).toFixed(0)}KB)`
+          : "";
+      setMsg(`Upload sukses!${savedPct}`);
     } catch (e) {
       setMsg(`Upload gagal: ${errMsg(e)}`);
     } finally {

@@ -199,6 +199,11 @@
 > - Integrasi 11 produk baru ke src/data/products.json: Laptop ASUS X540YA, Dell Vostro V131, Acer Aspire E15 i7+MX150, Dell Inspiron 14 bahan, Casing Toshiba, Motherboard Gaming Acer Nitro 5 (dual blower heatsink), Motherboard Lenovo Legion, Motherboard ThinkPad X260/X240, Motherboard Dell Inspiron 14, Logic Board Sony VAIO, dan SSD M.2 2280 SATA (varian Toshiba 128GB & Intel 256GB).
 > - sitemap.xml otomatis mencakup seluruh 14 produk (total 23 URL sitemap).
 > - Verifikasi: validate 9/9 OK, ESLint 0 error, build lolos, local server 200.
+>
+> Perbaikan Link Gambar Asli & Fitur Kompresi Otomatis Upload (2026-09-17):
+> - products.json: memulihkan link gambar asli online (Shopee/Google/Tokopedia) untuk produk Hardisk Laptop (hdd-laptop), Baterai 18650 (BMC-btr18650), dan Hardisk PC (BMC-hddpc).
+> - ImageField.tsx: menambahkan fungsi kompresi client-side (compressImageClient) berbasis Canvas HTML5. Setiap file foto besar (2-5MB PNG/JPG) otomatis di-resize (maks 1600px) dan dikompresi ke JPEG kualitas 0.82 sebelum dikirim ke Catbox, memangkas ukuran file hingga 80-90% (~150KB) secara instan.
+> - Verifikasi: ESLint 0 error, validate 9/9 OK, build produksi lolos, local server 200.
 
 ## 0. Kesimpulan Arsitektur
 
