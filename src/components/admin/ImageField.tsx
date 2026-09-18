@@ -21,14 +21,14 @@ function looksLikeImage(url: string): boolean {
 
 /**
  * Kompresi gambar client-side sebelum upload ke server / Catbox:
- * - Batasi dimensi maksimum (1600px width/height)
- * - Ekspor ke JPEG kualitas 0.82
- * - Mengurangi ukuran file dari 2-5 MB menjadi ~100-250 KB
+ * - Batasi dimensi maksimum (1200px width/height)
+ * - Target ukuran agresif ~85KB - 100KB (JPEG kualitas 0.68 dengan adaptive pass)
+ * - Mengurangi ukuran file dari 2-5 MB menjadi ~85-100 KB agar web super cepat
  */
 async function compressImageClient(
   file: File,
-  maxDimension = 1600,
-  quality = 0.82,
+  maxDimension = 1200,
+  quality = 0.68,
 ): Promise<{ dataUrl: string; fileName: string; originalSize: number; compressedSize: number }> {
   const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
   if (ext === "svg" || ext === "gif") {
@@ -74,13 +74,22 @@ async function compressImageClient(
 
         ctx.drawImage(img, 0, 0, width, height);
 
-        const dataUrl = canvas.toDataURL("image/jpeg", quality);
+        let currentQuality = quality;
+        let dataUrl = canvas.toDataURL("image/jpeg", currentQuality);
+        const head = "data:image/jpeg;base64,";
+        let b64Length = dataUrl.length - head.length;
+        let compressedSize = Math.round((b64Length * 3) / 4);
+
+        // Jika ukuran masih > 100 KB, turunkan kualitas secara adaptif ke target ~85-100 KB
+        if (compressedSize > 100 * 1024 && currentQuality > 0.55) {
+          currentQuality = 0.58;
+          dataUrl = canvas.toDataURL("image/jpeg", currentQuality);
+          b64Length = dataUrl.length - head.length;
+          compressedSize = Math.round((b64Length * 3) / 4);
+        }
+
         const baseName = file.name.replace(/\.[^/.]+$/, "");
         const compressedFileName = `${baseName}.jpg`;
-
-        const head = "data:image/jpeg;base64,";
-        const b64Length = dataUrl.length - head.length;
-        const compressedSize = Math.round((b64Length * 3) / 4);
 
         resolve({
           dataUrl,
@@ -149,20 +158,32 @@ export function ImageField({ label, value, onChange, hint, aiPromptDefault }: Pr
         img.onerror = () => reject(new Error("Gagal memuat gambar untuk poles lokal."));
         img.src = trimmed;
       });
+      let width = img.width;
+      let height = img.height;
+      const maxDim = 1200;
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
       const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
+      canvas.width = width;
+      canvas.height = height;
       const ctx = canvas.getContext("2d");
       if (!ctx) throw new Error("Gagal akses canvas.");
       ctx.filter = "brightness(1.05) contrast(1.08) saturate(1.03)";
-      ctx.drawImage(img, 0, 0);
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+      ctx.drawImage(img, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.68);
       const fileName = `studio-${Date.now()}.jpg`;
       const r = await adminUploadImage({
         data: { token: getAdminToken() ?? "", fileName, dataUrl },
       });
       onChange(r.url);
-      setMsg("✨ Foto berhasil dipoles filter studio lokal (latar & kontras lebih jernih)!");
+      setMsg("✨ Foto berhasil dipoles filter studio lokal & terkompresi (~85-100KB)!");
     } catch (e) {
       setMsg(`Poles lokal gagal: ${errMsg(e)}`);
     } finally {

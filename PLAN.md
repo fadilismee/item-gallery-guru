@@ -221,6 +221,14 @@
 > - ImageField & Admin UI: tombol 'Poles AI' di ImageField dengan pengaturan prompt konsistensi katalog; tombol 'Poles Singkat AI' & 'Poles Deskripsi AI' di form produk. Hasil foto AI tetap melewati kompresi Canvas agar tidak pernah 2MB+.
 > - Fallback Chain Image AI (2026-09-17): adminEnhanceImage mencoba 6 model gambar secara sekuensial (gemini-2.5-flash-image, 3.1-flash-image, 3.1-flash-lite, 3-pro-image, nano-banana-pro, 3.1-flash-image-preview). Tombol 'Poles Studio Lokal' ditambahkan di ImageField sebagai alternatif instan bebas kuota.
 > - Verifikasi: ESLint 0 error, validate 9/9 OK, build produksi lolos, live test redirect 308 host header OK.
+>
+> Pembersihan Tombol Jual & Kompresi Agresif 85KB-100KB (2026-09-18):
+> - SiteHeader: tombol Jual dihapus total dari navigasi atas (desktop navbar & mobile drawer), hanya tersisa di footer sebagai backlink resmi ke https://jual.buanacomputer.web.id.
+> - about.tsx: link pilar buyback & CTA diarahkan langsung ke https://jual.buanacomputer.web.id sebagai backlink.
+> - ImageField.tsx: standar kompresi disetel agresif (max 1200px, JPEG Q68 + adaptive pass 100KB) agar setiap upload admin selalu berukuran ~85-100KB.
+> - Poster Statis: seluruh file gambar di src/img/ dikompres ulang dari ~200KB menjadi rata-rata ~94-98KB.
+> - 34 Foto Katalog: dikompres ulang dan di-upload ke Catbox dengan ukuran 49KB-99KB (rata-rata 85.1KB), 45 link di products.json diperbarui.
+> - Verifikasi: ESLint 0 error, validate 9/9 OK, build produksi lolos, dev server 200.
 
 ## 0. Kesimpulan Arsitektur
 

@@ -100,14 +100,6 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
             <a href="#kontak" className="rounded px-2.5 py-2 hover:bg-black/5 hover:text-black">
               Kontak
             </a>
-            <a
-              href="https://jual.buanacomputer.web.id"
-              target="_blank"
-              rel="noreferrer"
-              className="rounded bg-pri/10 px-2.5 py-2 text-pri hover:bg-pri hover:text-white"
-            >
-              Jual ↗
-            </a>
           </nav>
 
           {/* Desktop Search */}
@@ -278,18 +270,6 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
                 <span>Katalog Laptop & PC</span>
                 <span className="text-xs text-muted-foreground">Belanja →</span>
               </Link>
-              <a
-                href="https://jual.buanacomputer.web.id"
-                target="_blank"
-                rel="noreferrer"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-black/5 hover:text-black"
-              >
-                <span>Jual Hardware Bekas & Rusak</span>
-                <span className="rounded bg-pri/10 px-2 py-0.5 text-xs font-semibold text-pri">
-                  Cair Instan ↗
-                </span>
-              </a>
               <Link
                 to="/blog"
                 onClick={() => setMenuOpen(false)}

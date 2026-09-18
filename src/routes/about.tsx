@@ -102,7 +102,7 @@ const pillars = [
     title: "Buyback & Sirkularitas Kanibalan Terbuka",
     desc: "Menerima laptop & PC mati dengan skema penaksiran transparan berbasis nilai riil komponen: IC salvageable, modul RAM, heatsink tembaga murni, dan panel layar.",
     link: "Cek Price List Terima Hardware",
-    to: "/jual",
+    href: "https://jual.buanacomputer.web.id",
   },
   {
     code: "PILAR 03 — OPEN JOURNAL",
@@ -710,12 +710,23 @@ function PillarsSection() {
                 <p className="mb-6 text-sm leading-relaxed text-slate-600">{p.desc}</p>
               </div>
               <div className="border-t border-slate-100 pt-4">
-                <Link
-                  to={p.to}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600 transition-transform group-hover:translate-x-1.5"
-                >
-                  {p.link} <span aria-hidden>→</span>
-                </Link>
+                {p.href ? (
+                  <a
+                    href={p.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600 transition-transform group-hover:translate-x-1.5"
+                  >
+                    {p.link} <span aria-hidden>→</span>
+                  </a>
+                ) : (
+                  <Link
+                    to={p.to}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600 transition-transform group-hover:translate-x-1.5"
+                  >
+                    {p.link} <span aria-hidden>→</span>
+                  </Link>
+                )}
               </div>
             </div>
           ))}
@@ -932,12 +943,14 @@ function VisitCta() {
             >
               Konsultasi Servis Langsung
             </a>
-            <Link
-              to="/jual"
+            <a
+              href="https://jual.buanacomputer.web.id"
+              target="_blank"
+              rel="noreferrer"
               className="flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 py-4 text-center text-sm font-semibold text-white backdrop-blur-md transition-all hover:bg-white/15"
             >
-              Taksir &amp; Jual Komputer Rusak (Buyback)
-            </Link>
+              Taksir &amp; Jual Komputer Rusak (Buyback) ↗
+            </a>
           </div>
         </div>
       </div>
