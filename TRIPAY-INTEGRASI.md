@@ -3,7 +3,27 @@
 **Merchant Name:** Merchant Sandbox (Buana Computer Store)  
 **Kode Merchant:** `T35186`  
 **Website Resmi:** [buanacomputer.web.id](https://buanacomputer.web.id)  
-**Dokumentasi Resmi:** [tripay.co.id/developer](https://tripay.co.id/developer)
+**Dokumentasi Resmi:** [tripay.co.id/developer](https://tripay.co.id/developer)  
+**Audit Kesesuaian Docs:** 24 September 2026 — ✅ terverifikasi terhadap docs resmi (lihat tabel §0).
+
+---
+
+## 0. Checklist Kesesuaian dengan Docs Resmi Tripay
+
+| Poin Docs                                                                                                             | Implementasi Kita (`src/server/payment.ts` & `src/server.ts`) | Status |
+| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ------ |
+| Endpoint create `/api(-sandbox)/transaction/create` + header `Authorization: Bearer`                                  | Sama persis                                                   | ✅     |
+| Signature create `HMAC-SHA256(merchantCode + merchantRef + amount, privateKey)`                                       | Sama persis                                                   | ✅     |
+| Field wajib: method, merchant_ref, amount, customer_*, order_items, callback_url, return_url, expired_time, signature | Semua dikirim                                                 | ✅     |
+| Batas nominal channel (QRIS 1rb–5jt, VA 10rb–10jt)                                                                    | Divalidasi sebelum request + pesan ramah                      | ✅     |
+| Batas expired channel (QRIS maks 60 mnt, VA 24 jam)                                                                   | QRIS = 1 jam, VA = 24 jam                                     | ✅     |
+| Cek detail `/transaction/detail?reference=` / `?merchant_ref=`                                                        | Dipakai `checkOrderStatus` & `adminVerifyOrder`               | ✅     |
+| Callback POST JSON + `X-Callback-Signature` = HMAC-SHA256(raw body, privateKey)                                       | Diverifikasi timing-safe, tolak bila salah                    | ✅     |
+| Header `X-Callback-Event` harus `payment_status`                                                                      | Dicek, event lain ditolak                                     | ✅     |
+| Validasi nominal & referensi callback vs invoice                                                                      | Dicek (`total_amount`, `reference`), mismatch ditolak         | ✅     |
+| `paid_at` callback = unix timestamp                                                                                   | Dikonversi ke ISO sebelum simpan                              | ✅     |
+| Respons sukses wajib `{ "success": true }` (retry 3x bila tidak)                                                      | Dipakai                                                       | ✅     |
+| Whitelist IP callback Tripay (`95.111.200.230`)                                                                       | Info — tidak dibatasi di sisi kita                            | ℹ️     |
 
 ---
 

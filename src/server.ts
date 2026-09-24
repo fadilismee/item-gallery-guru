@@ -1,5 +1,29 @@
 import { renderErrorPage } from "./lib/error-page";
 import { getSupabaseClient } from "./lib/supabase";
+import { createHmac, timingSafeEqual } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+
+function tripayPrivateKey(): string {
+  try {
+    const p = join(process.cwd(), "src", "data", "paymentSecrets.json");
+    if (existsSync(p)) {
+      const raw = JSON.parse(readFileSync(p, "utf-8")) as {
+        tripay?: { privateKey?: string };
+      };
+      if (raw.tripay?.privateKey) return String(raw.tripay.privateKey);
+    }
+  } catch {
+    // abaikan, fallback ke env
+  }
+  return (process.env.TRIPAY_PRIVATE_KEY || "").trim();
+}
+
+function signaturesEqual(a: string, b: string): boolean {
+  const ba = Buffer.from(a, "utf8");
+  const bb = Buffer.from(b, "utf8");
+  return ba.length === bb.length && ba.length > 0 && timingSafeEqual(ba, bb);
+}
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -22,49 +46,132 @@ export default {
       const url = new URL(request.url);
 
       // Webhook Endpoint for Tripay.co.id Callbacks
+      // Sesuai docs resmi: https://tripay.co.id/developer (#callback)
+      // - POST JSON + header X-Callback-Signature = HMAC-SHA256(raw body, privateKey)
+      // - Header X-Callback-Event harus "payment_status"
+      // - Respons sukses wajib { "success": true } (selain itu dicoba ulang 3x)
       if (url.pathname === "/api/webhook/tripay" || url.pathname === "/api/webhook/tokopay") {
+        const jsonRes = (obj: unknown) =>
+          new Response(JSON.stringify(obj), {
+            status: 200,
+            headers: { "content-type": "application/json" },
+          });
         try {
-          let refId =
-            url.searchParams.get("merchant_ref") ||
-            url.searchParams.get("ref_id") ||
-            url.searchParams.get("reff_id") ||
-            "";
-          let rawStatus = (url.searchParams.get("status") || "").toUpperCase();
-
-          if (request.method === "POST") {
-            const contentType = request.headers.get("content-type") || "";
-            if (contentType.includes("application/json")) {
-              const body = (await request.json()) as {
-                merchant_ref?: string;
-                ref_id?: string;
-                reff_id?: string;
-                status?: string;
-                is_closed_payment?: number;
-                paid_at?: number | string;
-              };
-              refId = body.merchant_ref || body.ref_id || body.reff_id || refId;
-              rawStatus = String(body.status || rawStatus).toUpperCase();
-            } else if (contentType.includes("application/x-www-form-urlencoded")) {
-              const formData = await request.formData();
-              refId = String(
-                formData.get("merchant_ref") ||
-                  formData.get("ref_id") ||
-                  formData.get("reff_id") ||
-                  refId,
-              );
-              rawStatus = String(formData.get("status") || rawStatus).toUpperCase();
+          // Alur legacy Tokopay via query string (kompatibilitas mundur)
+          if (request.method === "GET") {
+            const refId = url.searchParams.get("ref_id") || url.searchParams.get("reff_id") || "";
+            const rawStatus = (url.searchParams.get("status") || "").toUpperCase();
+            const isPaidLegacy = ["SUCCESS", "PAID", "DIBAYAR", "TERBAYAR", "1"].includes(
+              rawStatus,
+            );
+            if (refId && isPaidLegacy) {
+              const supabase = getSupabaseClient();
+              if (supabase) {
+                await supabase
+                  .from("orders")
+                  .update({ payment_status: "PAID", paid_at: new Date().toISOString() })
+                  .eq("id", refId);
+              }
             }
+            return jsonRes({ success: true });
           }
 
-          const isPaid =
-            rawStatus === "PAID" ||
-            rawStatus === "SUCCESS" ||
-            rawStatus === "SETTLED" ||
-            rawStatus === "DIBAYAR" ||
-            rawStatus === "TERBAYAR" ||
-            rawStatus === "1";
+          if (request.method !== "POST") {
+            return jsonRes({ success: false, message: "Method not allowed" });
+          }
 
-          if (refId && isPaid) {
+          // 1. Baca raw body (wajib utuh untuk verifikasi signature)
+          const rawBody = await request.text();
+          let body: {
+            reference?: string;
+            merchant_ref?: string;
+            status?: string;
+            total_amount?: number;
+            paid_at?: number | null;
+          };
+          try {
+            body = JSON.parse(rawBody) as typeof body;
+          } catch {
+            return jsonRes({ success: false, message: "Invalid JSON body" });
+          }
+
+          // 2. Alur Tripay (ada merchant_ref) → verifikasi signature ketat
+          if (body.merchant_ref) {
+            const event = request.headers.get("x-callback-event") || "";
+            if (event && event !== "payment_status") {
+              return jsonRes({ success: false, message: `Unrecognized event: ${event}` });
+            }
+            const sentSig = request.headers.get("x-callback-signature") || "";
+            const privateKey = tripayPrivateKey();
+            if (!privateKey) {
+              console.error("Webhook: TRIPAY_PRIVATE_KEY belum diset.");
+              return jsonRes({ success: false, message: "Server misconfigured" });
+            }
+            const expectedSig = createHmac("sha256", privateKey).update(rawBody).digest("hex");
+            if (!signaturesEqual(sentSig, expectedSig)) {
+              console.warn("Webhook: invalid Tripay signature.");
+              return jsonRes({ success: false, message: "Invalid signature" });
+            }
+
+            const status = String(body.status || "").toUpperCase();
+            const mapped =
+              status === "PAID"
+                ? "PAID"
+                : status === "EXPIRED"
+                  ? "EXPIRED"
+                  : status === "FAILED"
+                    ? "FAILED"
+                    : status === "REFUND"
+                      ? "CANCELLED"
+                      : null;
+            if (!mapped) {
+              return jsonRes({ success: false, message: "Unrecognized payment status" });
+            }
+
+            // 3. Cocokkan nominal dengan invoice agar callback palsu tidak lolos
+            const supabase = getSupabaseClient();
+            if (supabase) {
+              const { data: order } = await supabase
+                .from("orders")
+                .select("id, total_amount, tripay_reference")
+                .eq("id", body.merchant_ref)
+                .single();
+              if (!order) {
+                return jsonRes({ success: false, message: "Invoice not found" });
+              }
+              if (
+                (order as { tripay_reference?: string }).tripay_reference &&
+                body.reference &&
+                (order as { tripay_reference?: string }).tripay_reference !== body.reference
+              ) {
+                return jsonRes({ success: false, message: "Reference mismatch" });
+              }
+              if (
+                typeof body.total_amount === "number" &&
+                Number((order as { total_amount?: number }).total_amount) !== body.total_amount
+              ) {
+                return jsonRes({ success: false, message: "Amount mismatch" });
+              }
+              const patch: Record<string, string> = { payment_status: mapped };
+              if (mapped === "PAID") {
+                patch.paid_at =
+                  typeof body.paid_at === "number"
+                    ? new Date(body.paid_at * 1000).toISOString()
+                    : new Date().toISOString();
+              }
+              await supabase.from("orders").update(patch).eq("id", body.merchant_ref);
+            }
+            return jsonRes({ success: true });
+          }
+
+          // 3b. Fallback legacy (tokopay-style POST tanpa signature)
+          const refId = String(
+            (body as { ref_id?: string; reff_id?: string }).ref_id ||
+              (body as { reff_id?: string }).reff_id ||
+              "",
+          );
+          const rawStatus = String((body as { status?: string }).status || "").toUpperCase();
+          if (refId && ["SUCCESS", "PAID", "DIBAYAR", "TERBAYAR", "1"].includes(rawStatus)) {
             const supabase = getSupabaseClient();
             if (supabase) {
               await supabase
@@ -73,17 +180,10 @@ export default {
                 .eq("id", refId);
             }
           }
-
-          return new Response(JSON.stringify({ success: true, message: "OK", ref_id: refId }), {
-            status: 200,
-            headers: { "content-type": "application/json" },
-          });
+          return jsonRes({ success: true });
         } catch (webhookErr) {
           console.error("Payment webhook processing error:", webhookErr);
-          return new Response(JSON.stringify({ success: false, error: String(webhookErr) }), {
-            status: 500,
-            headers: { "content-type": "application/json" },
-          });
+          return jsonRes({ success: false, error: String(webhookErr) });
         }
       }
 

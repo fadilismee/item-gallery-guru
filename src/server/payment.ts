@@ -116,6 +116,18 @@ const TRIPAY_CHANNEL: Record<string, string> = {
   va_bni: "BNIVA",
 };
 
+/**
+ * Batas nominal & kedaluwarsa per channel sesuai tabel resmi Tripay
+ * (https://tripay.co.id/developer — Daftar Channel & Biaya).
+ */
+const TRIPAY_LIMITS: Record<string, { min: number; max: number; expiredSecs: number }> = {
+  qris: { min: 1000, max: 5000000, expiredSecs: 60 * 60 },
+  va_bca: { min: 10000, max: 10000000, expiredSecs: 24 * 60 * 60 },
+  va_bri: { min: 10000, max: 10000000, expiredSecs: 24 * 60 * 60 },
+  va_mandiri: { min: 10000, max: 10000000, expiredSecs: 24 * 60 * 60 },
+  va_bni: { min: 10000, max: 10000000, expiredSecs: 24 * 60 * 60 },
+};
+
 export type CreateOrderInput = {
   customerName: string;
   customerPhone: string;
@@ -170,6 +182,14 @@ async function createTripayOrder(
   const baseUrl = useSandbox ? "https://tripay.co.id/api-sandbox" : "https://tripay.co.id/api";
   const channel = TRIPAY_CHANNEL[method] || "QRIS";
 
+  const limits = TRIPAY_LIMITS[method] ?? TRIPAY_LIMITS.qris;
+  if (totalAmount < limits.min || totalAmount > limits.max) {
+    const fmt = (v: number) => `Rp ${v.toLocaleString("id-ID")}`;
+    throw new Error(
+      `Nominal ${fmt(totalAmount)} di luar batas channel ini (${fmt(limits.min)}–${fmt(limits.max)}). Bagi transaksi atau checkout via WhatsApp / marketplace.`,
+    );
+  }
+
   const signature = crypto
     .createHmac("sha256", privateKey)
     .update(merchantCode + orderId + String(totalAmount))
@@ -191,7 +211,7 @@ async function createTripayOrder(
     })),
     callback_url: "https://buanacomputer.web.id/api/webhook/tripay",
     return_url: `https://buanacomputer.web.id/order/${orderId}`,
-    expired_time: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+    expired_time: Math.floor(Date.now() / 1000) + limits.expiredSecs,
     signature,
   };
 
