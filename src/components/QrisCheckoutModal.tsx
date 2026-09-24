@@ -170,10 +170,10 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
               </div>
               <div>
                 <h2 className="font-heading text-lg font-bold text-foreground">
-                  Bayar Instan via QRIS (Tokopay)
+                  Bayar Instan via QRIS (Tripay)
                 </h2>
                 <p className="text-xs text-muted-foreground">
-                  BCA, Gopay, ShopeePay, OVO, Dana, LinkAja &amp; Semua m-Banking
+                  BCA, Mandiri, BRI, BNI, GoPay, ShopeePay, OVO, DANA &amp; Semua m-Banking
                 </p>
               </div>
             </div>
@@ -289,18 +289,18 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
             <div className="my-4 mx-auto flex w-fit flex-col items-center justify-center rounded-2xl border border-border bg-white p-4 shadow-md">
               <img
                 src={order.payment_url}
-                alt="QRIS Tokopay Buana Computer"
+                alt="QRIS Tripay Buana Computer"
                 className="h-56 w-56 sm:h-64 sm:w-64 object-contain rounded-lg"
               />
               <p className="mt-2 text-[11px] font-semibold text-slate-800">
-                BUANA COMPUTER • TOKOPAY.ID
+                BUANA COMPUTER • TRIPAY
               </p>
             </div>
 
             {/* Total Amount & Copy */}
             <div className="rounded-2xl border border-border bg-muted/30 p-3 flex items-center justify-between text-left">
               <div>
-                <p className="text-[10px] text-muted-foreground">Total Nominal Transfer:</p>
+                <p className="text-[10px] text-muted-foreground">Total Tagihan:</p>
                 <p className="font-mono text-base font-bold text-primary">
                   {formatPrice(order.total_amount)}
                 </p>
@@ -327,6 +327,17 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
               >
                 {checking ? "Memeriksa Pembayaran..." : "✓ Saya Sudah Bayar / Cek Status"}
               </button>
+
+              {order.checkout_url && (
+                <a
+                  href={order.checkout_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 py-2.5 text-xs font-bold text-primary hover:bg-primary/20"
+                >
+                  Buka Halaman Pembayaran Tripay →
+                </a>
+              )}
 
               <a
                 href={waConfirmHref}

@@ -2,17 +2,11 @@ import { createServerFn } from "@tanstack/react-start";
 import { getSupabaseClient, type OrderRecord } from "@/lib/supabase";
 import crypto from "node:crypto";
 
-const TOKOPAY_API_BASE = "https://api.tokopay.id/v1";
-
-// Memory storage fallback for local dev / testing before Supabase keys are entered
+// Memory storage fallback for local dev / testing
 const memoryOrders = new Map<string, OrderRecord>();
 
 function getEnv(key: string): string {
   return (process.env[key] || "").trim();
-}
-
-function md5(input: string): string {
-  return crypto.createHash("md5").update(input).digest("hex");
 }
 
 function generateInvoiceId(): string {
@@ -54,66 +48,87 @@ export const createOrderQris = createServerFn({ method: "POST" }).handler(
     if (totalAmount <= 0) throw new Error("Total pembayaran tidak valid.");
 
     const orderId = generateInvoiceId();
-    const merchantId = getEnv("TOKOPAY_MERCHANT_ID");
-    const secretKey = getEnv("TOKOPAY_SECRET_KEY");
 
-    let qrisString = "";
+    const merchantCode = getEnv("TRIPAY_MERCHANT_CODE") || "T35186";
+    const apiKey = getEnv("TRIPAY_API_KEY") || "DEV-crOyCsZR5BBHhFld4c5QQMCynd07ylKncmyMZi3d";
+    const privateKey = getEnv("TRIPAY_PRIVATE_KEY") || "IDjFa-tQj1V-mLm1r-tqiju-WIJI0";
+
+    const isSandbox = apiKey.startsWith("DEV-");
+    const baseUrl = isSandbox ? "https://tripay.co.id/api-sandbox" : "https://tripay.co.id/api";
+
     let qrisUrl = "";
-    let tokopayTrxId = `TEST-TRX-${Date.now()}`;
+    let qrisString = "";
+    let checkoutUrl = "";
+    let tripayReference = "";
     let isTestMode = false;
 
-    if (merchantId && secretKey && merchantId !== "test") {
-      // Live / Sandbox Tokopay.id Request
-      const signature = md5(`${merchantId}:${secretKey}:${orderId}`);
-      try {
-        const payload = {
-          merchant_id: merchantId,
-          secret_key: secretKey,
-          ref_id: orderId,
-          nominal: totalAmount,
-          metode: "QRIS",
-          customer_name: customerName,
-          customer_phone: customerPhone,
-          signature,
-        };
+    if (merchantCode && apiKey && privateKey) {
+      const signature = crypto
+        .createHmac("sha256", privateKey)
+        .update(merchantCode + orderId + String(totalAmount))
+        .digest("hex");
 
-        const res = await fetch(`${TOKOPAY_API_BASE}/order`, {
+      const payload = {
+        method: "QRIS",
+        merchant_ref: orderId,
+        amount: totalAmount,
+        customer_name: customerName,
+        customer_email: "customer@buanacomputer.web.id",
+        customer_phone: customerPhone,
+        order_items: items.map((it) => ({
+          sku: it.id,
+          name: (it.variant ? `${it.name} (${it.variant})` : it.name).slice(0, 50),
+          price: it.price,
+          quantity: it.qty,
+          image_url: it.image || undefined,
+        })),
+        callback_url: "https://buanacomputer.web.id/api/webhook/tripay",
+        return_url: `https://buanacomputer.web.id/order/${orderId}`,
+        expired_time: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+        signature,
+      };
+
+      try {
+        const res = await fetch(`${baseUrl}/transaction/create`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify(payload),
         });
 
         const json = (await res.json()) as {
-          status?: boolean | string | number;
+          success?: boolean;
           message?: string;
-          error_msg?: string;
           data?: {
-            trx_id?: string;
-            qr_link?: string;
+            reference?: string;
+            qr_url?: string;
             qr_string?: string;
-            pay_url?: string;
+            checkout_url?: string;
+            status?: string;
           };
         };
 
-        if (json.data && (json.status === "Success" || json.status === 1 || json.status === true)) {
-          tokopayTrxId = json.data.trx_id || tokopayTrxId;
+        if (json.success && json.data) {
+          tripayReference = json.data.reference || "";
+          qrisUrl = json.data.qr_url || "";
           qrisString = json.data.qr_string || "";
-          qrisUrl = json.data.qr_link || json.data.pay_url || "";
-        } else if (json.error_msg) {
-          console.warn("Tokopay API notice:", json.error_msg);
+          checkoutUrl = json.data.checkout_url || "";
+        } else {
+          console.warn("Tripay create order API notice:", json.message);
           isTestMode = true;
         }
       } catch (e) {
-        console.error("Tokopay live request error, falling back to test mode:", e);
+        console.error("Tripay API request failed, falling back to local simulator:", e);
         isTestMode = true;
       }
     } else {
       isTestMode = true;
     }
 
-    if (isTestMode || !qrisUrl) {
-      // Testing QRIS payload with dynamic QR code
-      const dummyQrPayload = `00020101021126580016ID.CO.TOKOPAY.WWW01189360099900000000005204581253033605802ID5914BUANA COMPUTER6006BANTUL61055519662${orderId}540${totalAmount}6304`;
+    if (!qrisUrl) {
+      const dummyQrPayload = `00020101021126580016ID.CO.TRIPAY.WWW01189360099900000000005204581253033605802ID5914BUANA COMPUTER6006BANTUL61055519662${orderId}540${totalAmount}6304`;
       qrisString = dummyQrPayload;
       qrisUrl = `https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=12&data=${encodeURIComponent(
         dummyQrPayload,
@@ -127,12 +142,13 @@ export const createOrderQris = createServerFn({ method: "POST" }).handler(
       customer_address: customerAddress || undefined,
       items,
       total_amount: totalAmount,
-      payment_gateway: "tokopay",
+      payment_gateway: "tripay",
       payment_channel: "qris",
       payment_status: "PENDING",
       payment_url: qrisUrl,
       qris_string: qrisString,
-      tokopay_trx_id: tokopayTrxId,
+      checkout_url: checkoutUrl,
+      tripay_reference: tripayReference,
       created_at: new Date().toISOString(),
     };
 
@@ -140,7 +156,27 @@ export const createOrderQris = createServerFn({ method: "POST" }).handler(
     const supabase = getSupabaseClient();
     if (supabase) {
       try {
-        await supabase.from("orders").insert([newOrder]);
+        const { error } = await supabase.from("orders").insert([newOrder]);
+        if (error && error.code === "PGRST204") {
+          // Fallback if extra columns not in schema cache
+          await supabase.from("orders").insert([
+            {
+              id: newOrder.id,
+              customer_name: newOrder.customer_name,
+              customer_phone: newOrder.customer_phone,
+              customer_address: newOrder.customer_address,
+              items: newOrder.items,
+              total_amount: newOrder.total_amount,
+              payment_gateway: newOrder.payment_gateway,
+              payment_channel: newOrder.payment_channel,
+              payment_status: newOrder.payment_status,
+              payment_url: newOrder.payment_url,
+              qris_string: newOrder.qris_string,
+              tokopay_trx_id: newOrder.tripay_reference,
+              created_at: newOrder.created_at,
+            },
+          ]);
+        }
       } catch (err) {
         console.warn("Supabase insert error (fallback to memory):", err);
       }
@@ -189,59 +225,56 @@ export const checkOrderStatus = createServerFn({ method: "POST" }).handler(
       throw new Error("Order tidak ditemukan.");
     }
 
-    // If still PENDING and Tokopay credentials exist, check status from Tokopay API
+    // If still PENDING, check status from Tripay API
     if (order.payment_status === "PENDING") {
-      const merchantId = getEnv("TOKOPAY_MERCHANT_ID");
-      const secretKey = getEnv("TOKOPAY_SECRET_KEY");
+      const apiKey = getEnv("TRIPAY_API_KEY") || "DEV-crOyCsZR5BBHhFld4c5QQMCynd07ylKncmyMZi3d";
+      const isSandbox = apiKey.startsWith("DEV-");
+      const baseUrl = isSandbox ? "https://tripay.co.id/api-sandbox" : "https://tripay.co.id/api";
 
-      if (merchantId && secretKey && merchantId !== "test") {
-        try {
-          const url = `${TOKOPAY_API_BASE}/order/status?merchant_id=${encodeURIComponent(
-            merchantId,
-          )}&secret_key=${encodeURIComponent(secretKey)}&ref_id=${encodeURIComponent(orderId)}`;
+      const refParam = order.tripay_reference
+        ? `reference=${encodeURIComponent(order.tripay_reference)}`
+        : `merchant_ref=${encodeURIComponent(order.id)}`;
 
-          const res = await fetch(url, { method: "GET" });
-          const json = (await res.json()) as {
-            status?: boolean | string | number;
-            data?: {
-              status?: string;
-              status_pembayaran?: string;
-              paid_at?: string;
-            };
+      try {
+        const res = await fetch(`${baseUrl}/transaction/detail?${refParam}`, {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+          },
+        });
+        const json = (await res.json()) as {
+          success?: boolean;
+          data?: {
+            status?: string;
+            paid_at?: number | string;
           };
+        };
 
-          const rawStatus = (
-            json?.data?.status ||
-            json?.data?.status_pembayaran ||
-            ""
-          ).toUpperCase();
+        const status = String(json?.data?.status || "").toUpperCase();
+        if (status === "PAID" || status === "SUCCESS" || status === "SETTLED") {
+          const paidAt = json.data?.paid_at
+            ? typeof json.data.paid_at === "number"
+              ? new Date(json.data.paid_at * 1000).toISOString()
+              : String(json.data.paid_at)
+            : new Date().toISOString();
 
-          if (
-            rawStatus === "PAID" ||
-            rawStatus === "SUCCESS" ||
-            rawStatus === "BERHASIL" ||
-            rawStatus === "TERBAYAR"
-          ) {
-            const paidAt = json.data?.paid_at || new Date().toISOString();
-            order.payment_status = "PAID";
-            order.paid_at = paidAt;
-            memoryOrders.set(orderId, order);
+          order.payment_status = "PAID";
+          order.paid_at = paidAt;
+          memoryOrders.set(orderId, order);
 
-            const supabase = getSupabaseClient();
-            if (supabase) {
-              try {
-                await supabase
-                  .from("orders")
-                  .update({ payment_status: "PAID", paid_at: paidAt })
-                  .eq("id", orderId);
-              } catch {
-                // ignore
-              }
+          const supabase = getSupabaseClient();
+          if (supabase) {
+            try {
+              await supabase
+                .from("orders")
+                .update({ payment_status: "PAID", paid_at: paidAt })
+                .eq("id", orderId);
+            } catch {
+              // ignore
             }
           }
-        } catch (e) {
-          console.warn("Tokopay live status check error:", e);
         }
+      } catch (e) {
+        console.warn("Tripay detail check error:", e);
       }
     }
 
@@ -282,59 +315,5 @@ export const simulateOrderPayment = createServerFn({ method: "POST" }).handler(
     }
 
     return { ok: true as const, status: "PAID", paid_at: paidAt };
-  },
-);
-
-/**
- * Webhook callback handler from Tokopay.id
- */
-export const handleTokopayCallback = createServerFn({ method: "POST" }).handler(
-  async ({
-    data,
-  }: {
-    data: {
-      merchant_id?: string;
-      ref_id?: string;
-      status?: string;
-      signature?: string;
-      nominal?: number;
-      total_bayar?: number;
-    };
-  }) => {
-    const refId = data?.ref_id || "";
-    const rawStatus = String(data?.status || "").toUpperCase();
-
-    if (!refId) throw new Error("ref_id kosong");
-
-    const isPaid =
-      rawStatus === "SUCCESS" ||
-      rawStatus === "PAID" ||
-      rawStatus === "DIBAYAR" ||
-      rawStatus === "TERBAYAR" ||
-      rawStatus === "1";
-
-    if (isPaid) {
-      const paidAt = new Date().toISOString();
-      const order = memoryOrders.get(refId);
-      if (order) {
-        order.payment_status = "PAID";
-        order.paid_at = paidAt;
-        memoryOrders.set(refId, order);
-      }
-
-      const supabase = getSupabaseClient();
-      if (supabase) {
-        try {
-          await supabase
-            .from("orders")
-            .update({ payment_status: "PAID", paid_at: paidAt })
-            .eq("id", refId);
-        } catch {
-          // ignore
-        }
-      }
-    }
-
-    return { status: "OK" };
   },
 );

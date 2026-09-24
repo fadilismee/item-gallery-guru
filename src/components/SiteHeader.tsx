@@ -241,7 +241,7 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
                                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-xs font-bold text-primary-foreground shadow-sm hover:bg-primary/90"
                               >
                                 <QrCode size={16} />
-                                Bayar via QRIS (Tokopay)
+                                Bayar via QRIS (Tripay)
                               </button>
                               <a
                                 href={waCartHref}

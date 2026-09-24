@@ -11,15 +11,21 @@ create table if not exists public.orders (
   customer_address text,
   items jsonb not null default '[]'::jsonb,
   total_amount bigint not null default 0,
-  payment_gateway text default 'tokopay',
+  payment_gateway text default 'tripay',
   payment_channel text default 'qris',
   payment_status text not null default 'PENDING',
   payment_url text,
   qris_string text,
+  checkout_url text,
+  tripay_reference text,
   tokopay_trx_id text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   paid_at timestamp with time zone
 );
+
+-- Pastikan kolom baru tetap ada jika tabel sudah pernah dibuat sebelumnya
+alter table public.orders add column if not exists checkout_url text;
+alter table public.orders add column if not exists tripay_reference text;
 
 -- Row Level Security (RLS) agar pembeli & server bisa baca/tulis order
 alter table public.orders enable row level security;

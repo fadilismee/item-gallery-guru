@@ -458,7 +458,7 @@ function ProductDetail() {
                 className="h-11 w-full font-heading font-bold shadow-md bg-pri text-on-pri hover:bg-pri-container text-sm flex items-center justify-center gap-2"
               >
                 <QrCode size={18} />
-                <span>Beli Langsung via QRIS (Tokopay)</span>
+                <span>Beli Langsung via QRIS (Tripay)</span>
               </Button>
 
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">

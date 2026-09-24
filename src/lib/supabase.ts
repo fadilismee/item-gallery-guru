@@ -42,11 +42,13 @@ export type OrderRecord = {
     image?: string;
   }>;
   total_amount: number;
-  payment_gateway: "tokopay" | "manual_wa";
+  payment_gateway: "tripay" | "tokopay" | "manual_wa";
   payment_channel: "qris" | "va_bca" | "va_mandiri" | "va_bri" | "cash_cod";
   payment_status: "PENDING" | "PAID" | "EXPIRED" | "FAILED" | "CANCELLED";
   payment_url?: string;
   qris_string?: string;
+  checkout_url?: string;
+  tripay_reference?: string;
   tokopay_trx_id?: string;
   created_at: string;
   paid_at?: string;
