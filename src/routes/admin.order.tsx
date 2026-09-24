@@ -108,6 +108,17 @@ function AdminOrder() {
     void reload("ALL", "");
   }, [reload]);
 
+  // Auto-refresh tiap 15 detik agar order baru langsung muncul tanpa klik manual.
+  // Dijeda otomatis saat tab browser tidak aktif (hemat kuota Supabase).
+  useEffect(() => {
+    const t = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        void reload();
+      }
+    }, 15000);
+    return () => clearInterval(t);
+  }, [reload]);
+
   const applyFilter = (s: StatusFilter) => {
     setStatus(s);
     void reload(s, query);

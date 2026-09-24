@@ -45,6 +45,11 @@ drop policy if exists "Allow anonymous update order" on public.orders;
 create policy "Allow anonymous update order" on public.orders
   for update using (true);
 
+-- Policy untuk hapus order testing / sampah dari dashboard admin
+drop policy if exists "Allow anonymous delete order" on public.orders;
+create policy "Allow anonymous delete order" on public.orders
+  for delete using (true);
+
 -- Index pencarian cepat berdasarkan status dan no hp
 create index if not exists idx_orders_status on public.orders(payment_status);
 create index if not exists idx_orders_created_at on public.orders(created_at desc);
