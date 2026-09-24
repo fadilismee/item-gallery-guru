@@ -49,15 +49,17 @@ function assertUsableRepo() {
   }
 }
 
-function assertLocal() {
+function assertWriteAllowed() {
   if (process.env.NODE_ENV === "production") {
-    throw new Error("Halaman admin hanya tersedia di local/dev, nonaktif di production.");
+    throw new Error(
+      "Penyuntingan data JSON hanya dapat dilakukan dari mesin dev server lokal lab Buana Computer.",
+    );
   }
   assertUsableRepo();
 }
 
 function assertAuth(token: unknown) {
-  assertLocal();
+  assertUsableRepo();
   if (typeof token !== "string" || token.length === 0)
     throw new Error("Unauthorized: silakan login dulu.");
   const a = Buffer.from(token, "utf8");
@@ -83,7 +85,7 @@ function zodIssues(e: unknown): string {
 
 export const adminLogin = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { password: string } }) => {
-    assertLocal();
+    assertUsableRepo();
     const pw = data?.password ?? "";
     const a = Buffer.from(
       createHmac("sha256", adminPassword()).update(TOKEN_LABEL).digest("hex"),
@@ -281,6 +283,7 @@ export const adminGetDataset = createServerFn({ method: "GET" }).handler(
 export const adminSaveDataset = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; name: string; data: unknown } }) => {
     assertAuth(data?.token);
+    assertWriteAllowed();
     const ds = DATASETS[data.name];
     if (!ds) throw new Error(`Dataset tidak dikenal: ${data.name}`);
     try {
@@ -323,6 +326,7 @@ export const adminGitStatus = createServerFn({ method: "GET" }).handler(
 export const adminGitCommitPush = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; message: string } }) => {
     assertAuth(data?.token);
+    assertWriteAllowed();
     const message = (data?.message ?? "").trim();
     if (message.length < 5) throw new Error("Pesan commit minimal 5 karakter.");
     const run = async (args: string[]) => {
@@ -607,6 +611,7 @@ export const adminUploadImage = createServerFn({ method: "POST" }).handler(
 export const adminUploadLocalBanner = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; fileName: string; dataUrl: string } }) => {
     assertAuth(data?.token);
+    assertWriteAllowed();
     const rawName = (data?.fileName ?? "banner").trim() || "banner";
     // Bersihkan nama file dan buang ekstensi lama
     const baseClean = rawName
