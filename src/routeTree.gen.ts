@@ -16,6 +16,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminBannerRouteImport } from './routes/admin.banner'
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
+import { Route as AdminOrderRouteImport } from './routes/admin.order'
 import { Route as AdminProdukRouteImport } from './routes/admin.produk'
 import { Route as AdminReviewRouteImport } from './routes/admin.review'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
@@ -58,6 +59,11 @@ const AdminBlogRoute = AdminBlogRouteImport.update({
   path: '/blog',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminOrderRoute = AdminOrderRouteImport.update({
+  id: '/order',
+  path: '/order',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminProdukRoute = AdminProdukRouteImport.update({
   id: '/produk',
   path: '/produk',
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/admin-login': typeof AdminLoginRoute
   '/admin/banner': typeof AdminBannerRoute
   '/admin/blog': typeof AdminBlogRoute
+  '/admin/order': typeof AdminOrderRoute
   '/admin/produk': typeof AdminProdukRoute
   '/admin/review': typeof AdminReviewRoute
   '/blog/$articleId': typeof BlogArticleIdRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/admin-login': typeof AdminLoginRoute
   '/admin/banner': typeof AdminBannerRoute
   '/admin/blog': typeof AdminBlogRoute
+  '/admin/order': typeof AdminOrderRoute
   '/admin/produk': typeof AdminProdukRoute
   '/admin/review': typeof AdminReviewRoute
   '/blog/$articleId': typeof BlogArticleIdRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/admin-login': typeof AdminLoginRoute
   '/admin/banner': typeof AdminBannerRoute
   '/admin/blog': typeof AdminBlogRoute
+  '/admin/order': typeof AdminOrderRoute
   '/admin/produk': typeof AdminProdukRoute
   '/admin/review': typeof AdminReviewRoute
   '/blog/$articleId': typeof BlogArticleIdRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/admin/banner'
     | '/admin/blog'
+    | '/admin/order'
     | '/admin/produk'
     | '/admin/review'
     | '/blog/$articleId'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/admin/banner'
     | '/admin/blog'
+    | '/admin/order'
     | '/admin/produk'
     | '/admin/review'
     | '/blog/$articleId'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/admin/banner'
     | '/admin/blog'
+    | '/admin/order'
     | '/admin/produk'
     | '/admin/review'
     | '/blog/$articleId'
@@ -243,6 +255,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBlogRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/order': {
+      id: '/admin/order'
+      path: '/order'
+      fullPath: '/admin/order'
+      preLoaderRoute: typeof AdminOrderRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/produk': {
       id: '/admin/produk'
       path: '/produk'
@@ -291,6 +310,7 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminBannerRoute: typeof AdminBannerRoute
   AdminBlogRoute: typeof AdminBlogRoute
+  AdminOrderRoute: typeof AdminOrderRoute
   AdminProdukRoute: typeof AdminProdukRoute
   AdminReviewRoute: typeof AdminReviewRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -299,6 +319,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminBannerRoute: AdminBannerRoute,
   AdminBlogRoute: AdminBlogRoute,
+  AdminOrderRoute: AdminOrderRoute,
   AdminProdukRoute: AdminProdukRoute,
   AdminReviewRoute: AdminReviewRoute,
   AdminIndexRoute: AdminIndexRoute,

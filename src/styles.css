@@ -716,6 +716,11 @@
   color: #0e7a4d;
 }
 
+.adm-icon-chip.amber {
+  background: #fef3d8;
+  color: #92600a;
+}
+
 .adm-stat-card {
   display: flex;
   flex-direction: column;

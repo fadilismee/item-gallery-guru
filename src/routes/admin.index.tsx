@@ -1,6 +1,12 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import { adminGitCommitPush, adminGitStatus, adminStatus, adminValidate } from "@/server/admin";
+import {
+  adminGitCommitPush,
+  adminGitStatus,
+  adminListOrders,
+  adminStatus,
+  adminValidate,
+} from "@/server/admin";
 import { AdminIcon as Icon } from "@/components/admin/AdminIcon";
 import { errMsg, getAdminToken } from "@/lib/adminClient";
 import { isEasyMode, useAdminMode } from "@/lib/adminMode";
@@ -121,6 +127,12 @@ function AdminDashboard() {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [orderStats, setOrderStats] = useState<{
+    total: number;
+    pending: number;
+    paid: number;
+    revenue: number;
+  } | null>(null);
 
   const token = () => getAdminToken() ?? "";
 
@@ -148,6 +160,17 @@ function AdminDashboard() {
         await refreshGit();
       } catch (e) {
         setError(errMsg(e));
+      }
+      try {
+        const o = await adminListOrders({ data: { token: token(), status: "ALL", limit: 200 } });
+        setOrderStats({
+          total: o.stats.total,
+          pending: o.stats.pending,
+          paid: o.stats.paid,
+          revenue: o.stats.revenue,
+        });
+      } catch {
+        // Supabase belum terhubung — tile transaksi tampil tanpa angka
       }
     })();
   }, [refreshGit]);
@@ -199,6 +222,15 @@ function AdminDashboard() {
       desc: "Kelola laptop, PC rakitan, storage, dan varian harga/stok toko",
       count: dash?.counts.products,
       unit: "Produk",
+    },
+    {
+      to: "/admin/order",
+      icon: "receipt_long",
+      chip: "amber",
+      label: "Transaksi & Order",
+      desc: "Log invoice Supabase: pending, lunas, gagal + verifikasi ke Tripay",
+      count: orderStats?.pending,
+      unit: "Pending",
     },
     {
       to: "/admin/blog",
@@ -268,6 +300,13 @@ function AdminDashboard() {
               <Icon name="campaign" className="text-[18px] text-pri" />
               Atur Banner
             </Link>
+            <Link to="/admin/order" className="adm-btn-ghost inline-flex items-center gap-1.5">
+              <Icon name="receipt_long" className="text-[18px] text-pri" />
+              Log Transaksi
+              {orderStats && orderStats.pending > 0 && (
+                <span className="adm-chip adm-chip-amber ml-1">{orderStats.pending}</span>
+              )}
+            </Link>
           </div>
         </div>
       </section>
@@ -275,8 +314,8 @@ function AdminDashboard() {
       {error && <p className="adm-alert-err">{error}</p>}
       {notice && <p className="adm-alert-ok whitespace-pre-wrap">{notice}</p>}
 
-      {/* ---------- 5 STAT CARDS (STORE FOCUS) ---------- */}
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
+      {/* ---------- 6 STAT CARDS (STORE FOCUS) ---------- */}
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
         <StatCard
           eyebrow="Katalog Toko"
           title="Total Produk"
@@ -290,6 +329,18 @@ function AdminDashboard() {
           }
           footLeftClass={dash && dash.inv.lowCount > 0 ? "text-red-700" : "text-green-700"}
           footRight={dash ? `${dash.inv.featured} Unggulan` : undefined}
+        />
+        <StatCard
+          eyebrow="Kasir Toko"
+          title="Transaksi"
+          icon="receipt_long"
+          chip="amber"
+          to="/admin/order"
+          value={orderStats ? `${orderStats.pending}` : "…"}
+          unit="Pending"
+          desc={orderStats ? `Omzet lunas ${fmtRpShort(orderStats.revenue)}` : "Memuat log order…"}
+          footLeft={orderStats ? `${orderStats.total} invoice` : "…"}
+          footRight={orderStats ? `${orderStats.paid} lunas` : undefined}
         />
         <StatCard
           eyebrow="Aset Toko"
@@ -790,7 +841,7 @@ function AdminDashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
           {modules.map((m) => (
             <Link
               key={m.to}

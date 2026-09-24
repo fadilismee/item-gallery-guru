@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { ZodError, type ZodTypeAny } from "zod";
 import {
@@ -12,6 +12,7 @@ import {
   ReviewsDataSchema,
 } from "@/lib/schemas";
 import { validateAllData } from "@/lib/validateAll";
+import { getSupabaseClient, type OrderRecord } from "@/lib/supabase";
 
 const execFileAsync = promisify(execFile);
 const TOKEN_LABEL = "buana-admin";
@@ -625,5 +626,156 @@ export const adminListUploads = createServerFn({ method: "GET" }).handler(
   async ({ data }: { data: { token: string } }) => {
     assertAuth(data?.token);
     return { uploads: readUploads() };
+  },
+);
+
+/* ---------------- log transaksi & order (Supabase, bukan file lokal) ---------------- */
+
+export type OrderLogFilter = {
+  token: string;
+  status?: "ALL" | "PENDING" | "PAID" | "EXPIRED" | "FAILED" | "CANCELLED";
+  query?: string;
+  limit?: number;
+};
+
+export const adminListOrders = createServerFn({ method: "GET" }).handler(
+  async ({ data }: { data: OrderLogFilter }) => {
+    assertAuth(data?.token);
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return {
+        orders: [] as OrderRecord[],
+        stats: { total: 0, pending: 0, paid: 0, problem: 0, revenue: 0 },
+        offline: true as const,
+      };
+    }
+
+    const limit = Math.min(Math.max(data?.limit ?? 200, 1), 500);
+    const { data: rows, error } = await supabase
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(limit);
+    if (error) throw new Error(`Gagal membaca tabel orders: ${error.message}`);
+
+    let orders = (rows ?? []) as OrderRecord[];
+    const status = (data?.status ?? "ALL").toUpperCase();
+    if (status !== "ALL") {
+      orders = orders.filter((o) => o.payment_status === status);
+    }
+    const q = (data?.query ?? "").trim().toLowerCase();
+    if (q) {
+      orders = orders.filter(
+        (o) =>
+          o.id.toLowerCase().includes(q) ||
+          o.customer_name.toLowerCase().includes(q) ||
+          o.customer_phone.toLowerCase().includes(q),
+      );
+    }
+
+    const all = (rows ?? []) as OrderRecord[];
+    const stats = {
+      total: all.length,
+      pending: all.filter((o) => o.payment_status === "PENDING").length,
+      paid: all.filter((o) => o.payment_status === "PAID").length,
+      problem: all.filter((o) => ["EXPIRED", "FAILED", "CANCELLED"].includes(o.payment_status))
+        .length,
+      revenue: all
+        .filter((o) => o.payment_status === "PAID")
+        .reduce((s, o) => s + (Number(o.total_amount) || 0), 0),
+    };
+
+    return { orders, stats, offline: false as const };
+  },
+);
+
+/**
+ * Verifikasi silang 1 order langsung ke API Tripay (cek ke PG),
+ * lalu sinkronkan hasilnya ke Supabase.
+ */
+export const adminVerifyOrder = createServerFn({ method: "POST" }).handler(
+  async ({ data }: { data: { token: string; orderId: string } }) => {
+    assertAuth(data?.token);
+    const orderId = (data?.orderId ?? "").trim();
+    if (!orderId) throw new Error("Order ID kosong.");
+
+    const supabase = getSupabaseClient();
+    if (!supabase) throw new Error("Supabase belum terhubung.");
+
+    const { data: row, error } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("id", orderId)
+      .single();
+    if (error || !row) throw new Error("Order tidak ditemukan di database.");
+    const order = row as OrderRecord;
+
+    const apiKey = (process.env.TRIPAY_API_KEY || "").trim();
+    if (!apiKey) throw new Error("TRIPAY_API_KEY belum diset di server.");
+    const baseUrl = apiKey.startsWith("DEV-")
+      ? "https://tripay.co.id/api-sandbox"
+      : "https://tripay.co.id/api";
+
+    const refParam = order.tripay_reference
+      ? `reference=${encodeURIComponent(order.tripay_reference)}`
+      : `merchant_ref=${encodeURIComponent(order.id)}`;
+
+    const res = await fetch(`${baseUrl}/transaction/detail?${refParam}`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    const json = (await res.json()) as {
+      success?: boolean;
+      message?: string;
+      data?: { status?: string; paid_at?: number | string; amount_received?: number };
+    };
+    if (!json.success) {
+      throw new Error(`Tripay: ${json.message || "gagal memeriksa status"}`);
+    }
+
+    const tripayStatus = String(json?.data?.status || "UNKNOWN").toUpperCase();
+    const mapped: OrderRecord["payment_status"] =
+      tripayStatus === "PAID"
+        ? "PAID"
+        : tripayStatus === "EXPIRED"
+          ? "EXPIRED"
+          : tripayStatus === "FAILED"
+            ? "FAILED"
+            : tripayStatus === "REFUND"
+              ? "CANCELLED"
+              : "PENDING";
+
+    const paidAt =
+      mapped === "PAID"
+        ? typeof json.data?.paid_at === "number"
+          ? new Date(json.data.paid_at * 1000).toISOString()
+          : typeof json.data?.paid_at === "string"
+            ? json.data.paid_at
+            : new Date().toISOString()
+        : undefined;
+
+    if (mapped !== order.payment_status) {
+      const patch: Partial<OrderRecord> = { payment_status: mapped };
+      if (paidAt) patch.paid_at = paidAt;
+      const { error: upErr } = await supabase.from("orders").update(patch).eq("id", orderId);
+      if (upErr) throw new Error(`Gagal sinkron ke database: ${upErr.message}`);
+      order.payment_status = mapped;
+      if (paidAt) order.paid_at = paidAt;
+    }
+
+    return { ok: true as const, order, tripayStatus };
+  },
+);
+
+/** Hapus order testing / sampah dari log (operasi cloud, bukan file lokal). */
+export const adminDeleteOrder = createServerFn({ method: "POST" }).handler(
+  async ({ data }: { data: { token: string; orderId: string } }) => {
+    assertAuth(data?.token);
+    const orderId = (data?.orderId ?? "").trim();
+    if (!orderId) throw new Error("Order ID kosong.");
+    const supabase = getSupabaseClient();
+    if (!supabase) throw new Error("Supabase belum terhubung.");
+    const { error } = await supabase.from("orders").delete().eq("id", orderId);
+    if (error) throw new Error(`Gagal menghapus: ${error.message}`);
+    return { ok: true as const, orderId };
   },
 );
