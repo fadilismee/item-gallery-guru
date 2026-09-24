@@ -1,4 +1,5 @@
 import { renderErrorPage } from "./lib/error-page";
+import { getSupabaseClient } from "./lib/supabase";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -27,6 +28,60 @@ export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const url = new URL(request.url);
+
+      // Webhook Endpoint for Tokopay.id Callbacks
+      if (url.pathname === "/api/webhook/tokopay") {
+        try {
+          let refId = url.searchParams.get("ref_id") || url.searchParams.get("reff_id") || "";
+          let rawStatus = (url.searchParams.get("status") || "").toUpperCase();
+
+          if (request.method === "POST") {
+            const contentType = request.headers.get("content-type") || "";
+            if (contentType.includes("application/json")) {
+              const body = (await request.json()) as {
+                ref_id?: string;
+                reff_id?: string;
+                status?: string;
+              };
+              refId = body.ref_id || body.reff_id || refId;
+              rawStatus = String(body.status || rawStatus).toUpperCase();
+            } else if (contentType.includes("application/x-www-form-urlencoded")) {
+              const formData = await request.formData();
+              refId = String(formData.get("ref_id") || formData.get("reff_id") || refId);
+              rawStatus = String(formData.get("status") || rawStatus).toUpperCase();
+            }
+          }
+
+          const isPaid =
+            rawStatus === "SUCCESS" ||
+            rawStatus === "PAID" ||
+            rawStatus === "DIBAYAR" ||
+            rawStatus === "TERBAYAR" ||
+            rawStatus === "1";
+
+          if (refId && isPaid) {
+            const supabase = getSupabaseClient();
+            if (supabase) {
+              await supabase
+                .from("orders")
+                .update({ payment_status: "PAID", paid_at: new Date().toISOString() })
+                .eq("id", refId);
+            }
+          }
+
+          return new Response(JSON.stringify({ status: 200, message: "OK", ref_id: refId }), {
+            status: 200,
+            headers: { "content-type": "application/json" },
+          });
+        } catch (webhookErr) {
+          console.error("Tokopay webhook processing error:", webhookErr);
+          return new Response(JSON.stringify({ status: 500, error: String(webhookErr) }), {
+            status: 500,
+            headers: { "content-type": "application/json" },
+          });
+        }
+      }
+
       const host = getHost(request);
       const isJualHost = host.startsWith("jual.");
 
