@@ -25,10 +25,16 @@
 
 ### A. Uji Coba Autentikasi Akun Merchant (`GET /v1/merchant/balance`)
 
-Perintah terminal:
+Perintah terminal (Curl):
 
 ```bash
-curl -G "https://api.tokopay.id/v1/merchant/balance?merchant=M241007BVDUY606&signature=e4da253dff3beeeae00028e37042a9b3"
+curl -G "https://api.tokopay.id/v1/merchant/balance?merchant=M241007BVDUY606&signature=1163264653f32f936f75290fa4d56f83"
+```
+
+Atau perintah terminal (PowerShell / Node.js):
+
+```powershell
+node -e "fetch('https://api.tokopay.id/v1/merchant/balance?merchant=M241007BVDUY606&signature=1163264653f32f936f75290fa4d56f83').then(r=>r.json()).then(console.log)"
 ```
 
 **Response Sukses dari Server Tokopay:**
@@ -43,7 +49,7 @@ curl -G "https://api.tokopay.id/v1/merchant/balance?merchant=M241007BVDUY606&sig
     "saldo_tersedia": 0,
     "saldo_tertahan": 0
   },
-  "ts": 1790260472
+  "ts": 1790261024
 }
 ```
 
