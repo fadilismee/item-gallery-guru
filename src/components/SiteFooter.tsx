@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { WarrantyModal } from "@/components/WarrantyModal";
 
 export function SiteFooter() {
@@ -16,11 +17,11 @@ export function SiteFooter() {
                 className="h-8 w-auto object-contain brightness-0 invert"
                 loading="lazy"
               />
-              <span className="text-sm font-bold tracking-tight">BUANA COMPUTER</span>
+              <span className="text-sm font-bold tracking-tight">BUANA COMPUTER STORE</span>
             </div>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/60">
-              Toko laptop, PC rakitan, dan aksesoris komputer. Melayani satuan & korporat. Cek
-              katalog online sebelum ke toko — harga transparan, garansi jelas.
+              Toko laptop second teruji, PC rakitan custom, monitor IPS, dan komponen komputer
+              berkualitas di Bantul, Yogyakarta. Transparansi kondisi 100%, garansi toko resmi.
             </p>
             <p className="mt-4 text-xs text-white/40">
               Mertosan Kulon, Potorono, Banguntapan, Bantul 55196
@@ -29,7 +30,7 @@ export function SiteFooter() {
 
           <div className="text-sm">
             <h4 className="text-xs font-semibold uppercase tracking-widest text-white/90">
-              Kontak
+              Kontak &amp; Gerai
             </h4>
             <ul className="mt-4 space-y-2 text-white/60">
               <li>
@@ -40,7 +41,7 @@ export function SiteFooter() {
                   rel="noreferrer"
                   className="font-medium text-white hover:text-white hover:underline"
                 >
-                  6285979220599
+                  0859-7922-0599
                 </a>
               </li>
               <li>Alamat: Mertosan Kulon, Potorono, Kec. Banguntapan, Bantul, DIY 55196</li>
@@ -59,67 +60,45 @@ export function SiteFooter() {
 
           <div className="text-sm">
             <h4 className="text-xs font-semibold uppercase tracking-widest text-white/90">
-              Jam Buka & Layanan
+              Jam Operasional
             </h4>
             <ul className="mt-4 space-y-2 text-white/60">
               <li>Senin – Sabtu: 09.00 – 20.00 WIB</li>
               <li>Minggu: 10.00 – 17.00 WIB (janjian WA)</li>
-              <li className="pt-2">
-                <a
-                  href="https://jual.buanacomputer.web.id"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-white hover:underline"
-                >
-                  Jual Barang Rusak →
-                </a>
+              <li className="pt-2 text-xs text-emerald-400">
+                ✓ Fasilitas Coba Unit Langsung di Toko
               </li>
             </ul>
           </div>
 
           <div className="text-sm">
             <h4 className="text-xs font-semibold uppercase tracking-widest text-white/90">
-              Tautan & Layanan
+              Menu Toko
             </h4>
             <ul className="mt-4 space-y-2 text-white/60">
               <li>
-                <a
-                  href="https://service.buanacomputer.web.id"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white hover:underline"
-                >
-                  Layanan Service
-                </a>
+                <Link to="/" className="hover:text-white hover:underline">
+                  Katalog Laptop &amp; PC
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="hover:text-white hover:underline">
+                  Buana Journal &amp; Tips
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="hover:text-white hover:underline">
+                  Tentang Toko
+                </Link>
               </li>
               <li>
                 <a
-                  href="https://jual.buanacomputer.web.id"
+                  href="https://www.tokopedia.com/bmccomp"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white hover:underline"
                 >
-                  Jual Barang Rusak
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://buanacomputer.web.id/blog"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white hover:underline"
-                >
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://buanacomputer.web.id/about"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white hover:underline"
-                >
-                  Tentang Kami
+                  Toko Tokopedia Resmi
                 </a>
               </li>
             </ul>
@@ -140,7 +119,7 @@ export function SiteFooter() {
 
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-4 text-xs text-white/40 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Buana Computer. Semua hak dilindungi.</p>
+          <p>© {new Date().getFullYear()} Buana Computer Store. Semua hak dilindungi.</p>
           <div className="flex flex-wrap items-center gap-4">
             <button
               type="button"
@@ -149,22 +128,12 @@ export function SiteFooter() {
             >
               🛡️ Kebijakan Garansi &amp; Refund
             </button>
-            <a
-              href="https://buanacomputer.web.id/about"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white/70"
-            >
+            <Link to="/about" className="hover:text-white/70">
               Tentang Toko
-            </a>
-            <a
-              href="https://buanacomputer.web.id/about"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white/70"
-            >
+            </Link>
+            <Link to="/about" className="hover:text-white/70">
               Kebijakan Privasi
-            </a>
+            </Link>
           </div>
         </div>
       </div>

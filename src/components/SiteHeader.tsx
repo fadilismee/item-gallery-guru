@@ -62,10 +62,10 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
   const waCartHref = `https://wa.me/6285979220599?text=${waCartMessage}`;
 
   const marqueeItems = [
-    "Konsultasi Gratis — Chat WA 6285979220599 →",
-    "Harga Terbaik & Garansi Resmi — Tanya Stok Sekarang →",
-    "Jual Rusak? HP 80rb–600rb • Laptop 500rb–2,5jt — Estimasi Via WA →",
-    "Bantul 55196 — Jemput Gratis Area Bantul →",
+    "Konsultasi Spek & Rakit PC Gratis — Chat WA 6285979220599 →",
+    "Laptop Second & Komponen Teruji Sentinel 100% — Garansi Resmi Toko →",
+    "Beli Instan via QRIS (Semua Bank / E-Wallet) atau Tokopedia & Shopee →",
+    "Gerai Banguntapan Bantul — Bisa Coba Unit Sepuasnya di Toko →",
   ];
 
   return (

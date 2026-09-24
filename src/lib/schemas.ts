@@ -162,94 +162,12 @@ export const BlogDataSchema = z.object({
 });
 
 /* ------------------------------------------------------------------ */
-/* Harga jual / buyback / taksiran (src/data/sellPrices.json)          */
-/* ------------------------------------------------------------------ */
-
-export const BuybackCategorySchema = z.enum(["mobo", "vga", "laptop", "proc-ram"]);
-export const AppraisalCategorySchema = z.enum([
-  "laptop",
-  "pc_rakitan",
-  "motherboard",
-  "vga",
-  "monitor",
-  "lainnya",
-]);
-export const AppraisalConditionSchema = z.enum([
-  "normal",
-  "minus_ringan",
-  "rusak_spesifik",
-  "matot",
-]);
-
-export const SellPriceSchema = z.object({
-  category: z.string().min(1),
-  range: z.tuple([z.number().int().nonnegative(), z.number().int().nonnegative()]),
-  unit: z.string().min(1),
-  example: z.string().min(1),
-  highlight: z.boolean().optional(),
-});
-
-export const BuybackItemSchema = z.object({
-  category: BuybackCategorySchema,
-  grade: z.string().min(1),
-  gradeTone: z.enum(["tertiary", "pri", "sec", "surface"]),
-  socket: z.string().min(1),
-  title: z.string().min(1),
-  desc: z.string().min(1),
-  specLeft: z.object({ label: z.string().min(1), value: z.string().min(1) }),
-  specRight: z.object({ label: z.string().min(1), value: z.string().min(1) }),
-  price: z.string().min(1),
-  priceTone: z.enum(["tertiary", "pri"]),
-  searchText: z.string().min(1),
-});
-
-export const SellPricesDataSchema = z.object({
-  sellPrices: z.array(SellPriceSchema).min(1),
-  buybackCategoryMeta: z.record(
-    BuybackCategorySchema,
-    z.object({
-      title: z.string().min(1),
-      desc: z.string().min(1),
-      count: z.string().min(1),
-    }),
-  ),
-  buybackItems: z.array(BuybackItemSchema).min(1),
-  appraisalCategories: z.array(z.object({ id: AppraisalCategorySchema, label: z.string().min(1) })),
-  appraisalConditions: z.array(
-    z.object({ id: AppraisalConditionSchema, label: z.string().min(1) }),
-  ),
-  appraisalRates: z.record(
-    AppraisalCategorySchema,
-    z.record(AppraisalConditionSchema, z.string().min(1)),
-  ),
-});
-
-/* ------------------------------------------------------------------ */
-/* Banner (src/data/banners.json)                                      */
+/* Banner promo homepage toko (src/data/banners.json)                  */
 /* ------------------------------------------------------------------ */
 
 export const BannersDataSchema = z.object({
   hero: z.array(z.string()),
   footer: z.string(),
-});
-
-/* ------------------------------------------------------------------ */
-/* Aset visual halaman /jual (src/data/jualAssets.json)                 */
-/* Dikelola via admin (menyusul) — publik membaca nilai statis JSON.   */
-/* ------------------------------------------------------------------ */
-
-export const JualGalleryItemSchema = z.object({
-  img: z.string().min(1),
-  title: z.string().min(1),
-  chip: z.string(),
-  note: z.string(),
-});
-
-export const JualAssetsDataSchema = z.object({
-  hero: z.string(),
-  heroStack: z.array(z.string().min(1)).min(3),
-  heroCaption: z.string(),
-  gallery: z.array(JualGalleryItemSchema),
 });
 
 /* ------------------------------------------------------------------ */

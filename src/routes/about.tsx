@@ -25,7 +25,6 @@ import {
   Navigation,
   PackageCheck,
   ParkingCircle,
-  Recycle,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
@@ -33,7 +32,6 @@ import {
   Store,
   ThermometerSnowflake,
   Wifi,
-  Wrench,
   XCircle,
   Zap,
 } from "lucide-react";
@@ -119,7 +117,7 @@ const aboutJsonLd = {
         },
       ],
       priceRange: "Rp 150.000 - Rp 25.000.000",
-      sameAs: ["https://www.tokopedia.com/bmccomp", "https://jual.buanacomputer.web.id"],
+      sameAs: ["https://www.tokopedia.com/bmccomp"],
     },
     {
       "@type": "BreadcrumbList",
@@ -1381,60 +1379,6 @@ function StoreVisitSection() {
   );
 }
 
-function EcosystemSlimStrip() {
-  return (
-    <section className="border-t border-slate-200/80 bg-slate-50/80 py-8">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <Reveal>
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm transition-all hover:border-pri/30">
-            <div className="flex items-center gap-3 text-center sm:text-left">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700">
-                <Sparkles size={20} className="text-pri animate-pulse" />
-              </span>
-              <div>
-                <p className="text-xs font-bold text-technavy">Layanan Ekosistem Buana Lainnya</p>
-                <p className="text-[11px] text-slate-500">
-                  Memiliki portal khusus terpisah untuk kebutuhan buyback hardware bekas &amp;
-                  servis presisi.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              <a
-                href="https://jual.buanacomputer.web.id"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group font-heading inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-all hover:-translate-y-0.5"
-              >
-                <Recycle
-                  size={14}
-                  className="text-sec transition-transform group-hover:rotate-180 duration-500"
-                />
-                Portal Jual / Buyback
-                <ExternalLink size={12} className="text-slate-400" />
-              </a>
-              <a
-                href="https://service.buanacomputer.web.id"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group font-heading inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-all hover:-translate-y-0.5"
-              >
-                <Wrench
-                  size={14}
-                  className="text-pri transition-transform group-hover:rotate-45 duration-300"
-                />
-                Service Lab
-                <ExternalLink size={12} className="text-slate-400" />
-              </a>
-            </div>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
 function FaqSection() {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
@@ -1495,7 +1439,7 @@ function FaqSection() {
               Masih memiliki pertanyaan seputar stok atau spek?
             </h3>
             <p className="mt-1 text-xs text-slate-600">
-              Tim teknis kami siap menjawab pertanyaan Anda dengan ramah dan cepat melalui WhatsApp.
+              Tim toko kami siap menjawab pertanyaan Anda dengan ramah dan cepat melalui WhatsApp.
             </p>
             <div className="mt-4">
               <a
@@ -1531,7 +1475,6 @@ function AboutPage() {
         <QualityStandardsSection />
         <TestimonialsMarqueeSection />
         <StoreVisitSection />
-        <EcosystemSlimStrip />
         <FaqSection />
       </main>
       <SiteFooter />

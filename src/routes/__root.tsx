@@ -78,35 +78,35 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "google-site-verification",
         content: "D9D4lVIRUuQ1KP4nHWeOJWaH5SgfFGUJf1bpLSFjkEY",
       },
-      { title: "Buana Computer — Toko Komputer Bantul Yogyakarta" },
+      { title: "Buana Computer Store — Toko Laptop & PC Bantul Yogyakarta" },
       {
         name: "description",
         content:
-          "Toko komputer Bantul, Yogyakarta: laptop, PC rakitan, monitor, komponen, servis hardware dan jual beli laptop bekas/rusak. Hubungi WA 6285979220599.",
+          "Toko komputer & laptop Bantul, Yogyakarta: laptop second teruji, PC rakitan gaming & kerja, monitor, komponen, dan storage sentinel 100% bergaransi toko resmi. WA 6285979220599.",
       },
       {
         name: "keywords",
         content:
-          "buana computer, toko komputer bantul, jual laptop bekas yogyakarta, service komputer bantul, pc rakitan jogja",
+          "buana computer store, toko komputer bantul, jual laptop bekas yogyakarta, pc rakitan jogja, toko laptop banguntapan, beli komponen pc jogja",
       },
-      { name: "author", content: "Buana Computer" },
-      { property: "og:title", content: "Buana Computer - Katalog Laptop & PC" },
+      { name: "author", content: "Buana Computer Store" },
+      { property: "og:title", content: "Buana Computer Store - Toko Laptop & PC Bantul" },
       {
         property: "og:description",
         content:
-          "Jelajahi katalog Buana Computer — laptop, PC rakitan, monitor, dan aksesoris lengkap dengan spesifikasi dan harga.",
+          "Jelajahi katalog Buana Computer Store — laptop second pilihan, PC rakitan custom, monitor IPS, dan komponen hardware bergaransi resmi.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "Buana Computer" },
+      { property: "og:site_name", content: "Buana Computer Store" },
       { property: "og:locale", content: "id_ID" },
       { property: "og:image", content: "https://buanacomputer.web.id/Buanacomputer-logo.png" },
       { property: "og:url", content: "https://buanacomputer.web.id" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Buana Computer - Katalog Laptop & PC" },
+      { name: "twitter:title", content: "Buana Computer Store - Toko Laptop & PC Bantul" },
       {
         name: "twitter:description",
         content:
-          "Jelajahi katalog Buana Computer — laptop, PC rakitan, monitor, dan aksesoris lengkap dengan spesifikasi dan harga.",
+          "Jelajahi katalog Buana Computer Store — laptop second pilihan, PC rakitan custom, monitor IPS, dan komponen hardware bergaransi resmi.",
       },
       { name: "twitter:image", content: "https://buanacomputer.web.id/Buanacomputer-logo.png" },
     ],
@@ -141,12 +141,12 @@ const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "@id": "https://buanacomputer.web.id/#website",
-  name: "Buana Computer",
-  alternateName: ["Buana Komputer", "Buana Computer Bantul", "Buanacomp"],
+  name: "Buana Computer Store",
+  alternateName: ["Buana Komputer", "Buana Computer Bantul", "Buanacomp Store"],
   url: "https://buanacomputer.web.id",
   inLanguage: "id-ID",
   description:
-    "Toko komputer Bantul Yogyakarta: katalog laptop bekas & baru, PC rakitan, servis hardware, dan buyback barang rusak.",
+    "Toko komputer Bantul Yogyakarta: katalog laptop bekas & baru, PC rakitan custom, monitor IPS, dan komponen hardware bergaransi resmi.",
 };
 
 const siteNavigationJsonLd = {
@@ -157,22 +157,23 @@ const siteNavigationJsonLd = {
       "@type": "SiteNavigationElement",
       position: 1,
       name: "Katalog Laptop & PC",
-      description: "Katalog laptop baru & second, PC rakitan, monitor, dan aksesoris komputer",
+      description: "Katalog laptop second teruji, PC rakitan gaming & kerja, monitor, dan storage",
       url: "https://buanacomputer.web.id/",
     },
     {
       "@type": "SiteNavigationElement",
       position: 2,
-      name: "Buana Journal & Tips Servis",
-      description: "Panduan rakit PC, review teardown, dan tips perawatan laptop dari meja teknisi",
+      name: "Buana Journal & Tips Hardware",
+      description:
+        "Panduan rakit PC, review benchmark, dan tips perawatan laptop dari meja teknisi",
       url: "https://buanacomputer.web.id/blog",
     },
     {
       "@type": "SiteNavigationElement",
       position: 3,
-      name: "Tentang Laboratorium Buana",
+      name: "Tentang Buana Computer Store",
       description:
-        "Profil laboratorium servis mikro-elektronika, transparansi meja periksa, dan daur ulang e-waste",
+        "Profil gerai komputer Bantul, standar pengujian kualitas, fasilitas toko, dan garansi resmi",
       url: "https://buanacomputer.web.id/about",
     },
   ],
@@ -180,11 +181,11 @@ const siteNavigationJsonLd = {
 
 const localBusinessJsonLd = {
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  name: "Buana Computer",
+  "@type": "ComputerStore",
+  name: "Buana Computer Store",
   image: "https://buanacomputer.web.id/Buanacomputer-logo.png",
   url: "https://buanacomputer.web.id",
-  telephone: "6285979220599",
+  telephone: "+6285979220599",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Mertosan Kulon, Potorono",
@@ -204,10 +205,9 @@ const localBusinessJsonLd = {
     opens: "09:00",
     closes: "20:00",
   },
-  priceRange: "Rp 675.000 - Rp 24.900.000",
+  priceRange: "Rp 150.000 - Rp 25.000.000",
   sameAs: [
-    "https://service.buanacomputer.web.id",
-    "https://jual.buanacomputer.web.id",
+    "https://www.tokopedia.com/bmccomp",
     "https://buanacomputer.web.id/blog",
     "https://buanacomputer.web.id/about",
   ],

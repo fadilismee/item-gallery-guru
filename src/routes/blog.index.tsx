@@ -7,16 +7,16 @@ import { blogArticles, blogCategories, type BlogArticle, type TagTone } from "@/
 export const Route = createFileRoute("/blog/")({
   head: () => ({
     meta: [
-      { title: "Buana Journal — Panduan Rakit PC, Review Hardware & Tips Servis Komputer" },
+      { title: "Buana Journal — Panduan Rakit PC, Review Hardware & Tips Perawatan Komputer" },
       {
         name: "description",
         content:
-          "Buana Journal: panduan rakit PC, review hardware hasil uji lab, dan tips servis laptop & PC dari teknisi Buana Computer Bantul, Yogyakarta.",
+          "Buana Journal: panduan rakit PC, review hardware hasil uji toko, dan tips perawatan laptop & PC dari tim Buana Computer Store Bantul, Yogyakarta.",
       },
       {
         name: "keywords",
         content:
-          "panduan rakit pc, review hardware, tips servis laptop, blog komputer indonesia, benchmark komputer, perawatan laptop, teardown laptop",
+          "panduan rakit pc, review hardware, tips perawatan laptop, blog komputer indonesia, benchmark komputer, perawatan laptop, teardown laptop",
       },
       { property: "og:title", content: "Buana Journal — Panduan & Review Hardware" },
       {

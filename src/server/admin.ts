@@ -8,10 +8,8 @@ import { ZodError, type ZodTypeAny } from "zod";
 import {
   BannersDataSchema,
   BlogDataSchema,
-  JualAssetsDataSchema,
   ProductsDataSchema,
   ReviewsDataSchema,
-  SellPricesDataSchema,
 } from "@/lib/schemas";
 import { validateAllData } from "@/lib/validateAll";
 
@@ -23,9 +21,7 @@ const DATASETS: Record<string, { file: string; schema: ZodTypeAny }> = {
   products: { file: "src/data/products.json", schema: ProductsDataSchema },
   reviews: { file: "src/data/reviews.json", schema: ReviewsDataSchema },
   blog: { file: "src/data/blog.json", schema: BlogDataSchema },
-  sellPrices: { file: "src/data/sellPrices.json", schema: SellPricesDataSchema },
   banners: { file: "src/data/banners.json", schema: BannersDataSchema },
-  jualAssets: { file: "src/data/jualAssets.json", schema: JualAssetsDataSchema },
 };
 
 /* ---------------- auth & guard ---------------- */
@@ -126,14 +122,7 @@ export const adminStatus = createServerFn({ method: "GET" }).handler(
       image: string;
     };
     type R = { id: string; name: string; rating: number; title: string; date: string };
-    type S = {
-      sellPrices: unknown[];
-      buybackItems: unknown[];
-      appraisalCategories: unknown[];
-      appraisalConditions: unknown[];
-    };
     type N = { hero: string[]; footer: string };
-    type J = { hero: string; heroStack: string[]; gallery: unknown[] };
 
     const safe = <T>(file: string, fallback: T): T => {
       try {
@@ -146,14 +135,7 @@ export const adminStatus = createServerFn({ method: "GET" }).handler(
     const products = safe<P[]>("src/data/products.json", []);
     const blog = safe<{ articles: B[] }>("src/data/blog.json", { articles: [] });
     const reviews = safe<R[]>("src/data/reviews.json", []);
-    const sell = safe<S>("src/data/sellPrices.json", {
-      sellPrices: [],
-      buybackItems: [],
-      appraisalCategories: [],
-      appraisalConditions: [],
-    });
     const banners = safe<N>("src/data/banners.json", { hero: [], footer: "" });
-    const jual = safe<J>("src/data/jualAssets.json", { hero: "", heroStack: [], gallery: [] });
     const uploads = safe<unknown[]>("src/data/uploads.json", []);
 
     const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : 0);
@@ -235,8 +217,6 @@ export const adminStatus = createServerFn({ method: "GET" }).handler(
         products: products.length,
         articles: articles.length,
         reviews: reviews.length,
-        buybackItems: sell.buybackItems.length,
-        jualGallery: Array.isArray(jual.gallery) ? jual.gallery.length : 0,
       },
       inv: {
         value: inventoryValue,
@@ -249,18 +229,9 @@ export const adminStatus = createServerFn({ method: "GET" }).handler(
       cats,
       top: best ? { name: best.name, sold: num(best.sold) } : null,
       recentProducts,
-      jual: {
-        heroStack: Array.isArray(jual.heroStack) ? jual.heroStack.length : 0,
-        gallery: Array.isArray(jual.gallery) ? jual.gallery.length : 0,
-      },
       uploadsCount: uploads.length,
       blog: { totalMinutes: totalReadMinutes, latest: blogLatest },
       reviews: { avg, latest: reviewLatest },
-      sell: {
-        rows: sell.sellPrices.length,
-        items: sell.buybackItems.length,
-        cells: sell.appraisalCategories.length * sell.appraisalConditions.length,
-      },
       banners: {
         hero: cleanHeroBanners.length,
         heroList: cleanHeroBanners,
@@ -338,13 +309,7 @@ export const adminGitCommitPush = createServerFn({ method: "POST" }).handler(
         throw new Error(`git ${args[0]} gagal: ${(err.stderr || err.message || "").trim()}`);
       }
     };
-    await run([
-      "add",
-      "src/data",
-      "public/sitemap.xml",
-      "public/sitemap-jual.xml",
-      "public/banners",
-    ]);
+    await run(["add", "src/data", "public/sitemap.xml", "public/banners"]);
     const commitOut = await run(["commit", "-m", message]);
     if (/nothing to commit/i.test(commitOut)) return { pushed: false as const, output: commitOut };
     const pushOut = await run(["push"]);

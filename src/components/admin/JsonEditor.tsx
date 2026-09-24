@@ -4,7 +4,7 @@ import { errMsg, getAdminToken } from "@/lib/adminClient";
 import { AdminIcon } from "./AdminIcon";
 
 type Props = {
-  /** Nama dataset server: products | reviews | blog | sellPrices | banners */
+  /** Nama dataset server: products | reviews | blog | banners */
   name: string;
   title: string;
   /** Data terkini dari halaman (untuk inisialisasi teks) */

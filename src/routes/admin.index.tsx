@@ -20,7 +20,7 @@ const EASY_COMMIT_MESSAGE = "Update konten via dashboard (mode mudah)";
 
 const defaultStorePosters = [
   { img: poster1, label: "Promo Laptop & PC Gaming", desc: "Poster #1 Default Toko" },
-  { img: poster2, label: "Servis & Buyback Hardware", desc: "Poster #2 Default Toko" },
+  { img: poster2, label: "PC Rakitan & Komponen", desc: "Poster #2 Default Toko" },
   { img: poster3, label: "Komponen & Aksesoris Teruji", desc: "Poster #3 Default Toko" },
 ];
 
@@ -196,34 +196,16 @@ function AdminDashboard() {
       icon: "inventory_2",
       chip: "",
       label: "Katalog Produk & Toko",
-      desc: "Kelola laptop, komponen, storage, dan pilihan varian harga/stok",
+      desc: "Kelola laptop, PC rakitan, storage, dan varian harga/stok toko",
       count: dash?.counts.products,
       unit: "Produk",
-    },
-    {
-      to: "/admin/jual",
-      icon: "recycling",
-      chip: "teal",
-      label: "Aset & Galeri Jual",
-      desc: "Kelola 3 foto hero stack kipas & galeri barang terima masuk lab",
-      count: dash?.counts.jualGallery,
-      unit: "Galeri",
-    },
-    {
-      to: "/admin/harga",
-      icon: "currency_exchange",
-      chip: "teal",
-      label: "Harga & SKU Buyback",
-      desc: "Atur price list barang rusak, matriks live rate, dan kartu SKU",
-      count: dash?.counts.buybackItems,
-      unit: "SKU",
     },
     {
       to: "/admin/blog",
       icon: "auto_stories",
       chip: "violet",
       label: "Buana Journal (Blog)",
-      desc: "Tulis dan sunting artikel panduan teknikal & review lab",
+      desc: "Tulis dan sunting artikel panduan teknikal & benchmark hardware",
       count: dash?.counts.articles,
       unit: "Artikel",
     },
@@ -241,7 +223,7 @@ function AdminDashboard() {
       icon: "campaign",
       chip: "red",
       label: "Banner & Promosi",
-      desc: "Atur slot hero slider promosi homepage dan poster footer",
+      desc: "Atur slot hero slider promosi homepage dan poster toko",
       count: dash?.banners.hero,
       unit: "Banner",
     },
@@ -262,33 +244,29 @@ function AdminDashboard() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="adm-chip adm-chip-blue">Operational Console</span>
+              <span className="adm-chip adm-chip-blue">Store Operational Console</span>
               <span className="adm-sub inline-flex items-center gap-1">
                 <Icon name="schedule" className="text-[15px]" />
-                {today} • Workshop Bantul
+                {today} • Gerai Bantul
               </span>
             </div>
             <h1 className="adm-h1 mt-2">Selamat Datang, Admin Buana</h1>
             <p className="adm-sub mt-1">
-              Pusat kendali katalog toko, buyback hardware, Buana Journal, dan publikasi live.
+              Pusat kendali katalog toko, stok barang, Buana Journal, dan publikasi live.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Link to="/admin/produk" className="adm-btn-ghost inline-flex items-center gap-1.5">
-              <Icon name="add_shopping_cart" className="text-[18px] text-pri" />
+            <Link to="/admin/produk" className="adm-btn-pri inline-flex items-center gap-1.5">
+              <Icon name="add_shopping_cart" className="text-[18px]" />
               Tambah Produk
-            </Link>
-            <Link to="/admin/jual" className="adm-btn-ghost inline-flex items-center gap-1.5">
-              <Icon name="recycling" className="text-[18px] text-pri" />
-              Aset /jual
             </Link>
             <Link to="/admin/blog" className="adm-btn-ghost inline-flex items-center gap-1.5">
               <Icon name="edit_note" className="text-[18px] text-pri" />
               Tulis Artikel
             </Link>
-            <Link to="/admin/harga" className="adm-btn-pri inline-flex items-center gap-1.5">
-              <Icon name="currency_exchange" className="text-[18px]" />
-              Update Price List
+            <Link to="/admin/banner" className="adm-btn-ghost inline-flex items-center gap-1.5">
+              <Icon name="campaign" className="text-[18px] text-pri" />
+              Atur Banner
             </Link>
           </div>
         </div>
@@ -297,8 +275,8 @@ function AdminDashboard() {
       {error && <p className="adm-alert-err">{error}</p>}
       {notice && <p className="adm-alert-ok whitespace-pre-wrap">{notice}</p>}
 
-      {/* ---------- 6 STAT CARDS (PERFECTLY BALANCED 2x3 / 3x2 / 6x1) ---------- */}
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      {/* ---------- 5 STAT CARDS (STORE FOCUS) ---------- */}
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
         <StatCard
           eyebrow="Katalog Toko"
           title="Total Produk"
@@ -324,18 +302,6 @@ function AdminDashboard() {
           desc={dash ? `${dash.inv.ready} unit siap jual` : "Memuat…"}
           footLeft={dash ? `${dash.inv.sold} unit terjual` : "…"}
           footRight="Estimasi"
-        />
-        <StatCard
-          eyebrow="Sirkularitas"
-          title="Aset & Buyback"
-          icon="recycling"
-          chip="teal"
-          to="/admin/jual"
-          value={dash ? `${dash.counts.buybackItems}` : "…"}
-          unit="SKU Buyback"
-          desc={dash ? `${dash.counts.jualGallery} foto galeri lab` : "Memuat…"}
-          footLeft={dash ? `${dash.jual.heroStack} Foto Stack` : "…"}
-          footRight={dash ? `${dash.sell.rows} Kategori` : undefined}
         />
         <StatCard
           eyebrow="Editorial Lab"
@@ -772,14 +738,14 @@ function AdminDashboard() {
                 <h3 className="font-heading text-[15px] font-bold text-on-surface">
                   Kesehatan Sistem &amp; Data
                 </h3>
-                <p className="adm-sub text-xs">Validasi 9 dataset Zod &amp; sitemap</p>
+                <p className="adm-sub text-xs">Validasi 5 dataset Zod &amp; sitemap</p>
               </div>
             </div>
 
             <div className="mt-3 space-y-2 text-xs">
               {!results ? (
                 <p className="adm-sub text-xs">
-                  Klik tombol di bawah untuk memeriksa integritas 9 file JSON data dan keunikan ID
+                  Klik tombol di bawah untuk memeriksa integritas 5 file JSON data dan keunikan ID
                   katalog.
                 </p>
               ) : failed ? (
@@ -795,7 +761,7 @@ function AdminDashboard() {
                 </div>
               ) : (
                 <div className="rounded-lg bg-green-50 p-2.5 text-green-800">
-                  <p className="font-bold">✓ Seluruh 9 dataset lolos validasi Zod.</p>
+                  <p className="font-bold">✓ Seluruh 5 dataset lolos validasi Zod.</p>
                   <p className="text-[11px] text-green-700">Sitemap dan link aman dari error.</p>
                 </div>
               )}
@@ -824,7 +790,7 @@ function AdminDashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
           {modules.map((m) => (
             <Link
               key={m.to}

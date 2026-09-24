@@ -34,7 +34,7 @@ export const Route = createFileRoute("/")({
       {
         name: "keywords",
         content:
-          "toko komputer bantul, jual laptop bekas yogyakarta, laptop second jogja, pc rakitan jogja, toko laptop bantul, service komputer yogyakarta, jual vga bantul, toko aksesoris komputer",
+          "toko komputer bantul, jual laptop bekas yogyakarta, laptop second jogja, pc rakitan jogja, toko laptop bantul, jual vga bantul, toko aksesoris komputer",
       },
       {
         property: "og:title",

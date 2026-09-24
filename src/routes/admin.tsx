@@ -12,12 +12,10 @@ export const Route = createFileRoute("/admin")({
 
 const NAV = [
   { to: "/admin", label: "Dashboard", icon: "dashboard", end: true },
-  { to: "/admin/produk", label: "Produk", icon: "inventory_2", end: false },
-  { to: "/admin/jual", label: "Aset Jual", icon: "recycling", end: false },
-  { to: "/admin/harga", label: "Harga Buyback", icon: "currency_exchange", end: false },
-  { to: "/admin/blog", label: "Blog", icon: "auto_stories", end: false },
-  { to: "/admin/review", label: "Review", icon: "rate_review", end: false },
-  { to: "/admin/banner", label: "Banner", icon: "campaign", end: false },
+  { to: "/admin/produk", label: "Katalog Produk", icon: "inventory_2", end: false },
+  { to: "/admin/blog", label: "Buana Journal", icon: "auto_stories", end: false },
+  { to: "/admin/review", label: "Review Toko", icon: "rate_review", end: false },
+  { to: "/admin/banner", label: "Banner Promo", icon: "campaign", end: false },
 ];
 
 function AdminLayout() {
