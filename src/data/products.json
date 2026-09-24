@@ -146,10 +146,7 @@
     ],
     "images": 2,
     "image": "https://files.catbox.moe/h4s45m.jpg",
-    "gallery": [
-      "https://files.catbox.moe/h4s45m.jpg",
-      "https://files.catbox.moe/u9rcmp.jpg"
-    ],
+    "gallery": ["https://files.catbox.moe/h4s45m.jpg", "https://files.catbox.moe/u9rcmp.jpg"],
     "isFeatured": true
   },
   {
@@ -244,9 +241,7 @@
     ],
     "images": 1,
     "image": "https://files.catbox.moe/5aevj3.jpg",
-    "gallery": [
-      "https://files.catbox.moe/5aevj3.jpg"
-    ],
+    "gallery": ["https://files.catbox.moe/5aevj3.jpg"],
     "isFeatured": true
   },
   {
@@ -287,10 +282,7 @@
     ],
     "images": 2,
     "image": "https://files.catbox.moe/lxlfxg.jpg",
-    "gallery": [
-      "https://files.catbox.moe/lxlfxg.jpg",
-      "https://files.catbox.moe/ism140.jpg"
-    ]
+    "gallery": ["https://files.catbox.moe/lxlfxg.jpg", "https://files.catbox.moe/ism140.jpg"]
   },
   {
     "id": "mobo-dell-inspiron-14",
@@ -330,9 +322,7 @@
     ],
     "images": 1,
     "image": "https://files.catbox.moe/ky6mwv.jpg",
-    "gallery": [
-      "https://files.catbox.moe/ky6mwv.jpg"
-    ]
+    "gallery": ["https://files.catbox.moe/ky6mwv.jpg"]
   },
   {
     "id": "laptop-dell-inspiron-bahan",
@@ -412,10 +402,7 @@
     ],
     "images": 2,
     "image": "https://files.catbox.moe/n7py90.jpg",
-    "gallery": [
-      "https://files.catbox.moe/n7py90.jpg",
-      "https://files.catbox.moe/bo7mw8.jpg"
-    ]
+    "gallery": ["https://files.catbox.moe/n7py90.jpg", "https://files.catbox.moe/bo7mw8.jpg"]
   },
   {
     "id": "mobo-sony-vaio-ultrabook",
@@ -451,9 +438,7 @@
     ],
     "images": 1,
     "image": "https://files.catbox.moe/7uqqdo.jpg",
-    "gallery": [
-      "https://files.catbox.moe/7uqqdo.jpg"
-    ]
+    "gallery": ["https://files.catbox.moe/7uqqdo.jpg"]
   },
   {
     "id": "ssd-m2-sata-internal",
@@ -489,9 +474,7 @@
     ],
     "images": 1,
     "image": "https://files.catbox.moe/hbtcf7.jpg",
-    "gallery": [
-      "https://files.catbox.moe/hbtcf7.jpg"
-    ],
+    "gallery": ["https://files.catbox.moe/hbtcf7.jpg"],
     "isFeatured": true,
     "variants": [
       {
@@ -637,31 +620,5 @@
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWt-xbdJYbl1sID0flEh4LQwpStxHMWO5DCiSJSKLqDQ&s=10"
     ],
     "isFeatured": true
-  },
-  {
-    "id": "makan",
-    "name": "makna",
-    "brand": "makan",
-    "category": "Laptop",
-    "price": 5000000,
-    "rating": 4.5,
-    "sold": 0,
-    "stock": 1,
-    "condition": "Baru",
-    "location": "Bantul, Yogyakarta",
-    "shortDescription": "asd",
-    "description": "ads",
-    "specs": [
-      {
-        "label": "asd",
-        "value": "asd"
-      }
-    ],
-    "images": 1,
-    "image": "https://files.catbox.moe/8fd2c5.jpg",
-    "gallery": [
-      "https://files.catbox.moe/8fd2c5.jpg"
-    ],
-    "oldPrice": 70000000
   }
 ]

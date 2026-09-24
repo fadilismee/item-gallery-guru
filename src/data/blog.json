@@ -148,13 +148,7 @@
           ]
         }
       ],
-      "tags": [
-        "#Hardware",
-        "#PCRakitan",
-        "#NVMeGen4",
-        "#AirflowSetup",
-        "#TechGuide2025"
-      ]
+      "tags": ["#Hardware", "#PCRakitan", "#NVMeGen4", "#AirflowSetup", "#TechGuide2025"]
     },
     {
       "slug": "review-keyboard-mechanical-tkl",
@@ -223,12 +217,7 @@
           "cite": "— Catatan Meja Review Buana Lab"
         }
       ],
-      "tags": [
-        "#Keyboard",
-        "#Mechanical",
-        "#HotSwap",
-        "#SetupKerja"
-      ]
+      "tags": ["#Keyboard", "#Mechanical", "#HotSwap", "#SetupKerja"]
     },
     {
       "slug": "monitor-qhd-27-vs-fhd-24",
@@ -316,12 +305,7 @@
           "text": "Pastikan panel memakai IPS (bukan VA murahan) bila akurasi warna penting, dan cek keberadaan DisplayPort 1.4 — HDMI 2.0 di beberapa monitor budget membatasi 1440p hanya sampai 144Hz."
         }
       ],
-      "tags": [
-        "#Monitor",
-        "#QHD",
-        "#GamingSetup",
-        "#DisplayGuide"
-      ]
+      "tags": ["#Monitor", "#QHD", "#GamingSetup", "#DisplayGuide"]
     },
     {
       "slug": "ssd-nvme-gen4-vs-gen3",
@@ -399,12 +383,7 @@
           "text": "Untuk gaming murni, Gen3 masih sangat layak dan lebih hemat. Tapi untuk kreator video, Gen4 1TB adalah upgrade dengan rasio manfaat-per-rupiah terbaik tahun ini — prioritaskan kapasitas 1TB agar cache SLC tidak cepat jenuh."
         }
       ],
-      "tags": [
-        "#SSD",
-        "#NVMeGen4",
-        "#StorageGuide",
-        "#VideoEditing"
-      ]
+      "tags": ["#SSD", "#NVMeGen4", "#StorageGuide", "#VideoEditing"]
     }
   ]
 }

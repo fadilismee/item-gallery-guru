@@ -1,5 +1,10 @@
 import { useRef, useState } from "react";
-import { adminEnhanceImage, adminListUploads, adminUploadImage } from "@/server/admin";
+import {
+  adminEnhanceImage,
+  adminListUploads,
+  adminUploadImage,
+  adminUploadLocalBanner,
+} from "@/server/admin";
 import { errMsg, getAdminToken } from "@/lib/adminClient";
 import { AdminIcon } from "./AdminIcon";
 
@@ -11,12 +16,92 @@ type Props = {
   onChange: (url: string) => void;
   hint?: string;
   aiPromptDefault?: string;
+  bannerMode?: boolean;
 };
 
 const inputCls = "adm-input";
 
 function looksLikeImage(url: string): boolean {
-  return /^https?:\/\//i.test(url.trim());
+  const t = url.trim();
+  return (
+    /^https?:\/\//i.test(t) || t.startsWith("/") || /\.(webp|jpg|jpeg|png|gif|svg)(\?.*)?$/i.test(t)
+  );
+}
+
+/**
+ * Kompresi banner khusus format WebP HD (1920px max, quality 0.85, target ~80-120KB,
+ * nama selalu diprefix Buanacomputer-*.webp) untuk disimpan langsung di repo lokal / GitHub.
+ */
+async function compressBannerWebpClient(
+  file: File,
+  maxDimension = 1920,
+  quality = 0.85,
+): Promise<{ dataUrl: string; fileName: string; originalSize: number; compressedSize: number }> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          return reject(new Error("Gagal membuat canvas kompresi WebP."));
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        let currentQuality = quality;
+        let dataUrl = canvas.toDataURL("image/webp", currentQuality);
+        const head = "data:image/webp;base64,";
+        let b64Length = dataUrl.length - head.length;
+        let compressedSize = Math.round((b64Length * 3) / 4);
+
+        // Jika ukuran masih > 150 KB, turunkan sedikit ke 0.78 agar optimal ~80-120 KB
+        if (compressedSize > 150 * 1024 && currentQuality > 0.75) {
+          currentQuality = 0.78;
+          dataUrl = canvas.toDataURL("image/webp", currentQuality);
+          b64Length = dataUrl.length - head.length;
+          compressedSize = Math.round((b64Length * 3) / 4);
+        }
+
+        const baseRaw = file.name
+          .replace(/\.[^/.]+$/, "")
+          .replace(/[^a-zA-Z0-9-_]/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-|-$/g, "");
+        const cleanBase = /^buanacomputer-/i.test(baseRaw)
+          ? `Buanacomputer-${baseRaw.replace(/^buanacomputer-/i, "")}`
+          : `Buanacomputer-${baseRaw || "banner"}`;
+        const compressedFileName = `${cleanBase}.webp`;
+
+        resolve({
+          dataUrl,
+          fileName: compressedFileName,
+          originalSize: file.size,
+          compressedSize,
+        });
+      };
+      img.onerror = () => reject(new Error("Gagal memuat gambar banner untuk dikompresi."));
+      img.src = String(event.target?.result);
+    };
+    reader.onerror = () => reject(new Error("Gagal membaca file gambar."));
+    reader.readAsDataURL(file);
+  });
 }
 
 /**
@@ -107,10 +192,17 @@ async function compressImageClient(
 }
 
 /**
- * Field gambar admin: preview + input URL manual + tombol Upload (file -> Catbox -> link
+ * Field gambar admin: preview + input URL manual / lokal + tombol Upload (file -> WebP lokal atau Catbox -> link
  * otomatis terisi) + tombol Gallery (pilih dari upload-an sebelumnya).
  */
-export function ImageField({ label, value, onChange, hint, aiPromptDefault }: Props) {
+export function ImageField({
+  label,
+  value,
+  onChange,
+  hint,
+  aiPromptDefault,
+  bannerMode = false,
+}: Props) {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
   const [libOpen, setLibOpen] = useState(false);
@@ -193,22 +285,43 @@ export function ImageField({ label, value, onChange, hint, aiPromptDefault }: Pr
 
   const doUpload = async (file: File) => {
     setBusy(true);
-    setMsg("Mengompresi & mengupload gambar…");
-    try {
-      const { dataUrl, fileName, originalSize, compressedSize } = await compressImageClient(file);
-      const r = await adminUploadImage({
-        data: { token: getAdminToken() ?? "", fileName, dataUrl },
-      });
-      onChange(r.url);
-      const savedPct =
-        originalSize > compressedSize
-          ? ` (Hemat ${Math.round((1 - compressedSize / originalSize) * 100)}%: ${(originalSize / 1024).toFixed(0)}KB → ${(compressedSize / 1024).toFixed(0)}KB)`
-          : "";
-      setMsg(`Upload sukses!${savedPct}`);
-    } catch (e) {
-      setMsg(`Upload gagal: ${errMsg(e)}`);
-    } finally {
-      setBusy(false);
+    if (bannerMode) {
+      setMsg("Mengonversi ke WebP HD & menyimpan ke repository lokal…");
+      try {
+        const { dataUrl, fileName, originalSize, compressedSize } =
+          await compressBannerWebpClient(file);
+        const r = await adminUploadLocalBanner({
+          data: { token: getAdminToken() ?? "", fileName, dataUrl },
+        });
+        onChange(r.url);
+        const savedPct =
+          originalSize > compressedSize
+            ? ` (Hemat ${Math.round((1 - compressedSize / originalSize) * 100)}%: ${(originalSize / 1024).toFixed(0)}KB → ${(compressedSize / 1024).toFixed(0)}KB)`
+            : "";
+        setMsg(`✓ Tersimpan lokal: ${r.fileName} (WebP HD)${savedPct}`);
+      } catch (e) {
+        setMsg(`Upload banner gagal: ${errMsg(e)}`);
+      } finally {
+        setBusy(false);
+      }
+    } else {
+      setMsg("Mengompresi & mengupload gambar…");
+      try {
+        const { dataUrl, fileName, originalSize, compressedSize } = await compressImageClient(file);
+        const r = await adminUploadImage({
+          data: { token: getAdminToken() ?? "", fileName, dataUrl },
+        });
+        onChange(r.url);
+        const savedPct =
+          originalSize > compressedSize
+            ? ` (Hemat ${Math.round((1 - compressedSize / originalSize) * 100)}%: ${(originalSize / 1024).toFixed(0)}KB → ${(compressedSize / 1024).toFixed(0)}KB)`
+            : "";
+        setMsg(`Upload sukses!${savedPct}`);
+      } catch (e) {
+        setMsg(`Upload gagal: ${errMsg(e)}`);
+      } finally {
+        setBusy(false);
+      }
     }
   };
 
@@ -239,7 +352,14 @@ export function ImageField({ label, value, onChange, hint, aiPromptDefault }: Pr
 
   return (
     <div>
-      <span className="adm-label">{label}</span>
+      <div className="flex items-center justify-between">
+        <span className="adm-label">{label}</span>
+        {bannerMode && (
+          <span className="font-mono text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+            Format: WebP HD • Git-Push Direct
+          </span>
+        )}
+      </div>
       <div className="mt-1 flex items-start gap-2">
         <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
           {looksLikeImage(trimmed) ? (
@@ -253,7 +373,11 @@ export function ImageField({ label, value, onChange, hint, aiPromptDefault }: Pr
         <div className="min-w-0 flex-1 space-y-1.5">
           <input
             value={value}
-            placeholder="https://… (atau upload di bawah)"
+            placeholder={
+              bannerMode
+                ? "/banners/Buanacomputer-banner.webp (atau upload file di bawah)"
+                : "https://… (atau upload di bawah)"
+            }
             onChange={(e) => onChange(e.target.value)}
             className={inputCls}
           />
@@ -265,7 +389,7 @@ export function ImageField({ label, value, onChange, hint, aiPromptDefault }: Pr
               className="adm-btn-pri inline-flex items-center gap-1 px-3 py-1.5 text-xs"
             >
               <AdminIcon name="upload" className="text-[15px]" />
-              {busy ? "Mengupload…" : "Upload Gambar"}
+              {busy ? "Mengupload…" : bannerMode ? "Upload Banner WebP" : "Upload Gambar"}
             </button>
             <button
               type="button"
@@ -285,7 +409,7 @@ export function ImageField({ label, value, onChange, hint, aiPromptDefault }: Pr
                 Salin Link
               </button>
             )}
-            {looksLikeImage(trimmed) && (
+            {!bannerMode && looksLikeImage(trimmed) && (
               <button
                 type="button"
                 onClick={doEnhanceAI}
@@ -297,7 +421,7 @@ export function ImageField({ label, value, onChange, hint, aiPromptDefault }: Pr
                 {busy ? "Memproses AI…" : "Poles AI"}
               </button>
             )}
-            {looksLikeImage(trimmed) && (
+            {!bannerMode && looksLikeImage(trimmed) && (
               <button
                 type="button"
                 onClick={doLocalStudioEnhance}
@@ -309,7 +433,7 @@ export function ImageField({ label, value, onChange, hint, aiPromptDefault }: Pr
                 Poles Studio Lokal
               </button>
             )}
-            {looksLikeImage(trimmed) && (
+            {!bannerMode && looksLikeImage(trimmed) && (
               <button
                 type="button"
                 onClick={() => setAiCustomOpen((v) => !v)}
@@ -319,7 +443,7 @@ export function ImageField({ label, value, onChange, hint, aiPromptDefault }: Pr
               </button>
             )}
           </div>
-          {aiCustomOpen && (
+          {aiCustomOpen && !bannerMode && (
             <div className="rounded-lg border border-purple-200 bg-purple-50/60 p-2.5 text-xs space-y-1">
               <label className="text-[10px] font-bold uppercase tracking-wider text-purple-900">
                 Prompt Konsistensi Katalog AI
@@ -338,13 +462,20 @@ export function ImageField({ label, value, onChange, hint, aiPromptDefault }: Pr
             accept="image/*"
             className="hidden"
             onChange={(e) => {
-              const f = e.target.files?.[0];
+              const file = e.target.files?.[0];
+              if (file) void doUpload(file);
               e.target.value = "";
-              if (f) void doUpload(f);
             }}
           />
-          {hint && <p className="text-[11px] text-muted-foreground">{hint}</p>}
-          {msg && <p className="text-[11px] text-muted-foreground">{msg}</p>}
+          {hint && <p className="adm-sub text-[11px]">{hint}</p>}
+          {bannerMode && (
+            <p className="adm-sub text-[11px] text-emerald-800">
+              💡 Banner otomatis terkompresi ke <strong>WebP HD</strong>, dinamai{" "}
+              <code>Buanacomputer-*.webp</code>, dan tersimpan langsung di repositori untuk di-push
+              ke GitHub.
+            </p>
+          )}
+          {msg && <p className="font-mono text-[11px] text-slate-700">{msg}</p>}
         </div>
       </div>
 

@@ -108,6 +108,7 @@ export const adminStatus = createServerFn({ method: "GET" }).handler(
       price: number;
       stock: number;
       sold: number;
+      image?: string;
       isFeatured?: boolean;
     };
     type B = {
@@ -130,6 +131,7 @@ export const adminStatus = createServerFn({ method: "GET" }).handler(
       appraisalConditions: unknown[];
     };
     type N = { hero: string[]; footer: string };
+    type J = { hero: string; heroStack: string[]; gallery: unknown[] };
 
     const safe = <T>(file: string, fallback: T): T => {
       try {
@@ -149,6 +151,8 @@ export const adminStatus = createServerFn({ method: "GET" }).handler(
       appraisalConditions: [],
     });
     const banners = safe<N>("src/data/banners.json", { hero: [], footer: "" });
+    const jual = safe<J>("src/data/jualAssets.json", { hero: "", heroStack: [], gallery: [] });
+    const uploads = safe<unknown[]>("src/data/uploads.json", []);
 
     const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : 0);
 
@@ -209,6 +213,19 @@ export const adminStatus = createServerFn({ method: "GET" }).handler(
       date: r.date,
     }));
 
+    const recentProducts = products.slice(0, 5).map((p) => ({
+      id: p.id,
+      name: p.name,
+      category: p.category,
+      price: num(p.price),
+      stock: num(p.stock),
+      image: p.image || "",
+    }));
+
+    const cleanHeroBanners = (Array.isArray(banners.hero) ? banners.hero : [])
+      .map((h) => String(h ?? "").trim())
+      .filter(Boolean);
+
     return {
       ok: true as const,
       env: process.env.NODE_ENV ?? "development",
@@ -216,6 +233,8 @@ export const adminStatus = createServerFn({ method: "GET" }).handler(
         products: products.length,
         articles: articles.length,
         reviews: reviews.length,
+        buybackItems: sell.buybackItems.length,
+        jualGallery: Array.isArray(jual.gallery) ? jual.gallery.length : 0,
       },
       inv: {
         value: inventoryValue,
@@ -227,6 +246,12 @@ export const adminStatus = createServerFn({ method: "GET" }).handler(
       },
       cats,
       top: best ? { name: best.name, sold: num(best.sold) } : null,
+      recentProducts,
+      jual: {
+        heroStack: Array.isArray(jual.heroStack) ? jual.heroStack.length : 0,
+        gallery: Array.isArray(jual.gallery) ? jual.gallery.length : 0,
+      },
+      uploadsCount: uploads.length,
       blog: { totalMinutes: totalReadMinutes, latest: blogLatest },
       reviews: { avg, latest: reviewLatest },
       sell: {
@@ -234,7 +259,12 @@ export const adminStatus = createServerFn({ method: "GET" }).handler(
         items: sell.buybackItems.length,
         cells: sell.appraisalCategories.length * sell.appraisalConditions.length,
       },
-      banners: { hero: banners.hero.filter((h) => String(h ?? "").trim().length > 0).length },
+      banners: {
+        hero: cleanHeroBanners.length,
+        heroList: cleanHeroBanners,
+        footer: Boolean(banners.footer?.trim()),
+        footerUrl: banners.footer || "",
+      },
     };
   },
 );
@@ -304,7 +334,13 @@ export const adminGitCommitPush = createServerFn({ method: "POST" }).handler(
         throw new Error(`git ${args[0]} gagal: ${(err.stderr || err.message || "").trim()}`);
       }
     };
-    await run(["add", "src/data", "public/sitemap.xml"]);
+    await run([
+      "add",
+      "src/data",
+      "public/sitemap.xml",
+      "public/sitemap-jual.xml",
+      "public/banners",
+    ]);
     const commitOut = await run(["commit", "-m", message]);
     if (/nothing to commit/i.test(commitOut)) return { pushed: false as const, output: commitOut };
     const pushOut = await run(["push"]);
@@ -563,6 +599,55 @@ export const adminUploadImage = createServerFn({ method: "POST" }).handler(
     const record: UploadRecord = { url, label: fileName, at: new Date().toISOString() };
     writeUploads([record, ...readUploads().filter((r) => r.url !== url)].slice(0, 200));
     return { url };
+  },
+);
+
+/* ---------------- upload banner lokal (WebP HD, Git-Backed, prefix Buanacomputer) ---------------- */
+
+export const adminUploadLocalBanner = createServerFn({ method: "POST" }).handler(
+  async ({ data }: { data: { token: string; fileName: string; dataUrl: string } }) => {
+    assertAuth(data?.token);
+    const rawName = (data?.fileName ?? "banner").trim() || "banner";
+    // Bersihkan nama file dan buang ekstensi lama
+    const baseClean = rawName
+      .replace(/\.[^/.]+$/, "")
+      .replace(/[^a-zA-Z0-9-_]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    // Pastikan SELALU diawali kata "Buanacomputer-"
+    const finalBase = /^buanacomputer-/i.test(baseClean)
+      ? `Buanacomputer-${baseClean.replace(/^buanacomputer-/i, "")}`
+      : `Buanacomputer-${baseClean || "banner"}`;
+
+    // Selalu gunakan format WebP
+    const finalFileName = `${finalBase}.webp`;
+
+    const m = /^data:image\/[\w+]+;base64,([A-Za-z0-9+/=]+)$/.exec((data?.dataUrl ?? "").trim());
+    const b64 = m?.[1] ?? "";
+    if (!b64) throw new Error("Data gambar WebP tidak valid.");
+    const buf = Buffer.from(b64, "base64");
+    if (buf.length === 0 || buf.length > MAX_UPLOAD_BYTES) {
+      throw new Error("Ukuran gambar maks 10MB.");
+    }
+
+    const bannersDir = join(ROOT, "public", "banners");
+    if (!existsSync(bannersDir)) {
+      mkdirSync(bannersDir, { recursive: true });
+    }
+
+    const targetPath = join(bannersDir, finalFileName);
+    writeFileSync(targetPath, buf);
+
+    const localUrl = `/banners/${finalFileName}`;
+    const record: UploadRecord = {
+      url: localUrl,
+      label: finalFileName,
+      at: new Date().toISOString(),
+    };
+    writeUploads([record, ...readUploads().filter((r) => r.url !== localUrl)].slice(0, 200));
+
+    return { url: localUrl, fileName: finalFileName, sizeBytes: buf.length };
   },
 );
 

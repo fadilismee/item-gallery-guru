@@ -2,7 +2,8 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useCart } from "@/data/cartStore";
 import { formatPrice } from "@/data/products";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, QrCode, X } from "lucide-react";
+import { QrisCheckoutModal, type CartItemForCheckout } from "@/components/QrisCheckoutModal";
 
 type SiteHeaderProps = {
   query?: string;
@@ -34,6 +35,16 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [qrisCartOpen, setQrisCartOpen] = useState(false);
+
+  const cartCheckoutItems: CartItemForCheckout[] = items.map((it) => ({
+    id: it.product.id,
+    name: it.product.name,
+    variant: it.selectedVariant?.name,
+    price: it.selectedVariant?.price ?? it.product.price,
+    qty: it.qty,
+    image: it.product.image,
+  }));
 
   const waCartMessage = encodeURIComponent(
     `Halo Buana Computer, saya mau checkout:\n` +
@@ -220,15 +231,28 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
                                 {formatPrice(subtotal)}
                               </span>
                             </div>
-                            <a
-                              href={waCartHref}
-                              target="_blank"
-                              rel="noreferrer"
-                              onClick={() => setOpen(false)}
-                              className="mt-3 flex w-full items-center justify-center rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white hover:bg-black/80"
-                            >
-                              Checkout via WhatsApp
-                            </a>
+                            <div className="mt-3 flex flex-col gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setOpen(false);
+                                  setQrisCartOpen(true);
+                                }}
+                                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-xs font-bold text-primary-foreground shadow-sm hover:bg-primary/90"
+                              >
+                                <QrCode size={16} />
+                                Bayar via QRIS (Tokopay)
+                              </button>
+                              <a
+                                href={waCartHref}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={() => setOpen(false)}
+                                className="flex w-full items-center justify-center rounded-lg border border-black/10 bg-black/5 py-2 text-xs font-medium text-black hover:bg-black/10"
+                              >
+                                Checkout via WhatsApp
+                              </a>
+                            </div>
                           </div>
                         </>
                       )}
@@ -328,6 +352,12 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
           </form>
         </div>
       )}
+
+      <QrisCheckoutModal
+        open={qrisCartOpen}
+        onClose={() => setQrisCartOpen(false)}
+        items={cartCheckoutItems}
+      />
     </header>
   );
 }

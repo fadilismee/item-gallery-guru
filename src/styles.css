@@ -221,9 +221,99 @@
   animation: marquee 36s linear infinite;
 }
 
+@keyframes buana-float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes buana-float-slow {
+  0%,
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(15px, -18px) scale(1.08);
+  }
+}
+
+@keyframes buana-pulse-glow {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes buana-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-float {
+  animation: buana-float 4s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: buana-float-slow 8s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: buana-pulse-glow 5s ease-in-out infinite;
+}
+
+.buana-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.buana-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.buana-reveal-scale {
+  opacity: 0;
+  transform: scale(0.94) translateY(16px);
+  transition:
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.buana-reveal-scale.is-visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-marquee {
-    animation-duration: 60s;
+  .animate-marquee,
+  .animate-float,
+  .animate-float-slow,
+  .animate-pulse-glow {
+    animation: none !important;
+  }
+  .buana-reveal,
+  .buana-reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }
 
@@ -657,8 +747,7 @@
 .adm-hero {
   background:
     radial-gradient(420px 160px at 88% -40px, rgba(0, 80, 203, 0.14), transparent 70%),
-    radial-gradient(320px 140px at 60% 120%, rgba(0, 103, 127, 0.1), transparent 70%),
-    #ffffff;
+    radial-gradient(320px 140px at 60% 120%, rgba(0, 103, 127, 0.1), transparent 70%), #ffffff;
 }
 
 .adm-bar-track {

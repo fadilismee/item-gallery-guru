@@ -1,4 +1,9 @@
+import { useState } from "react";
+import { WarrantyModal } from "@/components/WarrantyModal";
+
 export function SiteFooter() {
+  const [warrantyOpen, setWarrantyOpen] = useState(false);
+
   return (
     <footer id="kontak" className="border-t border-white/10 bg-[#0f0f0f] text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:gap-12 lg:grid-cols-[1.5fr_1fr] lg:py-16">
@@ -136,14 +141,21 @@ export function SiteFooter() {
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-4 text-xs text-white/40 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Buana Computer. Semua hak dilindungi.</p>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <button
+              type="button"
+              onClick={() => setWarrantyOpen(true)}
+              className="text-emerald-400 hover:underline hover:text-emerald-300 font-semibold"
+            >
+              🛡️ Kebijakan Garansi &amp; Refund
+            </button>
             <a
               href="https://buanacomputer.web.id/about"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white/70"
             >
-              Syarat Layanan
+              Tentang Toko
             </a>
             <a
               href="https://buanacomputer.web.id/about"
@@ -156,6 +168,8 @@ export function SiteFooter() {
           </div>
         </div>
       </div>
+
+      <WarrantyModal open={warrantyOpen} onClose={() => setWarrantyOpen(false)} />
     </footer>
   );
 }

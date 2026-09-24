@@ -43,7 +43,13 @@ function AdminLayout() {
     try {
       const g = await adminGitStatus({ data: { token: getAdminToken() ?? "" } });
       setDirtyCount(
-        g.dirty.filter((f) => f.includes("src/data") || f.includes("sitemap.xml")).length,
+        g.dirty.filter(
+          (f) =>
+            f.includes("src/data") ||
+            f.includes("sitemap") ||
+            f.includes("public/banners") ||
+            f.includes("banners"),
+        ).length,
       );
     } catch {
       // diamkan: git tidak tersedia / belum login penuh

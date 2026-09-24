@@ -55,9 +55,11 @@ function AdminBanner() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="adm-eyebrow">Portal Kendali Konten Publik & Kampanye</p>
-          <h1 className="adm-h1 mt-1">Banner & Promosi</h1>
+          <h1 className="adm-h1 mt-1">Banner & Promosi Toko</h1>
           <p className="adm-sub mt-1">
-            Atur slot hero slider homepage. Kosong = pakai gambar bawaan.
+            Unggah banner promosi format <strong>WebP HD</strong> yang otomatis dinamai{" "}
+            <code>Buanacomputer-*.webp</code> dan disimpan langsung di repositori untuk di-push ke
+            GitHub (tanpa perlu link luar).
           </p>
         </div>
         <button
@@ -76,8 +78,10 @@ function AdminBanner() {
       <section className="adm-card p-4 sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h2 className="font-heading text-lg font-extrabold">Slot Hero Slider</h2>
-            <p className="adm-sub">{file?.hero.length ?? 0} banner terpasang</p>
+            <h2 className="font-heading text-lg font-extrabold">Slot Hero Slider Homepage</h2>
+            <p className="adm-sub">
+              {file?.hero.length ?? 0} banner terpasang • Format WebP HD Git-Direct
+            </p>
           </div>
           <button
             onClick={() => file && setFile({ ...file, hero: [...file.hero, ""] })}
@@ -92,7 +96,7 @@ function AdminBanner() {
             <div key={i} className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
               <div className="flex items-center justify-between">
                 <span className="adm-chip adm-chip-blue font-mono">
-                  Slot #{i + 1} • Aktif Tayang
+                  Slot #{i + 1} • {h ? "Aktif Tayang" : "Menunggu Gambar"}
                 </span>
                 <button
                   onClick={() => setConfirming(i)}
@@ -102,25 +106,26 @@ function AdminBanner() {
                   Hapus
                 </button>
               </div>
-              {/^https?:\/\//i.test(h.trim()) && (
-                <img
-                  src={h.trim()}
-                  alt=""
-                  loading="lazy"
-                  className="mt-2 h-28 w-full rounded-lg border border-slate-200 object-cover"
-                />
+              {(h.trim().startsWith("/") || /^https?:\/\//i.test(h.trim())) && (
+                <div className="relative mt-2 overflow-hidden rounded-lg border border-slate-200 bg-slate-900">
+                  <img src={h.trim()} alt="" loading="lazy" className="h-32 w-full object-cover" />
+                  <span className="absolute bottom-1.5 left-1.5 rounded bg-black/75 px-2 py-0.5 font-mono text-[10px] text-white">
+                    {h.trim()}
+                  </span>
+                </div>
               )}
               <div className="mt-2">
                 <ImageField
                   label={`Gambar slide ${i + 1}`}
                   value={h}
+                  bannerMode={true}
                   onChange={(url) => {
                     if (!file) return;
                     const hero = [...file.hero];
                     hero[i] = url;
                     setFile({ ...file, hero });
                   }}
-                  hint="Rasio lebar disarankan 16:9."
+                  hint="Otomatis dikonversi ke WebP HD & tersimpan di public/banners/Buanacomputer-*.webp."
                 />
               </div>
             </div>
@@ -128,18 +133,21 @@ function AdminBanner() {
         </div>
         {(file?.hero.length ?? 0) === 0 && (
           <p className="adm-sub mt-2">
-            Kosong — komponen memakai gambar bawaan. Tambah banner untuk menimpa.
+            Kosong — homepage saat ini memakai 3 poster bawaan toko (Buanacomputer-poster1/2/3.jpg).
+            Klik tombol &quot;Tambah Banner Baru&quot; di atas untuk memasang banner promo kustom.
           </p>
         )}
       </section>
 
       <section className="adm-card p-4 sm:p-5">
-        <h2 className="font-heading text-lg font-extrabold">Footer / Ticker</h2>
+        <h2 className="font-heading text-lg font-extrabold">Footer / Banner Tambahan</h2>
         <div className="mt-2">
           <ImageField
-            label="Gambar/teks footer"
+            label="Gambar banner footer"
             value={file?.footer ?? ""}
+            bannerMode={true}
             onChange={(url) => file && setFile({ ...file, footer: url })}
+            hint="Format WebP HD tersimpan langsung di repositori."
           />
         </div>
       </section>

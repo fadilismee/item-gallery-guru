@@ -5,6 +5,9 @@ import { AdminIcon as Icon } from "@/components/admin/AdminIcon";
 import { errMsg, getAdminToken } from "@/lib/adminClient";
 import { isEasyMode, useAdminMode } from "@/lib/adminMode";
 import type { ValidationResult } from "@/lib/validateAll";
+import poster1 from "@/img/Buanacomputer-poster1.jpg";
+import poster2 from "@/img/Buanacomputer-poster2.jpg";
+import poster3 from "@/img/Buanacomputer-poster3.jpg";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
@@ -15,16 +18,25 @@ type DashData = Awaited<ReturnType<typeof adminStatus>>;
 
 const EASY_COMMIT_MESSAGE = "Update konten via dashboard (mode mudah)";
 
+const defaultStorePosters = [
+  { img: poster1, label: "Promo Laptop & PC Gaming", desc: "Poster #1 Default Toko" },
+  { img: poster2, label: "Servis & Buyback Hardware", desc: "Poster #2 Default Toko" },
+  { img: poster3, label: "Komponen & Aksesoris Teruji", desc: "Poster #3 Default Toko" },
+];
+
+const fmtRp = (v: number) =>
+  new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  }).format(v);
+
 const fmtRpShort = (v: number) => {
   if (v >= 1_000_000_000)
     return `Rp ${(v / 1_000_000_000).toLocaleString("id-ID", { maximumFractionDigits: 2 })} M`;
   if (v >= 1_000_000)
     return `Rp ${(v / 1_000_000).toLocaleString("id-ID", { maximumFractionDigits: 1 })} jt`;
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(v);
+  return fmtRp(v);
 };
 
 const tagChip = (tone: string) =>
@@ -43,6 +55,7 @@ function StatCard({
   footLeft,
   footLeftClass,
   footRight,
+  to,
 }: {
   eyebrow: string;
   title: string;
@@ -54,13 +67,16 @@ function StatCard({
   footLeft: string;
   footLeftClass?: string;
   footRight?: string;
+  to?: string;
 }) {
-  return (
-    <div className="adm-card adm-stat-card">
+  const content = (
+    <div className="adm-card adm-stat-card h-full">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="adm-stat-label">{eyebrow}</p>
-          <h3 className="font-heading mt-0.5 text-[15px] leading-tight font-bold">{title}</h3>
+          <h3 className="font-heading mt-0.5 text-[15px] leading-tight font-bold text-on-surface">
+            {title}
+          </h3>
         </div>
         <span className={`adm-icon-chip${chip ? ` ${chip}` : ""}`}>
           <Icon name={icon} />
@@ -73,7 +89,7 @@ function StatCard({
             <span className="font-mono text-[11px] font-semibold text-slate-500">{unit}</span>
           )}
         </p>
-        {desc && <p className="adm-sub mt-1 truncate">{desc}</p>}
+        {desc && <p className="adm-sub mt-1 truncate text-xs">{desc}</p>}
       </div>
       <div className="adm-foot-row">
         <span className={footLeftClass ?? "text-pri"}>{footLeft}</span>
@@ -81,6 +97,16 @@ function StatCard({
       </div>
     </div>
   );
+
+  if (to) {
+    return (
+      <Link to={to} className="block transition-transform hover:-translate-y-0.5">
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
 }
 
 function AdminDashboard() {
@@ -157,57 +183,67 @@ function AdminDashboard() {
   };
 
   const contentDirty = (git?.dirty ?? []).filter(
-    (f) => f.includes("src/data") || f.includes("sitemap.xml"),
+    (f) =>
+      f.includes("src/data") ||
+      f.includes("sitemap") ||
+      f.includes("public/banners") ||
+      f.includes("banners"),
   );
 
-  const tiles = [
+  const modules = [
     {
       to: "/admin/produk",
       icon: "inventory_2",
       chip: "",
-      label: "Produk & Katalog",
-      desc: "Tambah / ubah / hapus barang dagangan",
+      label: "Katalog Produk & Toko",
+      desc: "Kelola laptop, komponen, storage, dan pilihan varian harga/stok",
       count: dash?.counts.products,
-    },
-    {
-      to: "/admin/blog",
-      icon: "auto_stories",
-      chip: "violet",
-      label: "Buana Journal (Blog)",
-      desc: "Tulis & sunting artikel",
-      count: dash?.counts.articles,
-    },
-    {
-      to: "/admin/harga",
-      icon: "currency_exchange",
-      chip: "teal",
-      label: "Harga Buyback",
-      desc: "Price list buyback & SKU",
-      count: undefined,
+      unit: "Produk",
     },
     {
       to: "/admin/jual",
       icon: "recycling",
       chip: "teal",
       label: "Aset & Galeri Jual",
-      desc: "Hero stack 3 foto & galeri lab",
-      count: undefined,
+      desc: "Kelola 3 foto hero stack kipas & galeri barang terima masuk lab",
+      count: dash?.counts.jualGallery,
+      unit: "Galeri",
+    },
+    {
+      to: "/admin/harga",
+      icon: "currency_exchange",
+      chip: "teal",
+      label: "Harga & SKU Buyback",
+      desc: "Atur price list barang rusak, matriks live rate, dan kartu SKU",
+      count: dash?.counts.buybackItems,
+      unit: "SKU",
+    },
+    {
+      to: "/admin/blog",
+      icon: "auto_stories",
+      chip: "violet",
+      label: "Buana Journal (Blog)",
+      desc: "Tulis dan sunting artikel panduan teknikal & review lab",
+      count: dash?.counts.articles,
+      unit: "Artikel",
     },
     {
       to: "/admin/review",
       icon: "rate_review",
       chip: "green",
       label: "Review & Testimoni",
-      desc: "Testimoni pembeli",
+      desc: "Kelola ulasan pembeli, rating bintang, dan foto testimoni",
       count: dash?.counts.reviews,
+      unit: "Ulasan",
     },
     {
       to: "/admin/banner",
       icon: "campaign",
       chip: "red",
-      label: "Banner Promosi",
-      desc: "Gambar slide depan",
-      count: undefined,
+      label: "Banner & Promosi",
+      desc: "Atur slot hero slider promosi homepage dan poster footer",
+      count: dash?.banners.hero,
+      unit: "Banner",
     },
   ] as const;
 
@@ -220,7 +256,7 @@ function AdminDashboard() {
   const firstName = (n: string) => n.split("•")[0]?.trim() || n;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* ---------- hero ---------- */}
       <section className="adm-card adm-hero p-4 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -229,12 +265,12 @@ function AdminDashboard() {
               <span className="adm-chip adm-chip-blue">Operational Console</span>
               <span className="adm-sub inline-flex items-center gap-1">
                 <Icon name="schedule" className="text-[15px]" />
-                {today} • Toko Bantul
+                {today} • Workshop Bantul
               </span>
             </div>
             <h1 className="adm-h1 mt-2">Selamat Datang, Admin Buana</h1>
             <p className="adm-sub mt-1">
-              Sinkronisasi katalog, price list buyback, dan konten Buana Journal.
+              Pusat kendali katalog toko, buyback hardware, Buana Journal, dan publikasi live.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -248,7 +284,7 @@ function AdminDashboard() {
             </Link>
             <Link to="/admin/blog" className="adm-btn-ghost inline-flex items-center gap-1.5">
               <Icon name="edit_note" className="text-[18px] text-pri" />
-              Artikel Journal
+              Tulis Artikel
             </Link>
             <Link to="/admin/harga" className="adm-btn-pri inline-flex items-center gap-1.5">
               <Icon name="currency_exchange" className="text-[18px]" />
@@ -261,353 +297,626 @@ function AdminDashboard() {
       {error && <p className="adm-alert-err">{error}</p>}
       {notice && <p className="adm-alert-ok whitespace-pre-wrap">{notice}</p>}
 
-      {/* ---------- stat cards ---------- */}
-      <section className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
+      {/* ---------- 6 STAT CARDS (PERFECTLY BALANCED 2x3 / 3x2 / 6x1) ---------- */}
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
         <StatCard
-          eyebrow="Katalog Unit"
-          title="Total Produk Aktif"
+          eyebrow="Katalog Toko"
+          title="Total Produk"
           icon="inventory_2"
+          to="/admin/produk"
           value={dash ? `${dash.counts.products}` : "…"}
-          unit="SKU terverifikasi"
+          unit="SKU"
           desc={catsDesc}
           footLeft={
             dash ? (dash.inv.lowCount > 0 ? `${dash.inv.lowCount} Stok Kritis` : "Stok aman") : "…"
           }
           footLeftClass={dash && dash.inv.lowCount > 0 ? "text-red-700" : "text-green-700"}
-          footRight={dash ? `${dash.inv.featured} unggulan` : undefined}
+          footRight={dash ? `${dash.inv.featured} Unggulan` : undefined}
         />
         <StatCard
-          eyebrow="Modal Toko"
+          eyebrow="Aset Toko"
           title="Nilai Inventaris"
           icon="payments"
           chip="teal"
+          to="/admin/produk"
           value={dash ? fmtRpShort(dash.inv.value) : "…"}
-          unit="harga × stok"
+          unit="modal"
           desc={dash ? `${dash.inv.ready} unit siap jual` : "Memuat…"}
           footLeft={dash ? `${dash.inv.sold} unit terjual` : "…"}
-          footRight="Estimasi aset"
+          footRight="Estimasi"
+        />
+        <StatCard
+          eyebrow="Sirkularitas"
+          title="Aset & Buyback"
+          icon="recycling"
+          chip="teal"
+          to="/admin/jual"
+          value={dash ? `${dash.counts.buybackItems}` : "…"}
+          unit="SKU Buyback"
+          desc={dash ? `${dash.counts.jualGallery} foto galeri lab` : "Memuat…"}
+          footLeft={dash ? `${dash.jual.heroStack} Foto Stack` : "…"}
+          footRight={dash ? `${dash.sell.rows} Kategori` : undefined}
         />
         <StatCard
           eyebrow="Editorial Lab"
           title="Buana Journal"
           icon="auto_stories"
           chip="violet"
+          to="/admin/blog"
           value={dash ? `${dash.counts.articles}` : "…"}
-          unit="artikel terbit"
+          unit="Artikel"
           desc={dash?.blog.latest[0]?.title ?? "Memuat…"}
           footLeft={dash ? `${dash.blog.totalMinutes} mnt baca` : "…"}
           footRight={dash?.blog.latest[0]?.date}
         />
         <StatCard
-          eyebrow="Kepuasan Servis"
+          eyebrow="Kepuasan Klien"
           title="Rating & Review"
           icon="verified"
           chip="green"
+          to="/admin/review"
           value={dash ? dash.reviews.avg.toFixed(1) : "…"}
           unit="/ 5.0 ★"
-          desc={dash ? `${dash.counts.reviews} ulasan masuk` : "Memuat…"}
+          desc={dash ? `${dash.counts.reviews} testimoni` : "Memuat…"}
           footLeft={
             dash?.reviews.latest[0] ? `Terbaru: ${firstName(dash.reviews.latest[0].name)}` : "…"
           }
           footRight={dash?.reviews.latest[0]?.date}
         />
         <StatCard
-          eyebrow="Promosi Digital"
-          title="Banner Promosi"
+          eyebrow="Promosi & Media"
+          title="Banner & Upload"
           icon="campaign"
           chip="red"
+          to="/admin/banner"
           value={dash ? `${dash.banners.hero}` : "…"}
-          unit="slot live aktif"
-          desc={
-            dash
-              ? dash.banners.hero === 0
-                ? "Pakai gambar bawaan"
-                : "Tayang di homepage"
-              : "Memuat…"
-          }
-          footLeft={dash ? `${dash.sell.items} item buyback` : "…"}
-          footRight={dash ? `${dash.sell.rows} baris harga` : undefined}
+          unit="Banner Live"
+          desc={dash ? `${dash.uploadsCount} riwayat upload` : "Memuat…"}
+          footLeft={dash?.banners.hero === 0 ? "Bawaan aktif" : "Custom aktif"}
+          footRight="Homepage"
         />
       </section>
 
-      {/* ---------- publish ---------- */}
+      {/* ---------- publish banner ---------- */}
       {contentDirty.length > 0 && (
         <section className="adm-card flex flex-wrap items-center justify-between gap-3 border-green-200 bg-green-50/60 p-4">
           <p className="flex items-center gap-2 text-sm text-green-900">
             <Icon name="rocket_launch" className="text-[22px] text-green-700" />
             <span>
-              Ada <strong>{contentDirty.length} perubahan</strong> belum terbit — pengunjung web
-              belum melihatnya.
+              Ada <strong>{contentDirty.length} file data</strong> belum diterbitkan ke Vercel —
+              pengunjung web belum melihat perubahan terbaru.
             </span>
           </p>
           <button
             onClick={() => commitPush(EASY_COMMIT_MESSAGE)}
             disabled={busy === "git"}
-            className="adm-btn-green inline-flex items-center gap-1.5 px-6 py-2.5 text-base"
+            className="adm-btn-green inline-flex items-center gap-1.5 px-6 py-2.5 text-sm font-bold shadow-sm"
           >
-            <Icon name="rocket_launch" className="text-[20px]" />
+            <Icon name="rocket_launch" className="text-[18px]" />
             {busy === "git" ? "Menerbitkan…" : "Terbitkan Sekarang"}
           </button>
         </section>
       )}
 
-      {/* ---------- main grid ---------- */}
-      <section className="grid grid-cols-1 items-start gap-4 xl:grid-cols-12">
-        {/* performa konten */}
-        <div className="adm-card p-4 sm:p-5 xl:col-span-8">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5">
-              <span className="adm-icon-chip teal">
-                <Icon name="insights" />
-              </span>
-              <div>
-                <h2 className="font-heading text-[16px] font-bold">Performa Konten & Jurnal</h2>
-                <p className="adm-sub">Artikel terbaru • metrik pembaca</p>
+      {/* ---------- main grid (balanced 2 columns) ---------- */}
+      <section className="grid grid-cols-1 items-start gap-5 lg:grid-cols-12">
+        {/* Kolom Kiri: Monitoring Katalog & Performa Jurnal */}
+        <div className="space-y-5 lg:col-span-7 xl:col-span-8">
+          {/* Tabel Ringkas Produk Toko */}
+          <div className="adm-card p-4 sm:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="adm-icon-chip">
+                  <Icon name="storefront" />
+                </span>
+                <div>
+                  <h2 className="font-heading text-[16px] font-bold text-on-surface">
+                    Monitoring Produk &amp; Stok Toko
+                  </h2>
+                  <p className="adm-sub text-xs">Produk terdaftar di katalog marketplace</p>
+                </div>
               </div>
+              <Link
+                to="/admin/produk"
+                className="adm-btn-ghost inline-flex items-center gap-1 text-xs py-1"
+              >
+                Lihat Semua ({dash?.counts.products ?? 0})
+                <Icon name="arrow_forward" className="text-[14px]" />
+              </Link>
             </div>
-            {dash && (
-              <span className="adm-chip adm-chip-blue">{dash.blog.totalMinutes} mnt total</span>
-            )}
+
+            <div className="mt-3 overflow-x-auto">
+              <table className="adm-table">
+                <thead>
+                  <tr>
+                    <th>Produk</th>
+                    <th>Kategori</th>
+                    <th>Harga</th>
+                    <th>Status Stok</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(dash?.recentProducts ?? []).map((p) => (
+                    <tr key={p.id}>
+                      <td className="max-w-[200px]">
+                        <div className="flex items-center gap-2.5">
+                          {p.image ? (
+                            <img
+                              src={p.image}
+                              alt=""
+                              className="h-8 w-8 shrink-0 rounded-md border border-slate-200 object-cover"
+                            />
+                          ) : (
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-400">
+                              <Icon name="image" className="text-[16px]" />
+                            </div>
+                          )}
+                          <span className="truncate text-xs font-bold text-on-surface">
+                            {p.name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="text-xs text-slate-600">{p.category}</td>
+                      <td className="font-mono text-xs font-semibold text-on-surface">
+                        {fmtRp(p.price)}
+                      </td>
+                      <td>
+                        {p.stock <= 0 ? (
+                          <span className="adm-chip adm-chip-red text-[10px]">Habis (0)</span>
+                        ) : p.stock <= 2 ? (
+                          <span className="adm-chip adm-chip-amber text-[10px]">
+                            Kritis ({p.stock})
+                          </span>
+                        ) : (
+                          <span className="adm-chip adm-chip-green text-[10px]">
+                            Ready ({p.stock})
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                  {dash && dash.recentProducts.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="text-center py-6 text-xs text-slate-400">
+                        Belum ada produk terdaftar.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {(dash?.blog.latest ?? []).map((a, i) => (
-              <article key={a.slug} className="rounded-xl bg-slate-50 p-3">
-                <div className="flex items-center justify-between gap-2">
-                  <span className={`adm-chip ${tagChip(a.tagTone)}`}>{a.tag}</span>
-                  <span className="inline-flex items-center gap-0.5 font-mono text-[11px] font-semibold text-slate-500">
-                    <Icon name="schedule" className="text-[13px]" />
-                    {a.readMinutes} mnt
-                  </span>
+
+          {/* Performa Konten Buana Journal */}
+          <div className="adm-card p-4 sm:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="adm-icon-chip violet">
+                  <Icon name="insights" />
+                </span>
+                <div>
+                  <h2 className="font-heading text-[16px] font-bold text-on-surface">
+                    Performa Buana Journal &amp; Edukasi
+                  </h2>
+                  <p className="adm-sub text-xs">Artikel terbaru &amp; estimasi minat pembaca</p>
                 </div>
-                <h4 className="font-heading mt-2 line-clamp-2 min-h-[2.6em] text-[14px] leading-snug font-bold">
-                  {a.title}
-                </h4>
-                <div className="mt-2">
-                  <div className="flex items-center justify-between font-mono text-[11px]">
-                    <span className="text-slate-500">{a.readers}</span>
-                    <span className="font-bold text-pri">{a.pct}%</span>
+              </div>
+              {dash && (
+                <span className="adm-chip adm-chip-blue font-mono text-[11px]">
+                  {dash.blog.totalMinutes} mnt total baca
+                </span>
+              )}
+            </div>
+
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {(dash?.blog.latest ?? []).map((a, i) => (
+                <article
+                  key={a.slug}
+                  className="rounded-xl bg-slate-50 p-3 flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className={`adm-chip ${tagChip(a.tagTone)} text-[10px]`}>{a.tag}</span>
+                      <span className="inline-flex items-center gap-0.5 font-mono text-[10px] text-slate-500">
+                        <Icon name="schedule" className="text-[12px]" />
+                        {a.readMinutes} mnt
+                      </span>
+                    </div>
+                    <h4 className="font-heading mt-2 line-clamp-2 text-xs leading-snug font-bold text-on-surface">
+                      {a.title}
+                    </h4>
                   </div>
-                  <div className="adm-bar-track mt-1">
-                    <div className={`adm-bar-fill ${barTone(i)}`} style={{ width: `${a.pct}%` }} />
+                  <div className="mt-3 pt-2 border-t border-slate-200/60">
+                    <div className="flex items-center justify-between font-mono text-[10px]">
+                      <span className="text-slate-500">{a.readers}</span>
+                      <span className="font-bold text-pri">{a.pct}%</span>
+                    </div>
+                    <div className="adm-bar-track mt-1">
+                      <div
+                        className={`adm-bar-fill ${barTone(i)}`}
+                        style={{ width: `${a.pct}%` }}
+                      />
+                    </div>
+                    <p className="mt-1.5 font-mono text-[9px] text-slate-400">{a.date}</p>
                   </div>
-                </div>
-                <p className="mt-2 font-mono text-[10px] text-slate-400">{a.date}</p>
-              </article>
-            ))}
+                </article>
+              ))}
+            </div>
+
+            <div className="mt-3 flex items-center justify-between rounded-xl bg-slate-50 px-3.5 py-2.5">
+              <p className="adm-sub text-xs">Tulis panduan teardown &amp; benchmark baru.</p>
+              <Link
+                to="/admin/blog"
+                className="adm-btn-pri inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold"
+              >
+                Kelola Blog
+                <Icon name="arrow_forward" className="text-[14px]" />
+              </Link>
+            </div>
           </div>
-          <div className="mt-3 flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2.5">
-            <p className="adm-sub">Kelola seluruh artikel & tulis panduan baru.</p>
-            <Link
-              to="/admin/blog"
-              className="adm-btn-pri inline-flex items-center gap-1 px-3 py-1.5 text-xs"
-            >
-              Kelola Blog
-              <Icon name="arrow_forward" className="text-[15px]" />
-            </Link>
+
+          {/* Live Hero Banner & Promosi Homepage */}
+          <div className="adm-card p-4 sm:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="adm-icon-chip red">
+                  <Icon name="campaign" />
+                </span>
+                <div>
+                  <h2 className="font-heading text-[16px] font-bold text-on-surface">
+                    Live Hero Banner &amp; Promosi Toko
+                  </h2>
+                  <p className="adm-sub text-xs">
+                    Pratinjau visual banner carousel yang sedang tayang di homepage
+                  </p>
+                </div>
+              </div>
+              {dash && (
+                <span
+                  className={`adm-chip ${
+                    (dash.banners.heroList?.length ?? 0) > 0 ? "adm-chip-green" : "adm-chip-blue"
+                  } font-mono text-[11px]`}
+                >
+                  {(dash.banners.heroList?.length ?? 0) > 0
+                    ? `${dash.banners.heroList.length} Banner Custom Aktif`
+                    : "3 Poster Bawaan Toko"}
+                </span>
+              )}
+            </div>
+
+            {/* Thumbnail banner preview */}
+            <div className="mt-3">
+              {(dash?.banners.heroList?.length ?? 0) > 0 ? (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  {dash?.banners.heroList.map((url, idx) => (
+                    <div
+                      key={`${url}-${idx}`}
+                      className="group relative overflow-hidden rounded-xl border border-slate-200 bg-slate-900"
+                    >
+                      <div className="aspect-[21/9] sm:aspect-[16/9] w-full overflow-hidden">
+                        <img
+                          src={url}
+                          alt={`Banner Slot ${idx + 1}`}
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      </div>
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-2">
+                        <div className="flex items-center justify-between">
+                          <span className="rounded bg-emerald-500/90 px-1.5 py-0.5 font-mono text-[10px] font-bold text-white">
+                            SLOT #{idx + 1}
+                          </span>
+                          <span className="font-mono text-[10px] text-slate-200">
+                            Custom Banner
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  {defaultStorePosters.map((p, idx) => (
+                    <div
+                      key={p.label}
+                      className="group relative overflow-hidden rounded-xl border border-slate-200 bg-slate-900"
+                    >
+                      <div className="aspect-[21/9] sm:aspect-[16/9] w-full overflow-hidden">
+                        <img
+                          src={p.img}
+                          alt={p.label}
+                          className="h-full w-full object-cover opacity-90 transition-transform duration-300 group-hover:scale-105"
+                        />
+                      </div>
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-2">
+                        <div className="flex items-center justify-between">
+                          <span className="rounded bg-pri/90 px-1.5 py-0.5 font-mono text-[10px] font-bold text-white">
+                            DEFAULT #{idx + 1}
+                          </span>
+                          <span className="truncate pl-1 font-mono text-[10px] text-slate-200">
+                            {p.label}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Reminder & Action Bottom Bar */}
+            <div className="mt-3.5 flex flex-wrap items-center justify-between gap-2.5 rounded-xl border border-amber-200/80 bg-amber-50/70 p-3">
+              <div className="flex items-center gap-2">
+                <Icon name="tips_and_updates" className="text-[20px] text-amber-600 shrink-0" />
+                <p className="text-xs text-amber-950">
+                  <strong>Pengingat Admin:</strong> Perbarui banner saat ada promo gajian, flash
+                  sale, atau kampanye rakit PC baru agar homepage selalu relevan.
+                </p>
+              </div>
+              <Link
+                to="/admin/banner"
+                className="adm-btn-pri inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold shrink-0"
+              >
+                <Icon name="tune" className="text-[14px]" />
+                Atur Banner &amp; Promosi
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* sisi kanan */}
-        <div className="flex min-w-0 flex-col gap-4 xl:col-span-4">
-          {/* stok */}
+        {/* Kolom Kanan: Peringatan Stok, Ulasan Pelanggan, & Status Kesehatan Data */}
+        <div className="space-y-5 lg:col-span-5 xl:col-span-4">
+          {/* Stok Menipis & Best Seller */}
           <div className="adm-card p-4 sm:p-5">
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
               <span className="adm-icon-chip red">
                 <Icon name="warning" />
               </span>
               <div>
-                <h3 className="font-heading text-[16px] font-bold">Stok Menipis & Terlaris</h3>
-                <p className="adm-sub">Peringatan restock gudang</p>
+                <h3 className="font-heading text-[15px] font-bold text-on-surface">
+                  Peringatan Stok Gudang
+                </h3>
+                <p className="adm-sub text-xs">Barang yang perlu di-restock</p>
               </div>
             </div>
+
             {dash?.top && (
               <div className="adm-mini-row mt-3">
                 <div className="flex min-w-0 items-center gap-2">
-                  <Icon name="trending_up" className="text-[18px] text-green-700" />
-                  <p className="truncate text-[13px] font-bold">{dash.top.name}</p>
+                  <Icon name="trending_up" className="text-[18px] text-green-700 shrink-0" />
+                  <p className="truncate text-xs font-bold text-on-surface">Top: {dash.top.name}</p>
                 </div>
-                <span className="adm-chip adm-chip-green shrink-0">{dash.top.sold} terjual</span>
+                <span className="adm-chip adm-chip-green shrink-0 text-[10px]">
+                  {dash.top.sold} terjual
+                </span>
               </div>
             )}
+
             <div className="mt-2 space-y-2">
               {(dash?.inv.low ?? []).map((p) => (
                 <div key={p.id} className="adm-mini-row">
                   <div className="min-w-0">
-                    <p className="truncate text-[13px] font-bold">{p.name}</p>
+                    <p className="truncate text-xs font-bold text-on-surface">{p.name}</p>
                     <p className="font-mono text-[10px] text-slate-500">{p.category}</p>
                   </div>
-                  <span className="adm-chip adm-chip-red shrink-0">Sisa {p.stock}</span>
+                  <span className="adm-chip adm-chip-red shrink-0 text-[10px]">Sisa {p.stock}</span>
                 </div>
               ))}
               {dash && dash.inv.low.length === 0 && (
-                <p className="adm-sub rounded-lg bg-green-50 px-3 py-2 text-green-800">
-                  Semua stok aman — tidak ada yang kritis.
+                <p className="adm-sub rounded-lg bg-green-50 px-3 py-2 text-xs text-green-800">
+                  ✓ Seluruh stok barang aman.
                 </p>
               )}
             </div>
+
             <Link
               to="/admin/produk"
-              className="adm-btn-ghost mt-3 flex items-center justify-center gap-1"
+              className="adm-btn-ghost mt-3 flex items-center justify-center gap-1 text-xs py-1.5 w-full"
             >
-              Kelola Produk
-              <Icon name="arrow_forward" className="text-[15px]" />
+              Update Stok di Katalog
+              <Icon name="arrow_forward" className="text-[14px]" />
             </Link>
           </div>
 
-          {/* review */}
+          {/* Review Terbaru */}
           <div className="adm-card p-4 sm:p-5">
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2.5">
                 <span className="adm-icon-chip green">
                   <Icon name="rate_review" />
                 </span>
                 <div>
-                  <h3 className="font-heading text-[16px] font-bold">Review Terbaru</h3>
-                  <p className="adm-sub">Ulasan publik & rating</p>
+                  <h3 className="font-heading text-[15px] font-bold text-on-surface">
+                    Ulasan Pelanggan Terbaru
+                  </h3>
+                  <p className="adm-sub text-xs">Testimoni publik &amp; rating</p>
                 </div>
               </div>
-              {dash && <span className="adm-chip adm-chip-slate">{dash.counts.reviews}</span>}
+              {dash && (
+                <span className="adm-chip adm-chip-slate text-[11px] font-mono">
+                  {dash.counts.reviews} Total
+                </span>
+              )}
             </div>
-            <div className="mt-3 space-y-2">
+
+            <div className="mt-3 space-y-2.5">
               {(dash?.reviews.latest ?? []).map((r) => (
-                <div key={r.id} className="rounded-xl bg-slate-50 p-3">
+                <div key={r.id} className="rounded-xl bg-slate-50 p-2.5">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="truncate text-[13px] font-bold">{r.name}</p>
-                    <span className="font-mono text-[11px] font-bold text-amber-600">
+                    <p className="truncate text-xs font-bold text-on-surface">{r.name}</p>
+                    <span className="font-mono text-[10px] font-bold text-amber-600">
                       ★ {r.rating}
                     </span>
                   </div>
-                  <p className="mt-0.5 line-clamp-2 text-[13px] text-slate-600">“{r.title}”</p>
-                  <p className="mt-1 font-mono text-[10px] text-slate-400">{r.date}</p>
+                  <p className="mt-0.5 line-clamp-2 text-xs text-slate-600">“{r.title}”</p>
+                  <p className="mt-1 font-mono text-[9px] text-slate-400">{r.date}</p>
                 </div>
               ))}
             </div>
+
             <Link
               to="/admin/review"
-              className="adm-btn-ghost mt-3 flex items-center justify-center gap-1"
+              className="adm-btn-ghost mt-3 flex items-center justify-center gap-1 text-xs py-1.5 w-full"
             >
               Kelola Review
-              <Icon name="arrow_forward" className="text-[15px]" />
+              <Icon name="arrow_forward" className="text-[14px]" />
             </Link>
+          </div>
+
+          {/* Pemeriksaan Kesehatan Data (Ditempatkan Rapi di Kolom Kanan) */}
+          <div className="adm-card p-4 sm:p-5">
+            <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+              <span className="adm-icon-chip teal">
+                <Icon name="health_and_safety" />
+              </span>
+              <div>
+                <h3 className="font-heading text-[15px] font-bold text-on-surface">
+                  Kesehatan Sistem &amp; Data
+                </h3>
+                <p className="adm-sub text-xs">Validasi 9 dataset Zod &amp; sitemap</p>
+              </div>
+            </div>
+
+            <div className="mt-3 space-y-2 text-xs">
+              {!results ? (
+                <p className="adm-sub text-xs">
+                  Klik tombol di bawah untuk memeriksa integritas 9 file JSON data dan keunikan ID
+                  katalog.
+                </p>
+              ) : failed ? (
+                <div className="rounded-lg bg-red-50 p-2.5 text-red-800">
+                  <p className="font-bold">Ada dataset yang tidak valid:</p>
+                  <ul className="mt-1 list-disc pl-4 text-[11px]">
+                    {results
+                      .filter((r) => !r.ok)
+                      .map((r) => (
+                        <li key={r.file}>{r.file}</li>
+                      ))}
+                  </ul>
+                </div>
+              ) : (
+                <div className="rounded-lg bg-green-50 p-2.5 text-green-800">
+                  <p className="font-bold">✓ Seluruh 9 dataset lolos validasi Zod.</p>
+                  <p className="text-[11px] text-green-700">Sitemap dan link aman dari error.</p>
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={runValidate}
+              disabled={busy === "validate"}
+              className="adm-btn-ghost mt-3 w-full text-xs py-1.5 inline-flex items-center justify-center gap-1.5"
+            >
+              <Icon name="check_circle" className="text-[15px] text-pri" />
+              {busy === "validate" ? "Memeriksa…" : "Jalankan Pemeriksaan Data"}
+            </button>
           </div>
         </div>
       </section>
 
-      {/* ---------- tiles ---------- */}
-      <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {tiles.map((t) => (
-          <Link key={t.to} to={t.to} className="adm-card adm-tile p-5">
-            <span className={`adm-icon-chip${t.chip ? ` ${t.chip}` : ""}`}>
-              <Icon name={t.icon} className="text-[22px]" />
-            </span>
-            <p className="font-heading mt-2 text-lg font-bold">
-              {t.label}
-              {t.count !== undefined && (
-                <span className="adm-chip adm-chip-slate ml-2">{t.count}</span>
-              )}
-            </p>
-            <p className="adm-sub mt-0.5">{t.desc}</p>
-            <p className="mt-2 inline-flex items-center gap-1 text-sm font-bold text-pri">
-              Kelola
-              <Icon name="arrow_forward" className="text-[16px]" />
-            </p>
-          </Link>
-        ))}
-        <div className="adm-card p-5">
-          <span className="adm-icon-chip teal">
-            <Icon name="health_and_safety" className="text-[22px]" />
-          </span>
-          <p className="font-heading mt-2 text-lg font-bold">Kesehatan Data</p>
-          {!results ? (
-            <p className="adm-sub mt-0.5">Sistem memeriksa semua data otomatis.</p>
-          ) : failed ? (
-            <p className="mt-0.5 text-sm text-red-700">
-              Perlu diperbaiki:{" "}
-              {results
-                .filter((r) => !r.ok)
-                .map((r) => r.file)
-                .join(", ")}
-            </p>
-          ) : (
-            <p className="mt-0.5 text-sm text-green-700">
-              Aman ({results.length} pemeriksaan lolos).
-            </p>
-          )}
-          <button
-            onClick={runValidate}
-            disabled={busy === "validate"}
-            className="adm-btn-ghost mt-3"
-          >
-            {busy === "validate" ? "Memeriksa…" : easy ? "Periksa Data" : "Jalankan Validasi"}
-          </button>
-          {!easy && results && (
-            <ul className="mt-3 space-y-1 text-sm">
-              {results.map((r) => (
-                <li key={r.file} className={r.ok ? "text-green-700" : "text-red-700"}>
-                  {r.ok ? "✓" : "✗"} {r.file}
-                  {r.issues.map((i) => (
-                    <span key={i} className="block pl-5 text-xs">
-                      - {i}
+      {/* ---------- 6 MODUL NAVIGASI PINTASAN (SEIMBANG TANPA HANGING CARD) ---------- */}
+      <section>
+        <div className="mb-3 flex items-center justify-between">
+          <div>
+            <h2 className="font-heading text-[16px] font-bold text-on-surface">
+              Semua Modul Pengelolaan Toko
+            </h2>
+            <p className="adm-sub text-xs">Pilih modul untuk mengedit data secara visual</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+          {modules.map((m) => (
+            <Link
+              key={m.to}
+              to={m.to}
+              className="adm-card adm-tile p-4 sm:p-5 flex flex-col justify-between group hover:border-pri/40"
+            >
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className={`adm-icon-chip${m.chip ? ` ${m.chip}` : ""}`}>
+                    <Icon name={m.icon} className="text-[22px]" />
+                  </span>
+                  {m.count !== undefined && (
+                    <span className="adm-chip adm-chip-slate font-mono text-[11px]">
+                      {m.count} {m.unit}
                     </span>
-                  ))}
-                </li>
-              ))}
-            </ul>
-          )}
+                  )}
+                </div>
+                <p className="font-heading mt-3 text-base font-bold text-on-surface group-hover:text-pri transition-colors">
+                  {m.label}
+                </p>
+                <p className="adm-sub mt-1 text-xs leading-relaxed">{m.desc}</p>
+              </div>
+              <p className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-pri border-t border-slate-100 pt-2.5">
+                Buka Pengelola
+                <Icon
+                  name="arrow_forward"
+                  className="text-[14px] transition-transform group-hover:translate-x-1"
+                />
+              </p>
+            </Link>
+          ))}
         </div>
       </section>
 
-      {/* ---------- git (advanced) ---------- */}
+      {/* ---------- git panel (mode teknis) ---------- */}
       {!easy && (
         <section className="adm-card p-4 sm:p-5">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
             <span className="adm-icon-chip violet">
               <Icon name="terminal" />
             </span>
             <div>
               <p className="adm-eyebrow">Mode Teknis</p>
-              <h2 className="font-heading text-lg font-bold">Git</h2>
+              <h2 className="font-heading text-lg font-bold text-on-surface">
+                Git &amp; Deployment
+              </h2>
             </div>
           </div>
           {git ? (
-            <div className="mt-2 text-sm">
-              <p>
-                Branch: <code>{git.branch}</code> • Env: <code>{env || "…"}</code> •{" "}
-                {git.dirty.length === 0
-                  ? "working tree bersih"
-                  : `${git.dirty.length} file berubah`}
+            <div className="mt-3 text-xs space-y-2">
+              <p className="text-slate-600">
+                Branch: <code className="font-bold text-pri">{git.branch}</code> • Environment:{" "}
+                <code>{env || "development"}</code> •{" "}
+                {git.dirty.length === 0 ? (
+                  <span className="text-green-700 font-semibold">✓ Working tree bersih</span>
+                ) : (
+                  <span className="text-amber-700 font-semibold">
+                    {git.dirty.length} file data berubah
+                  </span>
+                )}
               </p>
               {git.dirty.length > 0 && (
-                <pre className="mt-2 max-h-32 overflow-auto rounded bg-slate-50 p-2 font-mono text-xs">
+                <pre className="max-h-32 overflow-auto rounded-lg bg-slate-50 p-2.5 font-mono text-[11px] border border-slate-200">
                   {git.dirty.join("\n")}
                 </pre>
               )}
-              <p className="mt-3 font-medium">10 commit terakhir:</p>
-              <pre className="mt-1 max-h-40 overflow-auto rounded bg-slate-50 p-2 font-mono text-xs">
+              <p className="pt-2 font-bold text-on-surface">10 Commit Terakhir di Repositori:</p>
+              <pre className="max-h-40 overflow-auto rounded-lg bg-slate-50 p-2.5 font-mono text-[11px] border border-slate-200">
                 {git.log.join("\n") || "(kosong)"}
               </pre>
             </div>
           ) : (
-            <p className="adm-sub mt-2">Memuat status git…</p>
+            <p className="adm-sub mt-2 text-xs">Memuat status git…</p>
           )}
           <div className="mt-3 flex flex-col gap-2 sm:flex-row">
             <input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Pesan commit, mis: admin: tambah produk X"
-              className="adm-input flex-1"
+              placeholder="Pesan commit rilis, misal: update harga hardisk & laptop"
+              className="adm-input flex-1 text-xs"
             />
             <button
               onClick={() => commitPush(message)}
               disabled={busy === "git" || message.trim().length < 5}
-              className="adm-btn-pri"
+              className="adm-btn-pri text-xs font-semibold px-5"
             >
               {busy === "git" ? "Memproses…" : "Commit & Push"}
             </button>
           </div>
-          <p className="adm-sub mt-1">
-            Commit mencakup <code>src/data</code> + <code>public/sitemap.xml</code>, lalu push
-            (trigger deploy Vercel).
+          <p className="adm-sub mt-1.5 text-[11px]">
+            Tindakan ini akan me-<code>git add src/data public/sitemap*.xml</code>, melakukan
+            commit, dan me-push ke GitHub untuk memicu auto-deploy Vercel.
           </p>
         </section>
       )}

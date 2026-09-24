@@ -154,6 +154,7 @@
 > Run #2 (commit 3db17fd): completed + conclusion SUCCESS — CI hijau.
 >
 > Mobile UI/UX Overhaul (2026-09-16):
+>
 > - SiteHeader: hamburger menu slide-down drawer, backdrop dismiss, modal keranjang responsif (max-width viewport) + tombol close mobile, perbaikan layout logo vs actions.
 > - HeroCarousel: tinggi minimum disesuaikan untuk smartphone (320px vs 420px lama) agar tidak mendominasi layar awal.
 > - ProductCard & Katalog: grid gap proporsional (gap-3 vs gap-4/5), padding kartu p-3 pada mobile, tombol marketplace flex-col / stacked agar teks Tokopedia/Shopee tidak terpotong pada layar sempit.
@@ -164,6 +165,7 @@
 > - Verifikasi: ESLint 0 error, build production Vite+Nitro lolos, validate 9/9 OK.
 >
 > Post-Review Bugfixes (2026-09-16):
+>
 > - SiteHeader: hapus deklarasi duplikat SiteHeaderProps, perbaiki hover gap pop-up keranjang (sm:pt-2) agar tidak tertutup saat kursor bergerak ke bawah, perbaiki input search non-home agar tidak redirect tiap ketikan melainkan submit via Enter.
 > - HeroCarousel: prioritaskan banner admin (banners.hero) di mobile maupun desktop jika ada, fallback ke phone/desktop images hanya jika kosong.
 > - blog.$articleId: tambahkan guard aman loaderData?.article pada head meta.
@@ -172,6 +174,7 @@
 > - Verifikasi: lint 0 error, validate 9/9 OK, build produksi lolos, dev server 200.
 >
 > Google Sitelinks & Verification Setup (2026-09-16):
+>
 > - __root.tsx: pasang google-site-verification meta tag (D9D4lVIRUuQ1KP4nHWeOJWaH5SgfFGUJf1bpLSFjkEY dari gs.txt).
 > - __root.tsx: pasang skema WebSite (nama resmi, alias, deskripsi) & SiteNavigationElement (5 rute utama sitelinks: Katalog, Jual, Form, Blog, About).
 > - .gitignore: ignore file gs.txt agar tidak bocor ke publik.
@@ -179,12 +182,14 @@
 > - Verifikasi: ESLint 0 error, build lolos, validate 9/9 OK, dev server 200.
 >
 > Admin All-in-One Expansion (2026-09-16):
+>
 > - admin.jual.tsx (Baru): halaman kendali aset /jual (hero stack 3 foto fan-out, hero fallback, hero caption, dan 6 kartu galeri barang terima masuk lab dengan tombol upload/gallery Catbox).
 > - admin.harga.tsx: upgrade katalog SKU buyback dari textarea JSON mentah menjadi editor visual kartu ramah pengguna (kategori dropdown, judul, grade, estimasi harga, warna tone, kata kunci pencarian, dan penghitungan otomatis jumlah SKU terdaftar).
 > - admin.tsx & admin.index.tsx: pembaruan menu navigasi atas dengan rute baru /admin/jual ("Aset Jual") dan penambahan tile pintasan di dashboard utama.
 > - Verifikasi: ESLint 0 error, build produksi Vite+Nitro lolos, validate 9/9 OK, local dev server 200.
 >
 > Fitur Varian Produk & Interactive Image Lightbox (2026-09-17):
+>
 > - schemas.ts & products.ts: penambahan ProductVariantSchema (name, price, oldPrice?, stock?) dan field opsional `variants` pada ProductSchema.
 > - products.json: konfigurasi varian kapasitas HDD Laptop Seagate (500GB, 1TB, 2TB) dengan harga dan stok masing-masing.
 > - ProductCard.tsx: format rentang harga dinamis (Opsi A: Rp 150.000 - Rp 450.000) dan badge jumlah pilihan varian.
@@ -194,6 +199,7 @@
 > - Verifikasi: ESLint 0 error, validate 9/9 OK, build produksi Vite+Nitro lolos, dev server 200.
 >
 > Upload Foto Asli & Integrasi 11 Produk Katalog (2026-09-17):
+>
 > - Upload 34 foto asli dari Catalog Assets ke Catbox CDN via upload-catalog-assets.mjs.
 > - Riwayat upload tersimpan di src/data/uploads.json (250 record terbaru).
 > - Integrasi 11 produk baru ke src/data/products.json: Laptop ASUS X540YA, Dell Vostro V131, Acer Aspire E15 i7+MX150, Dell Inspiron 14 bahan, Casing Toshiba, Motherboard Gaming Acer Nitro 5 (dual blower heatsink), Motherboard Lenovo Legion, Motherboard ThinkPad X260/X240, Motherboard Dell Inspiron 14, Logic Board Sony VAIO, dan SSD M.2 2280 SATA (varian Toshiba 128GB & Intel 256GB).
@@ -201,12 +207,14 @@
 > - Verifikasi: validate 9/9 OK, ESLint 0 error, build lolos, local server 200.
 >
 > Perbaikan Link Gambar Asli & Fitur Kompresi Otomatis Upload (2026-09-17):
+>
 > - products.json: memulihkan link gambar asli online (Shopee/Google/Tokopedia) untuk produk Hardisk Laptop (hdd-laptop), Baterai 18650 (BMC-btr18650), dan Hardisk PC (BMC-hddpc).
 > - ImageField.tsx: menambahkan fungsi kompresi client-side (compressImageClient) berbasis Canvas HTML5. Setiap file foto besar (2-5MB PNG/JPG) otomatis di-resize (maks 1600px) dan dikompresi ke JPEG kualitas 0.82 sebelum dikirim ke Catbox, memangkas ukuran file hingga 80-90% (~150KB) secara instan.
 > - Kompresi Aset Statis Poster & Banner (2026-09-17): Seluruh poster dan banner besar di src/img/ (Buanacomputer-poster1/2/3, footer, hp1/2/3, katalog) dikompresi dengan rasio hemat 90%, menurunkan total payload aset statis dari ~15.5 MB menjadi ~1.4 MB.
 > - Verifikasi: ESLint 0 error, validate 9/9 OK, build produksi lolos, local server 200.
 >
 > Pembersihan Gallery & Re-kompresi Katalog 2MB (2026-09-17):
+>
 > - Gallery uploads.json dikosongkan total (reset mulai dari awal) sesuai instruksi — tidak ada lagi histori gambar 2MB tersimpan.
 > - 34 foto Catalog Assets asli (2-4.7MB) dikompresi ulang client-side (max 1600px, JPEG quality 78) menjadi 126-336KB (hemat ~92% rata-rata) dan re-upload ke Catbox dengan URL baru.
 > - products.json 11 produk diperbarui: 45 URL lama 2MB diganti dengan URL baru terkompresi (contoh: zodch2 -> z0yf7i).
@@ -214,6 +222,7 @@
 > - Verifikasi: validate 9/9 OK, lint 0 error, build lolos, sitemap 24 URL, dev server 200.
 >
 > Subdomain Jual & Google Nano Banana AI Enhancement (2026-09-17):
+>
 > - Subdomain Jual: host detection di src/server.ts (jual.* -> rewrite internal ke /jual & /form; main buanacomputer.web.id/jual* -> redirect 308 ke subdomain jual.*). vercel.json rewrite disiapkan.
 > - Navbar: tombol Jual dihapus dari navigasi atas utama (desktop & mobile drawer); tetap dapat diakses via link redirect di footer ("Jual Barang Rusak ->").
 > - SEO Host-Aware & Split Sitemap: sitemap.xml (domain utama, 22 URL tanpa /jual) dan sitemap-jual.xml (subdomain, 2 URL: / dan /form). robots.txt merujuk ke kedua sitemap.
@@ -223,6 +232,7 @@
 > - Verifikasi: ESLint 0 error, validate 9/9 OK, build produksi lolos, live test redirect 308 host header OK.
 >
 > Pembersihan Tombol Jual & Kompresi Agresif 85KB-100KB (2026-09-18):
+>
 > - SiteHeader: tombol Jual dihapus total dari navigasi atas (desktop navbar & mobile drawer), hanya tersisa di footer sebagai backlink resmi ke https://jual.buanacomputer.web.id.
 > - about.tsx: link pilar buyback & CTA diarahkan langsung ke https://jual.buanacomputer.web.id sebagai backlink.
 > - ImageField.tsx: standar kompresi disetel agresif (max 1200px, JPEG Q68 + adaptive pass 100KB) agar setiap upload admin selalu berukuran ~85-100KB.
@@ -239,43 +249,49 @@
 
 ## 1. Peta Data Saat Ini
 
-| Dataset | Jumlah | File | Status |
-|---|---|---|---|
-| Produk | 12 | `src/data/products.json` (+ tipe di `products.ts`) | JSON ✔ |
-| Blog | 4 (7 tipe section) | `src/data/blog.ts` | TS → **pindah JSON** |
-| Review | 12 | `src/data/reviews.ts` | TS → **pindah JSON** |
-| Harga jual/taksir | 8 + 9 + 24 | `src/data/sellPrices.ts` | TS → **pindah JSON** |
-| Banner | 0 | `src/data/banners.json` | JSON ✔ |
-| Cart | client state | `src/data/cartStore.ts` (zustand + localStorage) | tetap |
+| Dataset           | Jumlah             | File                                               | Status               |
+| ----------------- | ------------------ | -------------------------------------------------- | -------------------- |
+| Produk            | 12                 | `src/data/products.json` (+ tipe di `products.ts`) | JSON ✔               |
+| Blog              | 4 (7 tipe section) | `src/data/blog.ts`                                 | TS → **pindah JSON** |
+| Review            | 12                 | `src/data/reviews.ts`                              | TS → **pindah JSON** |
+| Harga jual/taksir | 8 + 9 + 24         | `src/data/sellPrices.ts`                           | TS → **pindah JSON** |
+| Banner            | 0                  | `src/data/banners.json`                            | JSON ✔               |
+| Cart              | client state       | `src/data/cartStore.ts` (zustand + localStorage)   | tetap                |
 
 ## 2. Fase Eksekusi
 
 ### Fase 1 — Unifikasi data ke JSON
+
 - `blog.ts` → `src/data/blog.json` (konten saja); `blog.ts` jadi tipe + helper (`getArticle`, `relatedArticles`) yang import JSON.
 - `reviews.ts` → `src/data/reviews.json`; `reviews.ts` jadi tipe + helper.
 - `sellPrices.ts` → `src/data/sellPrices.json`; `sellPrices.ts` jadi tipe + helper.
 - Renderer tidak berubah (struktur identik, hanya sumber file pindah).
 
 ### Fase 2 — Validasi data
+
 - `src/lib/schemas.ts` (zod): `ProductSchema`, `ReviewSchema`, `BlogArticleSchema` (+ union 7 section), `SellPricesSchema`, `BannersSchema`.
 - Semua modul data (`products.ts`, `blog.ts`, `reviews.ts`, `sellPrices.ts`) ganti `as ...[]` → zod `parse()` dengan error jelas.
 - `npm run validate` → `scripts/validate-data.ts` cek semua file (`node --experimental-strip-types`; fallback devDep `tsx` kalau Node < 22.6).
 - Derive data turunan supaya tidak drift: `count` buyback dihitung dari item; rate appraisal vs harga buyback dicek konsistensinya.
 
 ### Fase 3 — Sitemap otomatis
+
 - `scripts/generate-sitemap.mjs`: baca `products.json` + `blog.json` → tulis `public/sitemap.xml` (`/`, `/jual`, `/jual/form`, `/about`, `/blog`, semua `/produk/<id>`, semua `/blog/<slug>`, `lastmod` deterministik).
 - `package.json`: tambah `"prebuild": "node scripts/generate-sitemap.mjs"`. Hapus sitemap manual.
 
 ### Fase 4 — Konsistensi konten (APPROVED: langsung ganti)
+
 - `products.json`: brand placeholder (MicroBuild/MicroBook/MicroStore/MicroView/MicroGear/MicroPrint) → **brand asli + deskripsi realistis**; lokasi `"Batam"` → `"Bantul, Yogyakarta"` (12 produk).
 - `reviews.json`: video sampel `big_buck_bunny` → gambar, tetap 12 entri.
 - `blog.index.tsx`: H1/hero/labValue **hardcoded** → derive dari `blogArticles[0]`.
 - `tools/bot.py`: default lokasi `"Batam"` → `"Bantul, Yogyakarta"`; rating lewat env.
 
 ### Fase 5 — Fix search `?q=`
+
 - `src/routes/index.tsx`: tambah `validateSearch` zod `{ q? }`; filter katalog + value input diinisialisasi dari `search.q` (SiteHeader sudah navigate ke `/?q=...`).
 
 ### Fase 6 — Dashboard admin local (dev-only + password)
+
 - **Auth**: env `ADMIN_PASSWORD`; `/admin/login` set cookie HMAC; guard `beforeLoad`; server fn menolak saat production/non-localhost.
 - **`src/server/admin.ts`** (`createServerFn`): `listProducts`, `saveProduct`, `deleteProduct`, `listBlog`, `saveBlog`, `listReviews`, `saveReview`, `listSellPrices`, `saveSellPrices`, `listBanners`, `saveBanners`, `validateAll`, `gitStatus`, `gitCommitPush(message)`. Tiap save validasi zod dulu.
 - **Rute UI** `/admin/*` (shadcn + sonner yang sudah ada):
@@ -284,14 +300,17 @@
   - `/admin/blog` — editor per tipe section; `/admin/harga`; `/admin/review`; `/admin/banner`
 
 ### Fase 7 — Konsolidasi `tools/bot.py`
+
 - Validasi minimal sisi Python (required field, tipe, harga ≥ 0) sebelum save; default lokasi benar; alur git tetap. Source of truth validasi = zod build-time.
 
 ## 3. Verifikasi
+
 1. `npm run validate`, `npx eslint .`, `npm run build` (sitemap ter-generate).
 2. Restart dev (`schtasks buana-dev`), cek: `/` (filter `?q=`), semua halaman blog render dari JSON, `/admin` login + CRUD uji lalu hapus, commit test (push hanya dengan izin).
 3. `public/sitemap.xml` memuat produk + artikel + semua rute.
 
 ## 4. Risiko / Batasan
+
 - Blog JSON: diff git kurang cantik dibanding Markdown (dipilih demi scope; renderer tidak berubah).
 - Rename file data = route/& import harus ikut; regen routeTree otomatis oleh plugin.
 - Commit test TIDAK di-push tanpa izin (push = trigger deploy Vercel).

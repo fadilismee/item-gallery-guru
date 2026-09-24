@@ -1,12 +1,14 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
+import { ChevronLeft, ChevronRight, MessageCircle, QrCode, X, ZoomIn } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
 import { ReviewReels } from "@/components/ReviewReels";
 import { PurePoster } from "@/components/PurePoster";
 import { Button } from "@/components/ui/button";
+import { WarrantyTrustBox } from "@/components/WarrantyModal";
+import { QrisCheckoutModal } from "@/components/QrisCheckoutModal";
 import { formatPrice, getProduct, products } from "@/data/products";
 import { useCart } from "@/data/cartStore";
 import reff1 from "@/img/reff1.jpg";
@@ -244,6 +246,7 @@ function ProductDetail() {
 
   const add = useCart((s) => s.add);
   const [added, setAdded] = useState(false);
+  const [qrisModalOpen, setQrisModalOpen] = useState(false);
 
   const variantLabel = currentVariant ? ` (Varian: ${currentVariant.name})` : "";
   const waMessage = encodeURIComponent(
@@ -257,6 +260,17 @@ function ProductDetail() {
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
+
+  const checkoutItem = [
+    {
+      id: product.id,
+      name: product.name,
+      variant: currentVariant?.name,
+      price: currentPrice,
+      qty,
+      image: galleryImages[0] ?? product.image,
+    },
+  ];
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index);
@@ -435,77 +449,106 @@ function ProductDetail() {
               </div>
             )}
 
-            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <div className="flex items-center justify-between gap-3 sm:justify-start">
-                <span className="text-xs font-medium text-muted-foreground sm:hidden">
-                  Kuantitas:
-                </span>
-                <div className="flex items-center rounded-lg border border-input">
-                  <button
-                    onClick={() => setQty((q) => Math.max(1, q - 1))}
-                    disabled={currentStock <= 0}
-                    className="flex h-9 w-9 items-center justify-center text-lg text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
-                    aria-label="Kurangi jumlah"
-                  >
-                    -
-                  </button>
-                  <span className="w-9 text-center text-sm font-semibold text-foreground">
-                    {currentStock > 0 ? qty : 0}
+            <div className="mt-4 flex flex-col gap-3">
+              {/* Main Purchase CTA: QRIS Instant Checkout */}
+              <Button
+                size="lg"
+                disabled={currentStock <= 0}
+                onClick={() => setQrisModalOpen(true)}
+                className="h-11 w-full font-heading font-bold shadow-md bg-pri text-on-pri hover:bg-pri-container text-sm flex items-center justify-center gap-2"
+              >
+                <QrCode size={18} />
+                <span>Beli Langsung via QRIS (Tokopay)</span>
+              </Button>
+
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="flex items-center justify-between gap-3 sm:justify-start">
+                  <span className="text-xs font-medium text-muted-foreground sm:hidden">
+                    Kuantitas:
                   </span>
-                  <button
-                    onClick={() => setQty((q) => Math.min(currentStock, q + 1))}
-                    disabled={currentStock <= 0 || qty >= currentStock}
-                    className="flex h-9 w-9 items-center justify-center text-lg text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
-                    aria-label="Tambah jumlah"
+                  <div className="flex items-center rounded-lg border border-input">
+                    <button
+                      onClick={() => setQty((q) => Math.max(1, q - 1))}
+                      disabled={currentStock <= 0}
+                      className="flex h-9 w-9 items-center justify-center text-lg text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Kurangi jumlah"
+                    >
+                      -
+                    </button>
+                    <span className="w-9 text-center text-sm font-semibold text-foreground">
+                      {currentStock > 0 ? qty : 0}
+                    </span>
+                    <button
+                      onClick={() => setQty((q) => Math.min(currentStock, q + 1))}
+                      disabled={currentStock <= 0 || qty >= currentStock}
+                      className="flex h-9 w-9 items-center justify-center text-lg text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Tambah jumlah"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-1">
+                  <Button asChild variant="outline" className="h-10 flex-1 font-semibold">
+                    <a
+                      href={waHref}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="truncate flex items-center gap-1.5 justify-center"
+                    >
+                      <MessageCircle size={15} className="text-emerald-600" />
+                      Chat WhatsApp
+                    </a>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="h-10 flex-1 font-medium truncate"
+                    disabled={currentStock <= 0}
+                    onClick={handleAddToCart}
                   >
-                    +
-                  </button>
+                    {currentStock <= 0 ? "Stok Habis" : added ? "✓ Ditambahkan" : "+ Keranjang"}
+                  </Button>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-1">
-                <Button asChild className="h-10 flex-1 font-semibold">
-                  <a href={waHref} target="_blank" rel="noreferrer" className="truncate">
-                    Hubungi Penjual
-                  </a>
-                </Button>
-                <Button
-                  variant="outline"
-                  className="h-10 flex-1 font-medium truncate"
-                  disabled={currentStock <= 0}
-                  onClick={handleAddToCart}
-                >
-                  {currentStock <= 0 ? "Stok Habis" : added ? "✓ Ditambahkan" : "+ Keranjang"}
-                </Button>
-              </div>
+
+              {(product.tokopediaUrl || product.shopeeUrl) && (
+                <div className="pt-1 grid grid-cols-2 gap-2">
+                  {product.tokopediaUrl && (
+                    <Button
+                      asChild
+                      className="h-9 bg-[#03AC0E] text-white hover:bg-[#03940C] text-xs font-bold"
+                    >
+                      <a href={product.tokopediaUrl} target="_blank" rel="noreferrer">
+                        <img
+                          src="https://cdn.simpleicons.org/tokopedia/FFFFFF"
+                          alt="Tokopedia"
+                          className="h-3.5 w-3.5"
+                        />
+                        Beli di Tokopedia
+                      </a>
+                    </Button>
+                  )}
+                  {product.shopeeUrl && (
+                    <Button
+                      asChild
+                      className="h-9 bg-[#EE4D2D] text-white hover:bg-[#D73211] text-xs font-bold"
+                    >
+                      <a href={product.shopeeUrl} target="_blank" rel="noreferrer">
+                        <img
+                          src="https://cdn.simpleicons.org/shopee/FFFFFF"
+                          alt="Shopee"
+                          className="h-3.5 w-3.5"
+                        />
+                        Beli di Shopee
+                      </a>
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
-            {(product.tokopediaUrl || product.shopeeUrl) && (
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                {product.tokopediaUrl && (
-                  <Button asChild className="h-10 bg-[#03AC0E] text-white hover:bg-[#03940C]">
-                    <a href={product.tokopediaUrl} target="_blank" rel="noreferrer">
-                      <img
-                        src="https://cdn.simpleicons.org/tokopedia/FFFFFF"
-                        alt="Tokopedia"
-                        className="h-4 w-4"
-                      />
-                      Tokopedia
-                    </a>
-                  </Button>
-                )}
-                {product.shopeeUrl && (
-                  <Button asChild className="h-10 bg-[#EE4D2D] text-white hover:bg-[#D73211]">
-                    <a href={product.shopeeUrl} target="_blank" rel="noreferrer">
-                      <img
-                        src="https://cdn.simpleicons.org/shopee/FFFFFF"
-                        alt="Shopee"
-                        className="h-4 w-4"
-                      />
-                      Shopee
-                    </a>
-                  </Button>
-                )}
-              </div>
-            )}
+
+            {/* Jaminan Garansi & SOP Retur Toko */}
+            <WarrantyTrustBox />
           </div>
 
           <div className="mt-6">
@@ -554,6 +597,12 @@ function ProductDetail() {
           onClose={() => setLightboxOpen(false)}
         />
       )}
+
+      <QrisCheckoutModal
+        open={qrisModalOpen}
+        onClose={() => setQrisModalOpen(false)}
+        items={checkoutItem}
+      />
     </div>
   );
 }
