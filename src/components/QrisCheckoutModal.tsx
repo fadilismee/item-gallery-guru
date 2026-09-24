@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
-import { AlertCircle, CheckCircle2, Clock, Copy, MessageCircle, QrCode, X } from "lucide-react";
+import {
+  AlertCircle,
+  Banknote,
+  CheckCircle2,
+  Clock,
+  Copy,
+  MessageCircle,
+  QrCode,
+  Store,
+  X,
+} from "lucide-react";
 import { checkOrderStatus, createOrderQris, simulateOrderPayment } from "@/server/payment";
+import type { PublicPayMethod } from "@/hooks/use-payment-config";
 import type { OrderRecord } from "@/lib/supabase";
 
 export type CartItemForCheckout = {
@@ -16,11 +27,29 @@ type Props = {
   open: boolean;
   onClose: () => void;
   items: CartItemForCheckout[];
+  payMethods?: PublicPayMethod[];
   onSuccess?: (order: OrderRecord) => void;
 };
 
-export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
-  const [step, setStep] = useState<"form" | "qris" | "paid">("form");
+const FALLBACK_METHODS: PublicPayMethod[] = [
+  { id: "qris", label: "QRIS — semua bank & e-wallet", enabled: true },
+  { id: "cod", label: "COD / Bayar langsung di toko", enabled: true },
+];
+
+function methodIcon(id: string) {
+  if (id === "qris") return <QrCode size={16} />;
+  if (id === "cod") return <Store size={16} />;
+  return <Banknote size={16} />;
+}
+
+export function QrisCheckoutModal({ open, onClose, items, payMethods, onSuccess }: Props) {
+  const methods =
+    payMethods && payMethods.length > 0
+      ? payMethods.filter((m) => m.id !== "manual_wa")
+      : FALLBACK_METHODS;
+  const [step, setStep] = useState<"form" | "pay" | "paid" | "cod">("form");
+  const [payMethod, setPayMethod] = useState(methods[0]?.id ?? "qris");
+  const [methodLabel, setMethodLabel] = useState(methods[0]?.label ?? "QRIS");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
@@ -28,7 +57,7 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
   const [error, setError] = useState("");
   const [order, setOrder] = useState<OrderRecord | null>(null);
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 mins countdown
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState("");
   const [checking, setChecking] = useState(false);
 
   const totalAmount = items.reduce((sum, item) => sum + item.price * item.qty, 0);
@@ -38,15 +67,19 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
   // Reset when opening
   useEffect(() => {
     if (open) {
+      const first = methods[0]?.id ?? "qris";
+      setPayMethod(first);
+      setMethodLabel(methods[0]?.label ?? "QRIS");
       setStep("form");
       setError("");
       setTimeLeft(15 * 60);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  // Countdown timer for QRIS
+  // Countdown timer
   useEffect(() => {
-    if (step !== "qris" || timeLeft <= 0) return;
+    if (step !== "pay" || timeLeft <= 0) return;
     const t = setInterval(() => {
       setTimeLeft((prev) => Math.max(0, prev - 1));
     }, 1000);
@@ -54,6 +87,8 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
   }, [step, timeLeft]);
 
   if (!open) return null;
+
+  const isVa = payMethod.startsWith("va_");
 
   const handleCreateOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,13 +102,14 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
           customerPhone: phone,
           customerAddress: address,
           items,
-          paymentChannel: "qris",
+          method: payMethod,
         },
       });
 
       if (res?.order) {
         setOrder(res.order);
-        setStep("qris");
+        setMethodLabel(methods.find((m) => m.id === payMethod)?.label ?? payMethod);
+        setStep(payMethod === "cod" ? "cod" : "pay");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Gagal memproses pesanan.");
@@ -119,12 +155,11 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
     }
   };
 
-  const copyTotal = async () => {
-    if (!order) return;
+  const copyText = async (text: string, key: string) => {
     try {
-      await navigator.clipboard.writeText(String(order.total_amount));
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(text);
+      setCopied(key);
+      setTimeout(() => setCopied(""), 2000);
     } catch {
       // ignore
     }
@@ -138,9 +173,13 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
 
   const waConfirmHref = order
     ? `https://wa.me/6285979220599?text=${encodeURIComponent(
-        `Halo Buana Computer, saya sudah menyelesaikan pembayaran via QRIS untuk Order ID: ${order.id} sebesar ${formatPrice(
-          order.total_amount,
-        )}. Atas nama ${order.customer_name}. Mohon diproses, terima kasih!`,
+        payMethod === "cod"
+          ? `Halo Buana Computer, saya membuat pesanan COD (bayar di toko) dengan Order ID: ${order.id} sebesar ${formatPrice(
+              order.total_amount,
+            )}. Atas nama ${order.customer_name}. Kapan bisa diambil ke toko? Terima kasih!`
+          : `Halo Buana Computer, saya sudah menyelesaikan pembayaran via ${methodLabel} untuk Order ID: ${order.id} sebesar ${formatPrice(
+              order.total_amount,
+            )}. Atas nama ${order.customer_name}. Mohon diproses, terima kasih!`,
       )}`
     : "#";
 
@@ -161,20 +200,49 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
           <X size={18} />
         </button>
 
-        {/* STEP 1: FORM DATA PEMESAN */}
+        {/* STEP 1: FORM DATA PEMESAN + PILIH METODE */}
         {step === "form" && (
           <div>
             <div className="flex items-center gap-3 border-b border-border pb-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <QrCode size={22} />
+                {methodIcon(payMethod)}
               </div>
               <div>
                 <h2 className="font-heading text-lg font-bold text-foreground">
-                  Bayar Instan via QRIS (Tripay)
+                  Bayar Pesanan Toko
                 </h2>
                 <p className="text-xs text-muted-foreground">
-                  BCA, Mandiri, BRI, BNI, GoPay, ShopeePay, OVO, DANA &amp; Semua m-Banking
+                  QRIS, Virtual Account bank, atau COD di toko
                 </p>
+              </div>
+            </div>
+
+            {/* Pillih Metode Pembayaran */}
+            <div className="mt-4">
+              <p className="mb-2 text-xs font-semibold text-foreground">Metode Pembayaran:</p>
+              <div className="flex flex-wrap gap-2">
+                {methods.map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => {
+                      setPayMethod(m.id);
+                      setMethodLabel(m.label);
+                    }}
+                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-all ${
+                      payMethod === m.id
+                        ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                        : "border-border bg-card text-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    {methodIcon(m.id)}
+                    {m.id === "qris"
+                      ? "QRIS"
+                      : m.id === "cod"
+                        ? "COD"
+                        : m.label.replace(" Virtual Account", "")}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -260,15 +328,19 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
                   disabled={busy}
                   className="w-full rounded-xl bg-primary py-3 text-sm font-bold text-primary-foreground shadow-md transition-colors hover:bg-primary/90 disabled:opacity-50"
                 >
-                  {busy ? "Membuat Kode QRIS..." : `Lanjut Bayar (${formatPrice(totalAmount)}) →`}
+                  {busy
+                    ? "Memproses Pesanan..."
+                    : payMethod === "cod"
+                      ? `Buat Pesanan COD (${formatPrice(totalAmount)}) →`
+                      : `Lanjut Bayar (${formatPrice(totalAmount)}) →`}
                 </button>
               </div>
             </form>
           </div>
         )}
 
-        {/* STEP 2: TAMPILAN QRIS SCAN */}
-        {step === "qris" && order && (
+        {/* STEP 2: PEMBAYARAN QRIS / VIRTUAL ACCOUNT */}
+        {step === "pay" && order && (
           <div className="text-center">
             <div className="flex items-center justify-between border-b border-border pb-3 text-left">
               <div>
@@ -276,7 +348,7 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
                   {order.id}
                 </span>
                 <h3 className="font-heading text-base font-bold text-foreground mt-0.5">
-                  Scan QRIS untuk Membayar
+                  {isVa ? "Transfer ke Virtual Account" : "Scan QRIS untuk Membayar"}
                 </h3>
               </div>
               <div className="flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-1 font-mono text-xs font-bold text-amber-600">
@@ -285,17 +357,36 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
               </div>
             </div>
 
-            {/* QR Code Container */}
-            <div className="my-4 mx-auto flex w-fit flex-col items-center justify-center rounded-2xl border border-border bg-white p-4 shadow-md">
-              <img
-                src={order.payment_url}
-                alt="QRIS Tripay Buana Computer"
-                className="h-56 w-56 sm:h-64 sm:w-64 object-contain rounded-lg"
-              />
-              <p className="mt-2 text-[11px] font-semibold text-slate-800">
-                BUANA COMPUTER • TRIPAY
-              </p>
-            </div>
+            {!isVa ? (
+              <div className="my-4 mx-auto flex w-fit flex-col items-center justify-center rounded-2xl border border-border bg-white p-4 shadow-md">
+                <img
+                  src={order.payment_url}
+                  alt="QRIS Buana Computer"
+                  className="h-56 w-56 sm:h-64 sm:w-64 object-contain rounded-lg"
+                />
+                <p className="mt-2 text-[11px] font-semibold text-slate-800">
+                  BUANA COMPUTER • {methodLabel.toUpperCase().slice(0, 24)}
+                </p>
+              </div>
+            ) : (
+              <div className="my-4 rounded-2xl border border-border bg-white p-5 shadow-md">
+                <p className="text-[11px] font-semibold text-slate-500">{methodLabel}</p>
+                <p className="mt-1 font-mono text-2xl font-extrabold tracking-wider text-slate-900">
+                  {order.pay_code || "–"}
+                </p>
+                <p className="mt-1 text-[11px] text-slate-500">
+                  Transfer tepat sejumlah tagihan dari m-banking / ATM / internet banking.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => copyText(order.pay_code || "", "va")}
+                  className="mt-3 inline-flex items-center gap-1 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-slate-700"
+                >
+                  <Copy size={13} />
+                  <span>{copied === "va" ? "Tersalin!" : "Salin No. VA"}</span>
+                </button>
+              </div>
+            )}
 
             {/* Total Amount & Copy */}
             <div className="rounded-2xl border border-border bg-muted/30 p-3 flex items-center justify-between text-left">
@@ -307,11 +398,11 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
               </div>
               <button
                 type="button"
-                onClick={copyTotal}
+                onClick={() => copyText(String(order.total_amount), "total")}
                 className="flex items-center gap-1 rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-muted"
               >
                 <Copy size={13} />
-                <span>{copied ? "Tersalin!" : "Salin Nominal"}</span>
+                <span>{copied === "total" ? "Tersalin!" : "Salin Nominal"}</span>
               </button>
             </div>
 
@@ -356,6 +447,56 @@ export function QrisCheckoutModal({ open, onClose, items, onSuccess }: Props) {
                 className="w-full rounded-xl border border-dashed border-slate-300 bg-slate-100 py-1.5 text-[10px] font-bold text-slate-600 hover:bg-slate-200"
               >
                 ⚡ Simulasikan Pembayaran Lunas (Demo Mode)
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP COD: PESANAN COD BERHASIL DIBUAT */}
+        {step === "cod" && order && (
+          <div className="text-center py-2">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/15 text-amber-600">
+              <Store size={32} />
+            </div>
+            <h3 className="font-heading mt-4 text-xl font-bold text-foreground">
+              Pesanan COD Dibuat!
+            </h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Tunjukkan invoice ini saat datang ke toko &amp; bayar{" "}
+              <strong>{formatPrice(order.total_amount)}</strong> di kasir.
+            </p>
+            <div className="my-5 rounded-2xl border border-border bg-muted/20 p-4 text-left text-xs space-y-2">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">No. Invoice:</span>
+                <span className="font-mono font-bold text-foreground">{order.id}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Nama:</span>
+                <span className="font-semibold text-foreground">{order.customer_name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Status:</span>
+                <span className="rounded bg-amber-500/20 px-2 py-0.5 font-bold text-amber-700">
+                  COD — BAYAR DI TOKO
+                </span>
+              </div>
+            </div>
+            <div className="space-y-2.5">
+              <a
+                href={waConfirmHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-3 text-xs font-bold text-white shadow-md hover:bg-emerald-700"
+              >
+                <MessageCircle size={16} />
+                Konfirmasi Jadwal Ambil via WhatsApp
+              </a>
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-full rounded-xl border border-border py-2 text-xs font-semibold text-foreground hover:bg-muted"
+              >
+                Tutup &amp; Selesai
               </button>
             </div>
           </div>

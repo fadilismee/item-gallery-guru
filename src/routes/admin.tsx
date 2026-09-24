@@ -14,6 +14,7 @@ const NAV = [
   { to: "/admin", label: "Dashboard", icon: "dashboard", end: true },
   { to: "/admin/produk", label: "Katalog Produk", icon: "inventory_2", end: false },
   { to: "/admin/order", label: "Transaksi", icon: "receipt_long", end: false },
+  { to: "/admin/payment", label: "Pembayaran", icon: "payments", end: false },
   { to: "/admin/blog", label: "Buana Journal", icon: "auto_stories", end: false },
   { to: "/admin/review", label: "Review Toko", icon: "rate_review", end: false },
   { to: "/admin/banner", label: "Banner Promo", icon: "campaign", end: false },

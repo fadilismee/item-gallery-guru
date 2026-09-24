@@ -26,6 +26,7 @@ create table if not exists public.orders (
 -- Pastikan kolom baru tetap ada jika tabel sudah pernah dibuat sebelumnya
 alter table public.orders add column if not exists checkout_url text;
 alter table public.orders add column if not exists tripay_reference text;
+alter table public.orders add column if not exists pay_code text;
 
 -- Row Level Security (RLS) agar pembeli & server bisa baca/tulis order
 alter table public.orders enable row level security;

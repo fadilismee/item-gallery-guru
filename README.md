@@ -52,10 +52,10 @@ Klik foto utama → modal layar penuh: navigasi panah ← / →, keyboard (`Arro
 
 4 jalur pembelian di setiap produk & keranjang:
 
-1. **⚡ QRIS Instan (Tripay):** Popup checkout → isi nama + WA → scan QRIS dinamis (semua bank & e-wallet) → status otomatis `PAID` via webhook → invoice resmi di `/order/:id`.
+1. **⚡ Bayar Instan (QRIS / VA / COD):** Popup checkout → pilih metode → isi nama + WA → scan QRIS / transfer VA / buat pesanan COD → status otomatis `PAID` via webhook → invoice resmi di `/order/:id`. Metode yang tampil diatur di `/admin/payment`.
 2. **💬 WhatsApp:** Pesan prefilled otomatis (nama, varian, qty, total) ke `0859-7922-0599`.
 3. **🟢 Tokopedia / 🟠 Shopee:** Tombol rekber marketplace resmi toko.
-4. **🛒 Keranjang:** Popup keranjang multi-varian, checkout QRIS atau WA sekaligus.
+4. **🛒 Keranjang:** Popup keranjang multi-varian, checkout semua metode aktif atau WA sekaligus.
 
 - **Kebijakan Garansi & Refund:** Modal SOP resmi (garansi 1–12 bulan per kategori, syarat video unboxing + segel utuh, tukar unit atau refund 100% maks 1×24 jam) — terpasang di halaman produk, checkout, dan footer.
 - **Anti-ragu:** Foto fisik asli, alamat gerai + Google Maps, nota & segel toko, 1 nomor WA konsisten.
@@ -73,13 +73,15 @@ Klik foto utama → modal layar penuh: navigasi panah ← / →, keyboard (`Arro
 
 Akses di `/admin` & `/admin-login` (password via `ADMIN_PASSWORD` di `.env`). Prinsip **local-first**: baca/tulis JSON lokal, tombol **Terbitkan** = commit + push `src/data` & sitemap → deploy Vercel.
 
-| Rute Menu       | Fungsi Pengelolaan                                                              |
-| --------------- | ------------------------------------------------------------------------------- |
-| `/admin`        | Ringkasan nilai inventaris, stok kritis, top seller, artikel & review terbaru.  |
-| `/admin/produk` | Tambah/edit/hapus barang, varian harga/stok, link Tokopedia/Shopee, _featured_. |
-| `/admin/blog`   | Tulis & sunting artikel journal (drawer editor 720px, 7 blok konten).           |
-| `/admin/review` | Kelola ulasan, rating bintang, dan media testimoni.                             |
-| `/admin/banner` | Slot hero slider homepage (WebP HD `Buanacomputer-*.webp`, tersimpan di repo).  |
+| Rute Menu        | Fungsi Pengelolaan                                                              |
+| ---------------- | ------------------------------------------------------------------------------- |
+| `/admin`         | Ringkasan nilai inventaris, stok kritis, top seller, artikel & review terbaru.  |
+| `/admin/produk`  | Tambah/edit/hapus barang, varian harga/stok, link Tokopedia/Shopee, _featured_. |
+| `/admin/order`   | Log transaksi Supabase + verifikasi silang status ke Tripay.                    |
+| `/admin/payment` | Gateway aktif, mode sandbox/live, on/off metode, API key, tes koneksi.          |
+| `/admin/blog`    | Tulis & sunting artikel journal (drawer editor 720px, 7 blok konten).           |
+| `/admin/review`  | Kelola ulasan, rating bintang, dan media testimoni.                             |
+| `/admin/banner`  | Slot hero slider homepage (WebP HD `Buanacomputer-*.webp`, tersimpan di repo).  |
 
 - **Keamanan:** Token sesi HMAC, proteksi timing-attack, guard unsaved-changes; fungsi tulis data menolak berjalan di production (view-only untuk review).
 - **Mode Mudah vs Teknis:** Form visual + tombol Terbitkan, atau editor JSON + panel git.
@@ -102,11 +104,12 @@ src/routes/            → index (katalog), produk.$productId, blog.*, about,
                          order.$orderId (invoice), admin.* (dashboard)
 src/components/        → SiteHeader/Footer, HeroCarousel, ProductCard,
                          QrisCheckoutModal, WarrantyModal, Reveal, admin/*
-src/data/              → products, reviews, blog, banners, uploads (*.json)
+src/data/              → products, reviews, blog, banners, paymentSettings,
+                         uploads (*.json) + paymentSecrets.json (gitignored)
 src/lib/               → schemas.ts (Zod), validateAll.ts, supabase.ts,
                          adminClient.ts, adminMode.ts
-src/server/            → admin.ts (CRUD dataset, git, upload, AI),
-                         payment.ts (Tripay QRIS order & status)
+src/server/            → admin.ts (CRUD dataset, git, upload, AI, order, secrets),
+                         payment.ts (order QRIS/VA/COD + status, ikut pengaturan)
 src/server.ts          → entry: webhook Tripay + redirect legacy /jual → /
 scripts/               → validate-data.ts, generate-sitemap.mjs (prebuild)
 ```

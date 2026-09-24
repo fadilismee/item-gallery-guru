@@ -8,6 +8,7 @@ import { ZodError, type ZodTypeAny } from "zod";
 import {
   BannersDataSchema,
   BlogDataSchema,
+  PaymentSettingsDataSchema,
   ProductsDataSchema,
   ReviewsDataSchema,
 } from "@/lib/schemas";
@@ -23,6 +24,7 @@ const DATASETS: Record<string, { file: string; schema: ZodTypeAny }> = {
   reviews: { file: "src/data/reviews.json", schema: ReviewsDataSchema },
   blog: { file: "src/data/blog.json", schema: BlogDataSchema },
   banners: { file: "src/data/banners.json", schema: BannersDataSchema },
+  paymentSettings: { file: "src/data/paymentSettings.json", schema: PaymentSettingsDataSchema },
 };
 
 /* ---------------- auth & guard ---------------- */
@@ -777,5 +779,123 @@ export const adminDeleteOrder = createServerFn({ method: "POST" }).handler(
     const { error } = await supabase.from("orders").delete().eq("id", orderId);
     if (error) throw new Error(`Gagal menghapus: ${error.message}`);
     return { ok: true as const, orderId };
+  },
+);
+
+/* ---------------- kredensial payment gateway (file lokal gitignored) ---------------- */
+
+const PAYMENT_SECRETS_FILE = "src/data/paymentSecrets.json";
+
+export type PaymentSecrets = {
+  tripay: { merchantCode: string; apiKey: string; privateKey: string };
+  tokopay: { merchantId: string; secretKey: string };
+};
+
+const blankSecrets = (): PaymentSecrets => ({
+  tripay: { merchantCode: "", apiKey: "", privateKey: "" },
+  tokopay: { merchantId: "", secretKey: "" },
+});
+
+function readSecrets(): PaymentSecrets {
+  try {
+    const raw = readJson(PAYMENT_SECRETS_FILE) as Partial<PaymentSecrets>;
+    const base = blankSecrets();
+    return {
+      tripay: { ...base.tripay, ...(raw.tripay ?? {}) },
+      tokopay: { ...base.tokopay, ...(raw.tokopay ?? {}) },
+    };
+  } catch {
+    return blankSecrets();
+  }
+}
+
+export const adminGetPaymentSecrets = createServerFn({ method: "GET" }).handler(
+  async ({ data }: { data: { token: string } }) => {
+    assertAuth(data?.token);
+    return { secrets: readSecrets() };
+  },
+);
+
+export const adminSavePaymentSecrets = createServerFn({ method: "POST" }).handler(
+  async ({ data }: { data: { token: string; secrets: PaymentSecrets } }) => {
+    assertAuth(data?.token);
+    assertWriteAllowed();
+    const s = data?.secrets;
+    if (!s || typeof s !== "object" || !s.tripay || !s.tokopay) {
+      throw new Error("Format kredensial tidak valid.");
+    }
+    const clean = (v: unknown) => String(v ?? "").trim();
+    const next: PaymentSecrets = {
+      tripay: {
+        merchantCode: clean(s.tripay.merchantCode),
+        apiKey: clean(s.tripay.apiKey),
+        privateKey: clean(s.tripay.privateKey),
+      },
+      tokopay: {
+        merchantId: clean(s.tokopay.merchantId),
+        secretKey: clean(s.tokopay.secretKey),
+      },
+    };
+    writeFileSync(join(ROOT, PAYMENT_SECRETS_FILE), JSON.stringify(next, null, 2) + "\n", "utf-8");
+    return { ok: true as const };
+  },
+);
+
+/**
+ * Tes koneksi API key ke payment gateway (tanpa membuat transaksi).
+ * Tripay: cek detail transaksi dummy — key valid bila server merespons
+ * (bukan error autentikasi). Tokopay: cek info saldo merchant.
+ */
+export const adminTestPaymentConnection = createServerFn({ method: "POST" }).handler(
+  async ({ data }: { data: { token: string; gateway: "tripay" | "tokopay"; mode?: string } }) => {
+    assertAuth(data?.token);
+    const gateway = data?.gateway === "tokopay" ? "tokopay" : "tripay";
+    const secrets = readSecrets();
+
+    if (gateway === "tripay") {
+      const apiKey = secrets.tripay.apiKey || (process.env.TRIPAY_API_KEY || "").trim();
+      if (!apiKey) throw new Error("API Key Tripay masih kosong.");
+      const baseUrl = apiKey.startsWith("DEV-")
+        ? "https://tripay.co.id/api-sandbox"
+        : "https://tripay.co.id/api";
+      const res = await fetch(`${baseUrl}/transaction/detail?merchant_ref=TEST-CONNECTION-PROBE`, {
+        headers: { Authorization: `Bearer ${apiKey}` },
+      });
+      const json = (await res.json()) as { success?: boolean; message?: string };
+      const msg = String(json.message || "");
+      if (json.success) return { ok: true as const, message: "Terhubung ke Tripay." };
+      if (/not found|tidak ditemukan|data not found/i.test(msg)) {
+        return {
+          ok: true as const,
+          message: `Terhubung ke Tripay (${apiKey.startsWith("DEV-") ? "mode Sandbox" : "mode Live"}).`,
+        };
+      }
+      throw new Error(`Tripay menolak key: ${msg || `HTTP ${res.status}`}`);
+    }
+
+    const merchantId = secrets.tokopay.merchantId || (process.env.TOKOPAY_MERCHANT_ID || "").trim();
+    const secretKey = secrets.tokopay.secretKey || (process.env.TOKOPAY_SECRET_KEY || "").trim();
+    if (!merchantId || !secretKey)
+      throw new Error("Merchant ID / Secret Key Tokopay masih kosong.");
+    const { createHash } = await import("node:crypto");
+    const signature = createHash("md5").update(`${merchantId}:${secretKey}`).digest("hex");
+    const res = await fetch(
+      `https://api.tokopay.id/v1/merchant/balance?merchant=${encodeURIComponent(
+        merchantId,
+      )}&signature=${signature}`,
+    );
+    const json = (await res.json()) as {
+      status?: number | string | boolean;
+      rc?: number;
+      data?: { nama_toko?: string };
+      error_msg?: string;
+    };
+    if (json.status === 1 || json.rc === 200) {
+      return {
+        ok: true as const,
+        message: `Terhubung ke Tokopay (toko: ${json.data?.nama_toko || "-"}).`,
+      };
+    }
+    throw new Error(`Tokopay menolak kredensial: ${json.error_msg || `HTTP ${res.status}`}`);
   },
 );

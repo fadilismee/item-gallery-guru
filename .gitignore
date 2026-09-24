@@ -24,6 +24,8 @@ lerna-debug.log*
 .env-apikey*
 *.env-apikey*
 !.env.example
+# API key payment gateway dari dashboard admin (baca per-request, tidak di-push)
+src/data/paymentSecrets.json
 
 # ================= Deploy =================
 .vercel

@@ -9,6 +9,7 @@ import { PurePoster } from "@/components/PurePoster";
 import { Button } from "@/components/ui/button";
 import { WarrantyTrustBox } from "@/components/WarrantyModal";
 import { QrisCheckoutModal } from "@/components/QrisCheckoutModal";
+import { usePaymentConfig } from "@/hooks/use-payment-config";
 import { formatPrice, getProduct, products } from "@/data/products";
 import { useCart } from "@/data/cartStore";
 import reff1 from "@/img/reff1.jpg";
@@ -172,6 +173,7 @@ function ProductDetail() {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const { onlineMethods, canInstantCheckout } = usePaymentConfig();
 
   const galleryImages =
     product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
@@ -450,16 +452,18 @@ function ProductDetail() {
             )}
 
             <div className="mt-4 flex flex-col gap-3">
-              {/* Main Purchase CTA: QRIS Instant Checkout */}
-              <Button
-                size="lg"
-                disabled={currentStock <= 0}
-                onClick={() => setQrisModalOpen(true)}
-                className="h-11 w-full font-heading font-bold shadow-md bg-pri text-on-pri hover:bg-pri-container text-sm flex items-center justify-center gap-2"
-              >
-                <QrCode size={18} />
-                <span>Beli Langsung via QRIS (Tripay)</span>
-              </Button>
+              {/* Main Purchase CTA: Instant Checkout (ikut pengaturan payment) */}
+              {canInstantCheckout && (
+                <Button
+                  size="lg"
+                  disabled={currentStock <= 0}
+                  onClick={() => setQrisModalOpen(true)}
+                  className="h-11 w-full font-heading font-bold shadow-md bg-pri text-on-pri hover:bg-pri-container text-sm flex items-center justify-center gap-2"
+                >
+                  <QrCode size={18} />
+                  <span>Beli Langsung (QRIS / VA / COD)</span>
+                </Button>
+              )}
 
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <div className="flex items-center justify-between gap-3 sm:justify-start">
@@ -602,6 +606,7 @@ function ProductDetail() {
         open={qrisModalOpen}
         onClose={() => setQrisModalOpen(false)}
         items={checkoutItem}
+        payMethods={onlineMethods}
       />
     </div>
   );

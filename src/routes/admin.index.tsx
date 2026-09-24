@@ -233,6 +233,15 @@ function AdminDashboard() {
       unit: "Pending",
     },
     {
+      to: "/admin/payment",
+      icon: "payments",
+      chip: "teal",
+      label: "Pembayaran & Gateway",
+      desc: "Atur gateway aktif, metode checkout, dan API key Tripay/Tokopay",
+      count: undefined,
+      unit: "Gateway",
+    },
+    {
       to: "/admin/blog",
       icon: "auto_stories",
       chip: "violet",

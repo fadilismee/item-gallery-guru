@@ -4,6 +4,7 @@ import { ZodError, type ZodTypeAny } from "zod";
 import {
   BannersDataSchema,
   BlogDataSchema,
+  PaymentSettingsDataSchema,
   ProductsDataSchema,
   ReviewsDataSchema,
   UploadsDataSchema,
@@ -20,6 +21,7 @@ const TARGETS: [string, ZodTypeAny][] = [
   ["src/data/reviews.json", ReviewsDataSchema],
   ["src/data/blog.json", BlogDataSchema],
   ["src/data/banners.json", BannersDataSchema],
+  ["src/data/paymentSettings.json", PaymentSettingsDataSchema],
   ["src/data/uploads.json", UploadsDataSchema],
 ];
 

@@ -50,6 +50,7 @@ export type OrderRecord = {
   checkout_url?: string;
   tripay_reference?: string;
   tokopay_trx_id?: string;
+  pay_code?: string;
   created_at: string;
   paid_at?: string;
 };

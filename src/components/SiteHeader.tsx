@@ -4,6 +4,7 @@ import { formatPrice } from "@/data/products";
 import { useState } from "react";
 import { Menu, QrCode, X } from "lucide-react";
 import { QrisCheckoutModal, type CartItemForCheckout } from "@/components/QrisCheckoutModal";
+import { usePaymentConfig } from "@/hooks/use-payment-config";
 
 type SiteHeaderProps = {
   query?: string;
@@ -36,6 +37,7 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [qrisCartOpen, setQrisCartOpen] = useState(false);
+  const { onlineMethods, canInstantCheckout } = usePaymentConfig();
 
   const cartCheckoutItems: CartItemForCheckout[] = items.map((it) => ({
     id: it.product.id,
@@ -232,17 +234,19 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
                               </span>
                             </div>
                             <div className="mt-3 flex flex-col gap-2">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setOpen(false);
-                                  setQrisCartOpen(true);
-                                }}
-                                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-xs font-bold text-primary-foreground shadow-sm hover:bg-primary/90"
-                              >
-                                <QrCode size={16} />
-                                Bayar via QRIS (Tripay)
-                              </button>
+                              {canInstantCheckout && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setOpen(false);
+                                    setQrisCartOpen(true);
+                                  }}
+                                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-xs font-bold text-primary-foreground shadow-sm hover:bg-primary/90"
+                                >
+                                  <QrCode size={16} />
+                                  Bayar Instan (QRIS / VA / COD)
+                                </button>
+                              )}
                               <a
                                 href={waCartHref}
                                 target="_blank"
@@ -357,6 +361,7 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
         open={qrisCartOpen}
         onClose={() => setQrisCartOpen(false)}
         items={cartCheckoutItems}
+        payMethods={onlineMethods}
       />
     </header>
   );

@@ -214,29 +214,55 @@ function OrderStatusPage() {
                 </div>
               </div>
 
-              {/* QR Code Container jika masih PENDING */}
-              {order.payment_status === "PENDING" && order.payment_url && (
-                <div className="rounded-2xl border border-border bg-white p-5 text-center shadow-sm">
-                  <p className="font-heading text-sm font-bold text-slate-900">
-                    Scan QRIS untuk Menyelesaikan Pembayaran:
-                  </p>
-                  <img
-                    src={order.payment_url}
-                    alt="QRIS Tokopay"
-                    className="mx-auto my-3 h-52 w-52 object-contain rounded-lg border border-slate-200"
-                  />
-                  <p className="font-mono text-xs font-bold text-slate-800">
-                    Total: {formatPrice(order.total_amount)}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={fetchStatus}
-                    className="mt-3 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground shadow-sm hover:bg-primary/90"
-                  >
-                    ✓ Cek Status Pembayaran
-                  </button>
-                </div>
-              )}
+              {/* Panel bayar jika masih PENDING: QRIS atau nomor VA */}
+              {order.payment_status === "PENDING" &&
+                (order.payment_channel === "cash_cod" ? (
+                  <div className="rounded-2xl border border-amber-300 bg-amber-50 p-5 text-center shadow-sm">
+                    <p className="font-heading text-sm font-bold text-amber-900">
+                      Pesanan COD — Bayar di Toko
+                    </p>
+                    <p className="mt-1 text-xs text-amber-800">
+                      Tunjukkan invoice {order.id} ke kasir &amp; bayar{" "}
+                      {formatPrice(order.total_amount)} langsung di gerai Banguntapan, Bantul.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border border-border bg-white p-5 text-center shadow-sm">
+                    {order.pay_code ? (
+                      <>
+                        <p className="font-heading text-sm font-bold text-slate-900">
+                          Transfer ke Virtual Account:
+                        </p>
+                        <p className="mt-2 font-mono text-2xl font-extrabold tracking-wider text-slate-900">
+                          {order.pay_code}
+                        </p>
+                      </>
+                    ) : (
+                      order.payment_url && (
+                        <>
+                          <p className="font-heading text-sm font-bold text-slate-900">
+                            Scan QRIS untuk Menyelesaikan Pembayaran:
+                          </p>
+                          <img
+                            src={order.payment_url}
+                            alt="QRIS Buana Computer"
+                            className="mx-auto my-3 h-52 w-52 object-contain rounded-lg border border-slate-200"
+                          />
+                        </>
+                      )
+                    )}
+                    <p className="font-mono text-xs font-bold text-slate-800">
+                      Total: {formatPrice(order.total_amount)}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={fetchStatus}
+                      className="mt-3 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground shadow-sm hover:bg-primary/90"
+                    >
+                      ✓ Cek Status Pembayaran
+                    </button>
+                  </div>
+                ))}
 
               {/* Jaminan Garansi Toko */}
               <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 flex items-center gap-3">

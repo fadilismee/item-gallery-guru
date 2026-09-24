@@ -1,0 +1,14 @@
+{
+  "activeGateway": "tripay",
+  "mode": "sandbox",
+  "methods": [
+    { "id": "qris", "label": "QRIS — semua bank & e-wallet", "enabled": true },
+    { "id": "va_bca", "label": "BCA Virtual Account", "enabled": false },
+    { "id": "va_bri", "label": "BRI Virtual Account", "enabled": false },
+    { "id": "va_mandiri", "label": "Mandiri Virtual Account", "enabled": false },
+    { "id": "va_bni", "label": "BNI Virtual Account", "enabled": false },
+    { "id": "cod", "label": "COD / Bayar langsung di toko", "enabled": true },
+    { "id": "manual_wa", "label": "Transfer manual via WhatsApp", "enabled": true }
+  ],
+  "staticQrisUrl": ""
+}

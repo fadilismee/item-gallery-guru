@@ -171,6 +171,26 @@ export const BannersDataSchema = z.object({
 });
 
 /* ------------------------------------------------------------------ */
+/* Pengaturan payment gateway toko (src/data/paymentSettings.json)      */
+/* Publik & commit ke git (tanpa secret!). Secret API key tersimpan di  */
+/* src/data/paymentSecrets.json yang gitignored + hanya bisa dibaca    */
+/* lewat dashboard admin lokal.                                         */
+/* ------------------------------------------------------------------ */
+
+export const PaymentMethodSchema = z.object({
+  id: z.string().min(1),
+  label: z.string().min(1),
+  enabled: z.boolean(),
+});
+
+export const PaymentSettingsDataSchema = z.object({
+  activeGateway: z.enum(["tripay", "tokopay", "manual"]),
+  mode: z.enum(["sandbox", "live"]),
+  methods: z.array(PaymentMethodSchema).min(1),
+  staticQrisUrl: z.string(),
+});
+
+/* ------------------------------------------------------------------ */
 /* Media library (src/data/uploads.json) — daftar link hasil upload     */
 /* ------------------------------------------------------------------ */
 
