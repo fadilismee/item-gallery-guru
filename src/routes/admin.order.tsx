@@ -9,7 +9,6 @@ import {
 import { errMsg, getAdminToken } from "@/lib/adminClient";
 import { AdminIcon } from "@/components/admin/AdminIcon";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
-import { isReviewer } from "@/lib/adminClient";
 import type { OrderRecord } from "@/lib/supabase";
 
 export const Route = createFileRoute("/admin/order")({
@@ -142,8 +141,6 @@ function AdminOrder() {
     void reload(status, query);
   };
 
-  const reviewer = isReviewer();
-
   const verify = async (orderId: string) => {
     setBusy(`verify-${orderId}`);
     setError("");
@@ -152,7 +149,7 @@ function AdminOrder() {
       const r = await adminVerifyOrder({ data: { token: token(), orderId } });
       setList((prev) => prev.map((o) => (o.id === orderId ? r.order : o)));
       if (detail?.id === orderId) setDetail(r.order);
-      const tail = r.readOnly ? " (perbandingan saja — mode reviewer)" : " (tersinkron).";
+      const tail = " (tersinkron).";
       setNotice(
         r.order.payment_status === "PAID"
           ? `✓ ${orderId} LUNAS menurut Tripay${tail}`
@@ -373,15 +370,13 @@ function AdminOrder() {
                       >
                         <AdminIcon name="verified" className="text-[16px]" />
                       </button>
-                      {!reviewer && (
-                        <button
-                          onClick={() => setConfirming(o.id)}
-                          title="Hapus dari log"
-                          className="rounded-md border border-border p-1.5 text-red-600 hover:bg-red-50"
-                        >
-                          <AdminIcon name="delete" className="text-[16px]" />
-                        </button>
-                      )}
+                      <button
+                        onClick={() => setConfirming(o.id)}
+                        title="Hapus dari log"
+                        className="rounded-md border border-border p-1.5 text-red-600 hover:bg-red-50"
+                      >
+                        <AdminIcon name="delete" className="text-[16px]" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -517,8 +512,8 @@ function AdminOrder() {
                 )}
               </div>
 
-              {/* ---------- refund manual (admin penuh saja) ---------- */}
-              {!reviewer && detail.payment_status === "PAID" ? (
+              {/* ---------- refund manual ---------- */}
+              {detail.payment_status === "PAID" ? (
                 <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-3">
                   <p className="text-xs font-bold text-amber-900">
                     Refund Manual (transfer balik via bank)

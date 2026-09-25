@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { adminLogin } from "@/server/admin";
-import { errMsg, setAdminRole, setAdminToken } from "@/lib/adminClient";
+import { errMsg, setAdminToken } from "@/lib/adminClient";
 import { AdminIcon } from "@/components/admin/AdminIcon";
 
 export const Route = createFileRoute("/admin-login")({
@@ -24,7 +24,6 @@ function AdminLogin() {
     try {
       const res = await adminLogin({ data: { password } });
       setAdminToken(res.token);
-      setAdminRole(res.role);
       navigate({ to: "/admin" });
     } catch (err) {
       const msg = errMsg(err);
@@ -46,7 +45,6 @@ function AdminLogin() {
     try {
       const res = await adminLogin({ data: { password, code } });
       setAdminToken(res.token);
-      setAdminRole(res.role);
       navigate({ to: "/admin" });
     } catch (err) {
       setError(errMsg(err));
@@ -62,9 +60,8 @@ function AdminLogin() {
           <p className="adm-eyebrow">Buana Hub • Portal Lab & Media</p>
           <h1 className="font-heading mt-1 text-2xl font-extrabold text-on-surface">Buana Admin</h1>
           <p className="adm-sub mt-1">
-            Langkah 1 dari 2 — masukkan password tim (<code>ADMIN_PASSWORD</code> di{" "}
-            <code>.env</code>). Tim verifikasi eksternal memakai password reviewer khusus (-mode
-            lihat saja, tanpa 2FA).
+            Langkah 1 dari 2 — masukkan password admin toko (<code>ADMIN_PASSWORD</code> di{" "}
+            <code>.env</code>).
           </p>
           <label className="adm-label mt-4">
             Password

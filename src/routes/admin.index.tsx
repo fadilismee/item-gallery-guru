@@ -8,7 +8,7 @@ import {
   adminValidate,
 } from "@/server/admin";
 import { AdminIcon as Icon } from "@/components/admin/AdminIcon";
-import { errMsg, getAdminToken, isReviewer } from "@/lib/adminClient";
+import { errMsg, getAdminToken } from "@/lib/adminClient";
 import { isEasyMode, useAdminMode } from "@/lib/adminMode";
 import type { ValidationResult } from "@/lib/validateAll";
 import poster1 from "@/img/Buanacomputer-poster1.jpg";
@@ -297,37 +297,27 @@ function AdminDashboard() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {isReviewer() ? (
-              <Link to="/admin/order" className="adm-btn-pri inline-flex items-center gap-1.5">
-                <Icon name="receipt_long" className="text-[18px]" />
-                Lihat Log Transaksi
+            <>
+              <Link to="/admin/produk" className="adm-btn-pri inline-flex items-center gap-1.5">
+                <Icon name="add_shopping_cart" className="text-[18px]" />
+                Tambah Produk
+              </Link>
+              <Link to="/admin/blog" className="adm-btn-ghost inline-flex items-center gap-1.5">
+                <Icon name="edit_note" className="text-[18px] text-pri" />
+                Tulis Artikel
+              </Link>
+              <Link to="/admin/banner" className="adm-btn-ghost inline-flex items-center gap-1.5">
+                <Icon name="campaign" className="text-[18px] text-pri" />
+                Atur Banner
+              </Link>
+              <Link to="/admin/order" className="adm-btn-ghost inline-flex items-center gap-1.5">
+                <Icon name="receipt_long" className="text-[18px] text-pri" />
+                Log Transaksi
                 {orderStats && orderStats.pending > 0 && (
                   <span className="adm-chip adm-chip-amber ml-1">{orderStats.pending}</span>
                 )}
               </Link>
-            ) : (
-              <>
-                <Link to="/admin/produk" className="adm-btn-pri inline-flex items-center gap-1.5">
-                  <Icon name="add_shopping_cart" className="text-[18px]" />
-                  Tambah Produk
-                </Link>
-                <Link to="/admin/blog" className="adm-btn-ghost inline-flex items-center gap-1.5">
-                  <Icon name="edit_note" className="text-[18px] text-pri" />
-                  Tulis Artikel
-                </Link>
-                <Link to="/admin/banner" className="adm-btn-ghost inline-flex items-center gap-1.5">
-                  <Icon name="campaign" className="text-[18px] text-pri" />
-                  Atur Banner
-                </Link>
-                <Link to="/admin/order" className="adm-btn-ghost inline-flex items-center gap-1.5">
-                  <Icon name="receipt_long" className="text-[18px] text-pri" />
-                  Log Transaksi
-                  {orderStats && orderStats.pending > 0 && (
-                    <span className="adm-chip adm-chip-amber ml-1">{orderStats.pending}</span>
-                  )}
-                </Link>
-              </>
-            )}
+            </>
           </div>
         </div>
       </section>
@@ -422,8 +412,8 @@ function AdminDashboard() {
         />
       </section>
 
-      {/* ---------- publish banner (admin penuh saja) ---------- */}
-      {!isReviewer() && contentDirty.length > 0 && (
+      {/* ---------- publish banner ---------- */}
+      {contentDirty.length > 0 && (
         <section className="adm-card flex flex-wrap items-center justify-between gap-3 border-green-200 bg-green-50/60 p-4">
           <p className="flex items-center gap-2 text-sm text-green-900">
             <Icon name="rocket_launch" className="text-[22px] text-green-700" />
@@ -807,8 +797,8 @@ function AdminDashboard() {
             </Link>
           </div>
 
-          {/* Pemeriksaan Kesehatan Data (admin penuh saja) */}
-          {!isReviewer() && (
+          {/* Pemeriksaan Kesehatan Data */}
+          {
             <div className="adm-card p-4 sm:p-5">
               <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
                 <span className="adm-icon-chip teal">
@@ -856,27 +846,23 @@ function AdminDashboard() {
                 {busy === "validate" ? "Memeriksa…" : "Jalankan Pemeriksaan Data"}
               </button>
             </div>
-          )}
+          }
         </div>
       </section>
 
-      {/* ---------- MODUL NAVIGASI (reviewer: hanya Transaksi) ---------- */}
+      {/* ---------- MODUL NAVIGASI ---------- */}
       <section>
         <div className="mb-3 flex items-center justify-between">
           <div>
             <h2 className="font-heading text-[16px] font-bold text-on-surface">
-              {isReviewer() ? "Modul Verifikasi" : "Semua Modul Pengelolaan Toko"}
+              Semua Modul Pengelolaan Toko
             </h2>
-            <p className="adm-sub text-xs">
-              {isReviewer()
-                ? "Akses lihat-saja untuk tim verifikasi eksternal"
-                : "Pilih modul untuk mengedit data secara visual"}
-            </p>
+            <p className="adm-sub text-xs">Pilih modul untuk mengedit data secara visual</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
-          {(isReviewer() ? modules.filter((m) => m.to === "/admin/order") : modules).map((m) => (
+          {modules.map((m) => (
             <Link
               key={m.to}
               to={m.to}
@@ -910,8 +896,8 @@ function AdminDashboard() {
         </div>
       </section>
 
-      {/* ---------- git panel (mode teknis, admin penuh saja) ---------- */}
-      {!easy && !isReviewer() && (
+      {/* ---------- git panel (mode teknis) ---------- */}
+      {!easy && (
         <section className="adm-card p-4 sm:p-5">
           <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
             <span className="adm-icon-chip violet">

@@ -41,20 +41,6 @@ function expectedToken(): string {
   return createHmac("sha256", adminPassword()).update(TOKEN_LABEL).digest("hex");
 }
 
-const REVIEWER_LABEL = "buana-reviewer";
-
-/**
- * Password akun reviewer (akses lihat-saja untuk tim verifikasi eksternal).
- * Kosong = peran reviewer nonaktif. Ganti/rotasi setelah selesai diverifikasi.
- */
-function reviewerPassword(): string {
-  return (process.env.ADMIN_REVIEWER_PASSWORD || "").trim();
-}
-
-function reviewerToken(): string {
-  return createHmac("sha256", reviewerPassword()).update(REVIEWER_LABEL).digest("hex");
-}
-
 function tokensEqual(a: string, b: string): boolean {
   const ba = Buffer.from(a, "utf8");
   const bb = Buffer.from(b, "utf8");
@@ -82,22 +68,14 @@ function isLocalRepo(): boolean {
   return existsSync(join(ROOT, "src", "data", "products.json"));
 }
 
-export type CallerRole = "admin" | "reviewer";
-
-function assertAuth(token: unknown): CallerRole {
-  if (typeof token !== "string" || token.length === 0)
+function assertAuth(token: unknown): void {
+  if (typeof token !== "string" || token.length === 0 || !tokensEqual(token, expectedToken()))
     throw new Error("Unauthorized: silakan login dulu.");
-  if (tokensEqual(token, expectedToken())) return "admin";
-  const rp = reviewerPassword();
-  if (rp && tokensEqual(token, reviewerToken())) return "reviewer";
-  throw new Error("Unauthorized: token tidak valid.");
 }
 
-/** Operasi tulis/hapus/sensitif — hanya peran admin penuh. */
+/** Operasi tulis/hapus/sensitif — butuh sesi admin yang valid. */
 function assertAdmin(token: unknown): void {
-  if (assertAuth(token) !== "admin") {
-    throw new Error("Mode reviewer: hanya boleh melihat, tidak boleh mengubah.");
-  }
+  assertAuth(token);
 }
 
 const readJson = (rel: string): unknown => JSON.parse(readFileSync(join(ROOT, rel), "utf-8"));
@@ -131,16 +109,7 @@ export const adminLogin = createServerFn({ method: "POST" }).handler(
           throw new Error("Kode 2FA salah atau kedaluwarsa.");
         }
       }
-      return { token: expectedToken(), role: "admin" as const };
-    }
-    // Akun reviewer (lihat-saja, tanpa 2FA — password dirotasi setelah verifikasi)
-    const rp = reviewerPassword();
-    if (rp) {
-      const ra = Buffer.from(createHmac("sha256", rp).update(REVIEWER_LABEL).digest("hex"), "utf8");
-      const rb = Buffer.from(createHmac("sha256", pw).update(REVIEWER_LABEL).digest("hex"), "utf8");
-      if (ra.length === rb.length && timingSafeEqual(ra, rb) && pw.length > 0) {
-        return { token: reviewerToken(), role: "reviewer" as const };
-      }
+      return { token: expectedToken() };
     }
     throw new Error("Password salah.");
   },
@@ -750,8 +719,7 @@ export const adminListOrders = createServerFn({ method: "GET" }).handler(
  */
 export const adminVerifyOrder = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; orderId: string } }) => {
-    // Reviewer boleh membandingkan status, tapi sinkron tulis hanya untuk admin.
-    const role = assertAuth(data?.token);
+    assertAuth(data?.token);
     const orderId = (data?.orderId ?? "").trim();
     if (!orderId) throw new Error("Order ID kosong.");
 
@@ -816,7 +784,7 @@ export const adminVerifyOrder = createServerFn({ method: "POST" }).handler(
             : new Date().toISOString()
         : undefined;
 
-    if (mapped !== order.payment_status && role === "admin") {
+    if (mapped !== order.payment_status) {
       const patch: Partial<OrderRecord> = { payment_status: mapped };
       if (paidAt) patch.paid_at = paidAt;
       if (mapped === "REFUNDED") patch.refunded_at = new Date().toISOString();
@@ -827,7 +795,7 @@ export const adminVerifyOrder = createServerFn({ method: "POST" }).handler(
       if (mapped === "REFUNDED") order.refunded_at = patch.refunded_at;
     }
 
-    return { ok: true as const, order, tripayStatus, readOnly: role !== "admin" };
+    return { ok: true as const, order, tripayStatus, readOnly: false as const };
   },
 );
 
@@ -910,10 +878,7 @@ function readSecrets(): PaymentSecrets {
 
 export const adminGetPaymentSecrets = createServerFn({ method: "GET" }).handler(
   async ({ data }: { data: { token: string } }) => {
-    // Reviewer tidak boleh melihat API key — kembalikan kosong agar UI tidak crash.
-    if (assertAuth(data?.token) !== "admin") {
-      return { secrets: blankSecrets(), masked: true as const };
-    }
+    assertAuth(data?.token);
     return { secrets: readSecrets(), masked: false as const };
   },
 );
