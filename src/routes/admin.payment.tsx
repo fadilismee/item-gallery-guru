@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
+  adminEgressCheck,
   adminGetDataset,
   adminGetPaymentSecrets,
   adminSaveDataset,
@@ -59,6 +60,7 @@ function AdminPayment() {
   const [notice, setNotice] = useState("");
   const [showSecrets, setShowSecrets] = useState(false);
   const [testMsg, setTestMsg] = useState<Record<string, string>>({});
+  const [egressMsg, setEgressMsg] = useState("");
   const [confirmingSave, setConfirmingSave] = useState(false);
 
   const token = () => getAdminToken() ?? "";
@@ -123,6 +125,21 @@ function AdminPayment() {
       setTestMsg((p) => ({ ...p, [gateway]: `✓ ${r.message}` }));
     } catch (e) {
       setTestMsg((p) => ({ ...p, [gateway]: `✗ ${errMsg(e)}` }));
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const checkEgress = async () => {
+    setBusy("egress");
+    setEgressMsg("");
+    try {
+      const r = await adminEgressCheck({ data: { token: token() } });
+      setEgressMsg(
+        `IP egress server: ${r.ip} — ${r.viaProxy ? "VIA PROXY STATIS ✓ (isi IP ini ke Whitelist IP Tripay)" : "langsung/dinamis (QUOTAGUARDSTATIC_URL belum diset)"}`,
+      );
+    } catch (e) {
+      setEgressMsg(`✗ ${errMsg(e)}`);
     } finally {
       setBusy(null);
     }
@@ -333,15 +350,27 @@ function AdminPayment() {
           <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
             <div className="flex items-center justify-between">
               <h3 className="font-heading text-sm font-bold">Tripay.co.id</h3>
-              <button
-                type="button"
-                onClick={() => testConnection("tripay")}
-                disabled={busy === "test-tripay"}
-                className="adm-btn-ghost inline-flex items-center gap-1 px-3 py-1 text-xs"
-              >
-                <AdminIcon name="wifi_tethering" className="text-[15px] text-pri" />
-                {busy === "test-tripay" ? "Mengetes…" : "Tes Koneksi"}
-              </button>
+              <div className="flex gap-1.5">
+                <button
+                  type="button"
+                  onClick={checkEgress}
+                  disabled={busy === "egress"}
+                  title="Lihat IP publik server (untuk kolom Whitelist IP Tripay)"
+                  className="adm-btn-ghost inline-flex items-center gap-1 px-3 py-1 text-xs"
+                >
+                  <AdminIcon name="public" className="text-[15px] text-pri" />
+                  {busy === "egress" ? "Mengecek…" : "Cek IP Egress"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => testConnection("tripay")}
+                  disabled={busy === "test-tripay"}
+                  className="adm-btn-ghost inline-flex items-center gap-1 px-3 py-1 text-xs"
+                >
+                  <AdminIcon name="wifi_tethering" className="text-[15px] text-pri" />
+                  {busy === "test-tripay" ? "Mengetes…" : "Tes Koneksi"}
+                </button>
+              </div>
             </div>
             <label className="adm-label mt-3">
               Kode Merchant
@@ -392,6 +421,15 @@ function AdminPayment() {
                 }`}
               >
                 {testMsg.tripay}
+              </p>
+            )}
+            {egressMsg && (
+              <p
+                className={`mt-2 font-mono text-[11px] ${
+                  egressMsg.startsWith("✗") ? "text-red-700" : "text-emerald-700"
+                }`}
+              >
+                {egressMsg}
               </p>
             )}
           </div>

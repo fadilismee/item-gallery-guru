@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { tripayFetch } from "./egress";
 import { getSupabaseClient, type OrderRecord } from "@/lib/supabase";
 import { PaymentSettingsDataSchema } from "@/lib/schemas";
 import paymentSettingsData from "@/data/paymentSettings.json";
@@ -381,7 +382,7 @@ async function createTripayOrder(
     signature,
   };
 
-  const res = await fetch(`${baseUrl}/transaction/create`, {
+  const res = await tripayFetch(`${baseUrl}/transaction/create`, {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -646,7 +647,7 @@ export const checkOrderStatus = createServerFn({ method: "POST" }).handler(
           : `merchant_ref=${encodeURIComponent(order.id)}`;
 
         try {
-          const res = await fetch(`${baseUrl}/transaction/detail?${refParam}`, {
+          const res = await tripayFetch(`${baseUrl}/transaction/detail?${refParam}`, {
             headers: { Authorization: `Bearer ${apiKey}` },
           });
           const json = (await res.json()) as {

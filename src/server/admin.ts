@@ -14,6 +14,7 @@ import {
 } from "@/lib/schemas";
 import { validateAllData } from "@/lib/validateAll";
 import { getSupabaseClient, type OrderRecord } from "@/lib/supabase";
+import { egressIp, tripayFetch } from "./egress";
 import { getTotpSecret, verifyTotp } from "./totp";
 
 const execFileAsync = promisify(execFile);
@@ -751,7 +752,7 @@ export const adminVerifyOrder = createServerFn({ method: "POST" }).handler(
       ? `reference=${encodeURIComponent(order.tripay_reference)}`
       : `merchant_ref=${encodeURIComponent(order.id)}`;
 
-    const res = await fetch(`${baseUrl}/transaction/detail?${refParam}`, {
+    const res = await tripayFetch(`${baseUrl}/transaction/detail?${refParam}`, {
       headers: { Authorization: `Bearer ${apiKey}` },
     });
     const json = (await res.json()) as {
@@ -925,9 +926,12 @@ export const adminTestPaymentConnection = createServerFn({ method: "POST" }).han
       const baseUrl = apiKey.startsWith("DEV-")
         ? "https://tripay.co.id/api-sandbox"
         : "https://tripay.co.id/api";
-      const res = await fetch(`${baseUrl}/transaction/detail?merchant_ref=TEST-CONNECTION-PROBE`, {
-        headers: { Authorization: `Bearer ${apiKey}` },
-      });
+      const res = await tripayFetch(
+        `${baseUrl}/transaction/detail?merchant_ref=TEST-CONNECTION-PROBE`,
+        {
+          headers: { Authorization: `Bearer ${apiKey}` },
+        },
+      );
       const json = (await res.json()) as { success?: boolean; message?: string };
       const msg = String(json.message || "");
       if (json.success) return { ok: true as const, message: "Terhubung ke Tripay." };
@@ -964,5 +968,18 @@ export const adminTestPaymentConnection = createServerFn({ method: "POST" }).han
       };
     }
     throw new Error(`Tokopay menolak kredensial: ${json.error_msg || `HTTP ${res.status}`}`);
+  },
+);
+
+/**
+ * Cek IP publik server ini — rute persis seperti request ke Tripay.
+ * Dipakai untuk mengisi kolom "Whitelist IP" merchant Tripay & bukti ke teknisi.
+ */
+export const adminEgressCheck = createServerFn({ method: "GET" }).handler(
+  async ({ data }: { data: { token: string } }) => {
+    assertAuth(data?.token);
+    const { ip, viaProxy } = await egressIp();
+    if (!ip) throw new Error("Gagal membaca IP egress server.");
+    return { ip, viaProxy };
   },
 );

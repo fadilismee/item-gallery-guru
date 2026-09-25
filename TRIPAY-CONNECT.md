@@ -77,7 +77,17 @@ Untuk keperluan verifikasi merchant, tim Tripay login memakai **akun admin toko 
 - **Isi di dalam:** Dashboard ringkasan + Log Transaksi (`/admin/order`, saat ini berisi data transaksi + data uji berlabel `TEST-`) lengkap dengan tombol verifikasi silang ke Tripay. Produksi berjalan mode lihat-jarak-jauh; checkout pembeli guest (tanpa login).
 - **Catatan:** password admin akan kami **rotasi/ganti setelah proses verifikasi selesai**.
 
-## 7. Kontak Teknis Toko
+## 7. IP Statis Server (Kolom Whitelist IP)
+
+Hosting memakai Vercel serverless (IP keluar dinamis). Agar lolos verifikasi whitelist:
+
+1. Daftar **QuotaGuard Static** (paket Starter ±$19/bln, trial 3 hari) — dapat **2 IP statis** + `QUOTAGUARDSTATIC_URL`.
+2. Isi kedua IP ke kolom **Whitelist IP** merchant Tripay, pisahkan koma: `IP1,IP2`.
+3. Set `QUOTAGUARDSTATIC_URL` di Vercel env (production) + `.env` lokal, lalu redeploy.
+4. Kode otomatis me-routing **semua request ke Tripay** (buat transaksi, cek status, tes koneksi) lewat proxy statis; tanpa env, request jalan langsung seperti biasa.
+5. Bukti IP: buka `/admin/payment` → kartu Tripay → **Cek IP Egress** (menampilkan IP publik persis seperti yang dilihat Tripay).
+
+## 8. Kontak Teknis Toko
 
 - WhatsApp: `0859-7922-0599`
 - Alamat: Mertosan Kulon, Potorono, Banguntapan, Bantul, DI Yogyakarta 55196
