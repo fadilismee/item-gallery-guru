@@ -25,10 +25,20 @@ const TARGETS: [string, ZodTypeAny][] = [
   ["src/data/uploads.json", UploadsDataSchema],
 ];
 
-const load = (rootDir: string, p: string): unknown =>
-  JSON.parse(readFileSync(join(rootDir, p), "utf-8"));
+const load = (rootDir: string, p: string, bundled?: Record<string, unknown>): unknown => {
+  try {
+    return JSON.parse(readFileSync(join(rootDir, p), "utf-8"));
+  } catch {
+    // Production serverless: file tidak ada → pakai bawaan bundle bila disediakan.
+    if (bundled && bundled[p] !== undefined) return bundled[p];
+    throw new Error(`Dataset ${p} tidak tersedia di server ini.`);
+  }
+};
 
-export function validateAllData(rootDir: string): {
+export function validateAllData(
+  rootDir: string,
+  bundled?: Record<string, unknown>,
+): {
   results: ValidationResult[];
   failed: boolean;
 } {
@@ -37,7 +47,7 @@ export function validateAllData(rootDir: string): {
 
   for (const [file, schema] of TARGETS) {
     try {
-      schema.parse(load(rootDir, file));
+      schema.parse(load(rootDir, file, bundled));
       results.push({ file, ok: true, issues: [] });
     } catch (e) {
       failed = true;
@@ -51,7 +61,7 @@ export function validateAllData(rootDir: string): {
 
   // Cross-check: id & slug harus unik
   try {
-    const products = load(rootDir, "src/data/products.json") as { id: string }[];
+    const products = load(rootDir, "src/data/products.json", bundled) as { id: string }[];
     const dupes = findDupes(products.map((p) => p.id));
     if (dupes.length > 0) {
       failed = true;
@@ -59,7 +69,7 @@ export function validateAllData(rootDir: string): {
     } else {
       results.push({ file: `unik product.id (${products.length})`, ok: true, issues: [] });
     }
-    const blog = load(rootDir, "src/data/blog.json") as { articles: { slug: string }[] };
+    const blog = load(rootDir, "src/data/blog.json", bundled) as { articles: { slug: string }[] };
     const slugDupes = findDupes(blog.articles.map((a) => a.slug));
     if (slugDupes.length > 0) {
       failed = true;

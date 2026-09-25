@@ -326,9 +326,9 @@ function AdminDashboard() {
       {notice && <p className="adm-alert-ok whitespace-pre-wrap">{notice}</p>}
       {dash && !dash.local && (
         <p className="adm-alert-err">
-          Mode lihat-jarak-jauh: server ini tidak memegang file katalog, jadi statistik produk/blog
-          tampil 0 dan tombol tulis nonaktif. Untuk edit &amp; Terbitkan, buka dashboard dari PC dev
-          / LAN kantor. Log transaksi Supabase di bawah tetap live.
+          Mode lihat-jarak-jauh: data katalog sesuai deploy terakhir (otomatis segar setiap
+          Terbitkan) dan tombol tulis nonaktif. Untuk edit &amp; Terbitkan, buka dashboard dari PC
+          dev / LAN kantor. Log transaksi Supabase di bawah tetap live.
         </p>
       )}
 

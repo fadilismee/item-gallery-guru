@@ -16,6 +16,14 @@ import { validateAllData } from "@/lib/validateAll";
 import { getSupabaseClient, type OrderRecord } from "@/lib/supabase";
 import { egressIp, tripayFetch } from "./egress";
 import { getTotpSecret, verifyTotp } from "./totp";
+// Static import = terbundle saat build → dashboard production tetap FULL
+// (baca fs runtime tidak ada di serverless). Pola sama seperti loadPaymentSettings:
+// dev lokal baca file (live), production pakai bawaan bundle (segar tiap Terbitkan).
+import productsData from "@/data/products.json";
+import reviewsData from "@/data/reviews.json";
+import blogData from "@/data/blog.json";
+import bannersData from "@/data/banners.json";
+import uploadsData from "@/data/uploads.json";
 
 const execFileAsync = promisify(execFile);
 const TOKEN_LABEL = "buana-admin";
@@ -80,6 +88,26 @@ function assertAdmin(token: unknown): void {
 }
 
 const readJson = (rel: string): unknown => JSON.parse(readFileSync(join(ROOT, rel), "utf-8"));
+
+/** Data bawaan bundle (production serverless) per path dataset. */
+const BUNDLED: Record<string, unknown> = {
+  "src/data/products.json": productsData,
+  "src/data/reviews.json": reviewsData,
+  "src/data/blog.json": blogData,
+  "src/data/banners.json": bannersData,
+  "src/data/uploads.json": uploadsData,
+};
+
+/** Baca dataset: file lokal dulu (live), fallback bawaan bundle (production). */
+const readDataset = (rel: string): unknown => {
+  try {
+    return readJson(rel);
+  } catch {
+    const bundled = BUNDLED[rel];
+    if (bundled !== undefined) return bundled;
+    throw new Error(`Dataset ${rel} tidak tersedia di server ini.`);
+  }
+};
 
 function zodIssues(e: unknown): string {
   if (e instanceof ZodError) {
@@ -147,7 +175,7 @@ export const adminStatus = createServerFn({ method: "GET" }).handler(
 
     const safe = <T>(file: string, fallback: T): T => {
       try {
-        return readJson(file) as T;
+        return readDataset(file) as T;
       } catch {
         return fallback;
       }
@@ -234,8 +262,8 @@ export const adminStatus = createServerFn({ method: "GET" }).handler(
     return {
       ok: true as const,
       env: process.env.NODE_ENV ?? "development",
-      // local=false (production/Vercel): file JSON tidak ada di serverless,
-      // statistik katalog tampil 0 — tapi log transaksi Supabase tetap live.
+      // local=false (production/Vercel): tulis & Terbitkan hanya dari PC dev,
+      // tapi statistik katalog tetap FULL dari bawaan bundle + transaksi live Supabase.
       local: isLocalRepo(),
       counts: {
         products: products.length,
@@ -271,7 +299,7 @@ export const adminGetDataset = createServerFn({ method: "GET" }).handler(
     assertAuth(data?.token);
     const ds = DATASETS[data.name];
     if (!ds) throw new Error(`Dataset tidak dikenal: ${data.name}`);
-    return { data: readJson(ds.file) };
+    return { data: readDataset(ds.file) };
   },
 );
 
@@ -294,7 +322,7 @@ export const adminSaveDataset = createServerFn({ method: "POST" }).handler(
 export const adminValidate = createServerFn({ method: "GET" }).handler(
   async ({ data }: { data: { token: string } }) => {
     assertAuth(data?.token);
-    return validateAllData(ROOT);
+    return validateAllData(ROOT, BUNDLED);
   },
 );
 
