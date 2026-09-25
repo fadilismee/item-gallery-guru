@@ -1,28 +1,111 @@
 {
-  "activeGateway": "tripay",
+  "activeGateway": "manual",
   "mode": "sandbox",
   "methods": [
-    { "id": "qris", "label": "QRIS — semua bank & e-wallet", "enabled": true },
-    { "id": "qris_toko", "label": "QRIS Toko — scan langsung", "enabled": true },
-    { "id": "dana", "label": "DANA", "enabled": true },
-    { "id": "gopay", "label": "GoPay", "enabled": true },
-    { "id": "seabank", "label": "SeaBank", "enabled": true },
-    { "id": "bca", "label": "BCA", "enabled": true },
-    { "id": "va_bca", "label": "BCA Virtual Account", "enabled": false },
-    { "id": "va_bri", "label": "BRI Virtual Account", "enabled": false },
-    { "id": "va_mandiri", "label": "Mandiri Virtual Account", "enabled": false },
-    { "id": "va_bni", "label": "BNI Virtual Account", "enabled": false },
-    { "id": "retail_alfamart", "label": "Alfamart", "enabled": false },
-    { "id": "retail_indomaret", "label": "Indomaret", "enabled": false },
-    { "id": "cod", "label": "COD / Bayar langsung di toko", "enabled": true },
-    { "id": "manual_wa", "label": "Transfer manual via WhatsApp", "enabled": true }
+    {
+      "id": "qris",
+      "label": "QRIS — semua bank & e-wallet",
+      "enabled": true
+    },
+    {
+      "id": "qris_toko",
+      "label": "QRIS Toko — scan langsung",
+      "enabled": true
+    },
+    {
+      "id": "dana",
+      "label": "DANA",
+      "enabled": true
+    },
+    {
+      "id": "gopay",
+      "label": "GoPay",
+      "enabled": true
+    },
+    {
+      "id": "seabank",
+      "label": "SeaBank",
+      "enabled": true
+    },
+    {
+      "id": "bca",
+      "label": "BCA",
+      "enabled": true
+    },
+    {
+      "id": "va_bca",
+      "label": "BCA Virtual Account",
+      "enabled": false
+    },
+    {
+      "id": "va_bri",
+      "label": "BRI Virtual Account",
+      "enabled": false
+    },
+    {
+      "id": "va_mandiri",
+      "label": "Mandiri Virtual Account",
+      "enabled": false
+    },
+    {
+      "id": "va_bni",
+      "label": "BNI Virtual Account",
+      "enabled": false
+    },
+    {
+      "id": "retail_alfamart",
+      "label": "Alfamart",
+      "enabled": false
+    },
+    {
+      "id": "retail_indomaret",
+      "label": "Indomaret",
+      "enabled": false
+    },
+    {
+      "id": "cod",
+      "label": "COD / Bayar langsung di toko",
+      "enabled": true
+    },
+    {
+      "id": "manual_wa",
+      "label": "Transfer manual via WhatsApp",
+      "enabled": true
+    }
   ],
   "staticQrisUrl": "",
-  "shipping": { "javaFee": 25000, "outsideJavaFee": 40000 },
+  "shipping": {
+    "javaFee": 25000,
+    "outsideJavaFee": 40000
+  },
   "manualAccounts": [
-    { "id": "dana", "label": "DANA", "kind": "ewallet", "number": "", "holder": "" },
-    { "id": "gopay", "label": "GoPay", "kind": "ewallet", "number": "", "holder": "" },
-    { "id": "seabank", "label": "SeaBank", "kind": "bank", "number": "", "holder": "" },
-    { "id": "bca", "label": "BCA", "kind": "bank", "number": "", "holder": "" }
+    {
+      "id": "dana",
+      "label": "DANA",
+      "kind": "ewallet",
+      "number": "087760589917",
+      "holder": "FATAHILLAH MIRZA ACHMADIL"
+    },
+    {
+      "id": "gopay",
+      "label": "GoPay",
+      "kind": "ewallet",
+      "number": "087760589917",
+      "holder": "FATAHILLAH MIRZA ACHMADIL"
+    },
+    {
+      "id": "seabank",
+      "label": "SeaBank",
+      "kind": "bank",
+      "number": "646415646",
+      "holder": "belum pak"
+    },
+    {
+      "id": "bca",
+      "label": "BCA",
+      "kind": "bank",
+      "number": "64864794520648",
+      "holder": "belum pak"
+    }
   ]
 }
