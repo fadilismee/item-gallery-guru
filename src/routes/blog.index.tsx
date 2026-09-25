@@ -58,7 +58,7 @@ function AnnouncementBar() {
           <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-pri" />
           <span className="font-semibold tracking-wide">EDISI KHUSUS 2025:</span>
           <span className="font-normal text-on-surface-variant">
-            Panduan Komprehensif Rakit PC &amp; Lab Servis Buana Komputer Yogyakarta
+            Panduan Komprehensif Rakit PC &amp; Lab Uji Buana Komputer Yogyakarta
           </span>
         </div>
         <div className="font-monotech hidden items-center gap-2 text-[11px] text-on-surface-variant sm:flex">
@@ -238,8 +238,8 @@ function Newsletter() {
               Dapatkan Analisis Hardware Terkini &amp; Solusi Teknis Teruji
             </h2>
             <p className="max-w-xl text-sm leading-relaxed text-surface-variant sm:text-base">
-              Buletin mingguan panduan teknologi, analisa servis perangkat, dan rekomendasi komponen
-              terbaik langsung ke inbox Anda. Bebas promosi kosong, murni intisari teknis.
+              Buletin mingguan panduan teknologi, analisa mendalam perangkat, dan rekomendasi
+              komponen terbaik langsung ke inbox Anda. Bebas promosi kosong, murni intisari teknis.
             </p>
           </div>
           <div className="lg:col-span-5">
@@ -380,7 +380,7 @@ function BlogPage() {
             <div className="space-y-2 lg:col-span-5">
               <div className="font-monotech flex items-center gap-2 text-[11px] uppercase tracking-wider text-pri">
                 <span aria-hidden>⚙</span>
-                <span>Buana Service &amp; Custom Rig Lab</span>
+                <span>Buana Lab &amp; Custom Rig</span>
               </div>
               <h3 className="font-heading text-2xl font-semibold text-on-surface sm:text-3xl">
                 Transparansi Teknis, Garansi Penuh, &amp; Suku Cadang Terkurasi

@@ -89,7 +89,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "keywords",
         content:
-          "buana computer store, toko komputer bantul, jual laptop bekas yogyakarta, pc rakitan jogja, toko laptop banguntapan, beli komponen pc jogja",
+          "buana computer store, toko komputer bantul, toko laptop bekas yogyakarta, pc rakitan jogja, toko laptop banguntapan, beli komponen pc jogja",
       },
       { name: "author", content: "Buana Computer Store" },
       { property: "og:title", content: "Buana Computer Store - Toko Laptop & PC Bantul" },

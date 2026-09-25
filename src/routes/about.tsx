@@ -65,7 +65,7 @@ const faqs = [
   },
   {
     q: "Metode pembayaran apa saja yang diterima di toko?",
-    a: "Kami menerima pembayaran tunai (cash di toko), transfer bank instan (BCA, Mandiri, BRI), pembayaran via QRIS, serta transaksi aman melalui marketplace resmi Tokopedia Buana Computer.",
+    a: "Kami menerima pembayaran tunai (cash di toko), QRIS Toko, transfer bank & e-wallet (BCA, SeaBank, DANA, GoPay), serta transaksi aman melalui marketplace resmi Tokopedia Buana Computer.",
   },
 ];
 
@@ -164,7 +164,7 @@ export const Route = createFileRoute("/about")({
       {
         name: "keywords",
         content:
-          "toko laptop bantul, toko komputer bantul, jual laptop bekas jogja, rakit pc jogja, toko komputer yogyakarta, buana computer store, laptop second bantul, beli komponen pc jogja, toko laptop banguntapan",
+          "toko laptop bantul, toko komputer bantul, toko laptop bekas jogja, rakit pc jogja, toko komputer yogyakarta, buana computer store, laptop second bantul, beli komponen pc jogja, toko laptop banguntapan",
       },
       {
         property: "og:title",
@@ -330,7 +330,7 @@ const comparisonData = [
   },
   {
     feature: "Garansi Toko Resmi",
-    buana: "Garansi tertulis resmi dengan nota & segel toko sah (tukar/servis).",
+    buana: "Garansi tertulis resmi dengan nota & segel toko sah (tukar unit).",
     other: "Garansi personal tidak jelas atau lepas tangan setelah barang terkirim.",
   },
   {

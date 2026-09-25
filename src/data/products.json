@@ -186,7 +186,7 @@
       },
       {
         "label": "Kondisi",
-        "value": "Part komponen utuh siap riset & servis"
+        "value": "Part komponen utuh siap riset & oprek"
       }
     ],
     "images": 4,
@@ -212,7 +212,7 @@
     "condition": "Bekas",
     "location": "Bantul, Yogyakarta",
     "shortDescription": "Motherboard gaming Lenovo Model NJJ dengan chip GPU & VRAM GDDR6, dual slot DDR4.",
-    "description": "Original Motherboard Lenovo Gaming Laptop (Model NJJ / DA0NJJMBAG0 REV G). Dilengkapi chipset dedicated GPU dengan modul VRAM GDDR6, dual slot RAM DDR4 SODIMM, serta dual M.2 PCIe SSD slot. Cocok untuk kanibal chip BGA, penggantian board laptop Lenovo gaming, atau teknisi servis.",
+    "description": "Original Motherboard Lenovo Gaming Laptop (Model NJJ / DA0NJJMBAG0 REV G). Dilengkapi chipset dedicated GPU dengan modul VRAM GDDR6, dual slot RAM DDR4 SODIMM, serta dual M.2 PCIe SSD slot. Cocok untuk kanibal chip BGA, penggantian board laptop Lenovo gaming, atau kebutuhan teknisi.",
     "specs": [
       {
         "label": "Part Number",
@@ -236,7 +236,7 @@
       },
       {
         "label": "Kondisi",
-        "value": "Unit motherboard utuh siap riset & servis"
+        "value": "Unit motherboard utuh siap riset & oprek"
       }
     ],
     "images": 1,
@@ -326,7 +326,7 @@
   },
   {
     "id": "laptop-dell-inspiron-bahan",
-    "name": "Laptop Dell Inspiron 14 Bahan Servis & Modul",
+    "name": "Laptop Dell Inspiron 14 Bahan & Modul",
     "brand": "Dell",
     "category": "Laptop",
     "price": 650000,
@@ -357,7 +357,7 @@
       },
       {
         "label": "Kondisi",
-        "value": "Bahan servis / kanibal modul part"
+        "value": "Bahan / modul part"
       }
     ],
     "images": 3,

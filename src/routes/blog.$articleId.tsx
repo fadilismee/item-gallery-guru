@@ -492,7 +492,7 @@ function ArticlePage() {
               <div className="font-monotech space-y-2 text-[11px] text-white/90">
                 <div className="flex items-center gap-2">
                   <span className="text-sec-fixed">✓</span>
-                  <span>Teknisi Berpengalaman • Garansi Servis</span>
+                  <span>Tim Lab Berpengalaman • Garansi Toko Resmi</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sec-fixed">✓</span>
