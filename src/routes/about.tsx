@@ -40,8 +40,6 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { CountUp, Reveal } from "@/components/Reveal";
 import reviewsData from "@/data/reviews.json";
 import aboutModel from "@/img/buanacomp-aboutus.webp";
-import poster2 from "@/img/Buanacomputer-poster2.jpg";
-import poster3 from "@/img/Buanacomputer-poster3.jpg";
 
 const WA_NUMBER = "6285979220599";
 const WA_CONSULT = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
@@ -442,39 +440,6 @@ function SectionEyebrow({ children, light }: { children: string; light?: boolean
   );
 }
 
-const heroShowcases = [
-  {
-    id: "laptop",
-    tab: "Laptop Second",
-    badge: "GRADE A/B • SIAP PAKAI",
-    image: aboutModel,
-    title: "Laptop Second Mulus & Bergaransi",
-    desc: "Kesehatan baterai prima, keyboard 100% normal, layar jernih, charger original.",
-    tag: "Core i3 - i7 / Ryzen / RTX",
-    linkTo: "/",
-  },
-  {
-    id: "pc",
-    tab: "PC Rakitan",
-    badge: "CUSTOM BUILD • BENCHMARK LOLOS",
-    image: poster2,
-    title: "PC Gaming, Editing & Office",
-    desc: "Manajemen kabel rapi, sirkulasi udara adem, lolos uji FurMark & Cinebench.",
-    tag: "Bebas Bottleneck & Upgradeable",
-    linkTo: "/",
-  },
-  {
-    id: "storage",
-    tab: "Komponen & SSD",
-    badge: "SENTINEL 100% • TERUJI",
-    image: poster3,
-    title: "Storage NVMe, RAM & Display IPS",
-    desc: "SSD & HDD teruji bebas bad sector, RAM speed tinggi, monitor IPS warna akurat.",
-    tag: "Garansi Toko Resmi Sah",
-    linkTo: "/",
-  },
-];
-
 const popularSearches = [
   { label: "Laptop Gaming", q: "laptop" },
   { label: "PC Rakitan", q: "pc" },
@@ -484,9 +449,6 @@ const popularSearches = [
 ];
 
 function AboutHero() {
-  const [activeTab, setActiveTab] = useState(0);
-  const activeItem = heroShowcases[activeTab] ?? heroShowcases[0];
-
   return (
     <section className="relative flex min-h-[90vh] items-center justify-center overflow-hidden bg-techdark pb-28 pt-14 text-white">
       {/* Dynamic Animated Ambient Glow Background */}
@@ -609,88 +571,16 @@ function AboutHero() {
             </Reveal>
           </div>
 
-          {/* Sisi Kanan: Interactive Showcase Visualizer with Tab Switching */}
+          {/* Sisi Kanan: Foto model standalone (di luar card) */}
           <div className="lg:col-span-5">
             <Reveal delayMs={300} scale>
               <div className="relative mx-auto max-w-md">
-                {/* Showcase Tab Pills */}
-                <div className="mb-3 flex items-center justify-between rounded-2xl border border-white/15 bg-slate-900/90 p-1.5 backdrop-blur-md">
-                  {heroShowcases.map((s, idx) => (
-                    <button
-                      key={s.id}
-                      type="button"
-                      onClick={() => setActiveTab(idx)}
-                      className={`flex-1 rounded-xl py-1.5 text-xs font-heading font-bold transition-all duration-300 ${
-                        activeTab === idx
-                          ? "bg-pri text-white shadow-md shadow-pri/30"
-                          : "text-slate-400 hover:text-white"
-                      }`}
-                    >
-                      {s.tab}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Glowing border showcase card */}
-                <div className="group relative overflow-hidden rounded-3xl border border-white/20 bg-slate-900/90 p-3.5 shadow-2xl backdrop-blur-xl transition-all duration-500 hover:border-pri/50 hover:shadow-pri/25">
-                  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-black">
-                    <img
-                      src={activeItem.image}
-                      alt={activeItem.title}
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-
-                    {/* Top Overlay Badge */}
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-xs text-white">
-                      <div className="flex items-center gap-1.5 rounded-full bg-slate-950/80 px-3 py-1 font-mono text-[10px] font-bold text-emerald-400 backdrop-blur-md border border-white/15">
-                        <span className="h-1.5 w-1.5 animate-ping rounded-full bg-emerald-400" />
-                        {activeItem.badge}
-                      </div>
-                      <span className="rounded-md bg-black/60 px-2 py-0.5 font-mono text-[10px] text-slate-300 backdrop-blur-sm border border-white/10">
-                        {activeItem.tag}
-                      </span>
-                    </div>
-
-                    {/* Bottom Overlay Info */}
-                    <div className="absolute bottom-3 left-3 right-3 text-left">
-                      <h3 className="font-heading text-base font-bold text-white drop-shadow-sm">
-                        {activeItem.title}
-                      </h3>
-                      <p className="mt-0.5 text-xs text-slate-300 line-clamp-1">
-                        {activeItem.desc}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Highlights telemetry row inside showcase card */}
-                  <div className="mt-3 grid grid-cols-2 gap-2 text-left">
-                    <div className="rounded-xl border border-white/10 bg-white/5 p-2.5">
-                      <div className="flex items-center gap-1.5 text-emerald-400">
-                        <Activity size={14} />
-                        <span className="font-mono text-[10px] font-bold">100% SENTINEL</span>
-                      </div>
-                      <p className="font-heading text-[11px] font-bold text-white mt-1">
-                        {activeItem.stats}
-                      </p>
-                    </div>
-                    <Link
-                      to={activeItem.linkTo}
-                      className="group/link flex flex-col justify-between rounded-xl border border-pri/30 bg-pri/10 p-2.5 transition-all hover:bg-pri/20"
-                    >
-                      <div className="flex items-center justify-between text-brand-200 font-mono text-[10px] font-bold">
-                        <span>KATALOG</span>
-                        <ArrowRight
-                          size={12}
-                          className="transition-transform group-hover/link:translate-x-1"
-                        />
-                      </div>
-                      <p className="font-heading text-[11px] font-bold text-white mt-1">
-                        Lihat Pilihan Unit →
-                      </p>
-                    </Link>
-                  </div>
-                </div>
+                <img
+                  src={aboutModel}
+                  alt="Model Buana Computer Store — laptop second bergaransi"
+                  className="w-full object-contain drop-shadow-2xl"
+                  loading="eager"
+                />
 
                 {/* Floating pill accent bottom-left */}
                 <div className="absolute -bottom-4 -left-4 hidden sm:flex items-center gap-2.5 rounded-2xl border border-pri/40 bg-slate-900/95 px-4 py-2.5 text-xs text-white shadow-xl backdrop-blur-xl animate-float">
