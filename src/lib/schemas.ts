@@ -183,11 +183,17 @@ export const PaymentMethodSchema = z.object({
   enabled: z.boolean(),
 });
 
+export const PaymentShippingSchema = z.object({
+  javaFee: z.number().int().nonnegative(),
+  outsideJavaFee: z.number().int().nonnegative(),
+});
+
 export const PaymentSettingsDataSchema = z.object({
   activeGateway: z.enum(["tripay", "tokopay", "manual"]),
   mode: z.enum(["sandbox", "live"]),
   methods: z.array(PaymentMethodSchema).min(1),
   staticQrisUrl: z.string(),
+  shipping: PaymentShippingSchema,
 });
 
 /* ------------------------------------------------------------------ */

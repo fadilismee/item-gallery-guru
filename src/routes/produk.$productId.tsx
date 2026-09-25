@@ -173,7 +173,7 @@ function ProductDetail() {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const { onlineMethods, canInstantCheckout } = usePaymentConfig();
+  const { checkoutMethods, canInstantCheckout } = usePaymentConfig();
 
   const galleryImages =
     product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
@@ -606,7 +606,7 @@ function ProductDetail() {
         open={qrisModalOpen}
         onClose={() => setQrisModalOpen(false)}
         items={checkoutItem}
-        payMethods={onlineMethods}
+        payMethods={checkoutMethods}
       />
     </div>
   );

@@ -25,6 +25,7 @@ type PaymentSettings = {
   mode: "sandbox" | "live";
   methods: MethodSetting[];
   staticQrisUrl: string;
+  shipping: { javaFee: number; outsideJavaFee: number };
 };
 
 const GATEWAYS = [
@@ -65,7 +66,13 @@ function AdminPayment() {
 
   useEffect(() => {
     adminGetDataset({ data: { token: token(), name: "paymentSettings" } })
-      .then((r) => setSettings(r.data as PaymentSettings))
+      .then((r) => {
+        const d = r.data as PaymentSettings;
+        setSettings({
+          ...d,
+          shipping: d.shipping ?? { javaFee: 25000, outsideJavaFee: 40000 },
+        });
+      })
       .catch((e) => setError(errMsg(e)));
     adminGetPaymentSecrets({ data: { token: token() } })
       .then((r) => setSecrets(r.secrets))
@@ -443,6 +450,57 @@ function AdminPayment() {
               </p>
             )}
           </div>
+        </div>
+      </section>
+
+      {/* ---------- tarif ongkir flat ---------- */}
+      <section className="adm-card p-4 sm:p-5">
+        <h2 className="font-heading text-lg font-extrabold">Tarif Ongkir Flat</h2>
+        <p className="adm-sub">
+          Zona tujuan ditentukan otomatis oleh AI Gemini dari alamat / GPS pembeli. COD / ambil di
+          toko selalu gratis ongkir.
+        </p>
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <label className="adm-label">
+            Ongkir Pulau Jawa (Rp)
+            <input
+              type="number"
+              min={0}
+              step={1000}
+              value={settings?.shipping.javaFee ?? 25000}
+              onChange={(e) =>
+                settings &&
+                setSettings({
+                  ...settings,
+                  shipping: {
+                    ...settings.shipping,
+                    javaFee: Math.max(0, Number(e.target.value) || 0),
+                  },
+                })
+              }
+              className="adm-input mt-1 font-mono"
+            />
+          </label>
+          <label className="adm-label">
+            Ongkir Luar Pulau Jawa (Rp)
+            <input
+              type="number"
+              min={0}
+              step={1000}
+              value={settings?.shipping.outsideJavaFee ?? 40000}
+              onChange={(e) =>
+                settings &&
+                setSettings({
+                  ...settings,
+                  shipping: {
+                    ...settings.shipping,
+                    outsideJavaFee: Math.max(0, Number(e.target.value) || 0),
+                  },
+                })
+              }
+              className="adm-input mt-1 font-mono"
+            />
+          </label>
         </div>
       </section>
 

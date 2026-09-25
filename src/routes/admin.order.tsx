@@ -1,6 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import { adminDeleteOrder, adminListOrders, adminVerifyOrder } from "@/server/admin";
+import {
+  adminDeleteOrder,
+  adminListOrders,
+  adminRefundOrder,
+  adminVerifyOrder,
+} from "@/server/admin";
 import { errMsg, getAdminToken } from "@/lib/adminClient";
 import { AdminIcon } from "@/components/admin/AdminIcon";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
@@ -10,7 +15,7 @@ export const Route = createFileRoute("/admin/order")({
   component: AdminOrder,
 });
 
-type StatusFilter = "ALL" | "PENDING" | "PAID" | "EXPIRED" | "FAILED" | "CANCELLED";
+type StatusFilter = "ALL" | "PENDING" | "PAID" | "EXPIRED" | "FAILED" | "CANCELLED" | "REFUNDED";
 
 type Stats = { total: number; pending: number; paid: number; problem: number; revenue: number };
 
@@ -21,6 +26,7 @@ const FILTERS: { id: StatusFilter; label: string }[] = [
   { id: "EXPIRED", label: "Expired" },
   { id: "FAILED", label: "Gagal" },
   { id: "CANCELLED", label: "Batal" },
+  { id: "REFUNDED", label: "Refund" },
 ];
 
 const fmtRp = (v: number) =>
@@ -52,7 +58,9 @@ function StatusBadge({ status }: { status: OrderRecord["payment_status"] }) {
         ? "adm-chip-amber"
         : status === "FAILED"
           ? "adm-chip-red"
-          : "adm-chip-slate";
+          : status === "REFUNDED"
+            ? "adm-chip-blue"
+            : "adm-chip-slate";
   const label =
     status === "PAID"
       ? "LUNAS"
@@ -62,7 +70,9 @@ function StatusBadge({ status }: { status: OrderRecord["payment_status"] }) {
           ? "EXPIRED"
           : status === "FAILED"
             ? "GAGAL"
-            : "BATAL";
+            : status === "REFUNDED"
+              ? "REFUND"
+              : "BATAL";
   return <span className={`adm-chip ${cls} font-mono text-[10px] font-bold`}>{label}</span>;
 }
 
@@ -83,6 +93,8 @@ function AdminOrder() {
   const [notice, setNotice] = useState("");
   const [detail, setDetail] = useState<OrderRecord | null>(null);
   const [confirming, setConfirming] = useState<string | null>(null);
+  const [refundNote, setRefundNote] = useState("");
+  const [confirmingRefund, setConfirmingRefund] = useState<string | null>(null);
 
   const token = () => getAdminToken() ?? "";
 
@@ -164,6 +176,43 @@ function AdminOrder() {
     } finally {
       setBusy(null);
       setConfirming(null);
+    }
+  };
+
+  const refund = async (orderId: string) => {
+    setBusy(`refund-${orderId}`);
+    setError("");
+    setNotice("");
+    try {
+      const r = await adminRefundOrder({ data: { token: token(), orderId, note: refundNote } });
+      setList((prev) =>
+        prev.map((o) =>
+          o.id === orderId
+            ? {
+                ...o,
+                payment_status: "REFUNDED" as const,
+                refunded_at: r.refunded_at,
+                refund_note: refundNote,
+              }
+            : o,
+        ),
+      );
+      if (detail?.id === orderId) {
+        setDetail({
+          ...detail,
+          payment_status: "REFUNDED",
+          refunded_at: r.refunded_at,
+          refund_note: refundNote,
+        });
+      }
+      setRefundNote("");
+      setNotice(`Refund ${orderId} tercatat. Pastikan dana sudah ditransfer balik ke pembeli.`);
+      void reload(status, query);
+    } catch (e) {
+      setError(errMsg(e));
+    } finally {
+      setBusy(null);
+      setConfirmingRefund(null);
     }
   };
 
@@ -396,10 +445,24 @@ function AdminOrder() {
                   </div>
                 ))}
                 <div className="flex items-center justify-between bg-slate-50 px-3 py-2.5 font-bold">
-                  <span>Total</span>
+                  <span>Total (termasuk ongkir)</span>
                   <span className="font-mono text-pri">{fmtRp(detail.total_amount)}</span>
                 </div>
               </div>
+
+              {(detail.shipping_fee ?? 0) > 0 && (
+                <div className="rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-xs flex items-center justify-between">
+                  <span className="text-slate-500">
+                    Ongkir{" "}
+                    {detail.shipping_zone && detail.shipping_zone !== "PICKUP"
+                      ? `(${detail.shipping_zone === "JAWA" ? "Pulau Jawa" : "Luar Jawa"})`
+                      : ""}
+                  </span>
+                  <span className="font-mono font-bold text-on-surface">
+                    {fmtRp(detail.shipping_fee ?? 0)}
+                  </span>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-2 font-mono text-[11px]">
                 <div className="rounded-lg bg-slate-50 p-2.5">
@@ -414,6 +477,14 @@ function AdminOrder() {
                   <div className="col-span-2 rounded-lg bg-slate-50 p-2.5">
                     <p className="text-slate-400">Referensi Tripay</p>
                     <p className="font-bold text-on-surface">{detail.tripay_reference}</p>
+                  </div>
+                )}
+                {detail.payment_status === "REFUNDED" && (
+                  <div className="col-span-2 rounded-lg bg-sky-50 border border-sky-200 p-2.5">
+                    <p className="text-sky-600">Dana dikembalikan: {fmtTime(detail.refunded_at)}</p>
+                    {detail.refund_note && (
+                      <p className="mt-1 font-sans text-xs text-sky-900">{detail.refund_note}</p>
+                    )}
                   </div>
                 )}
               </div>
@@ -439,6 +510,38 @@ function AdminOrder() {
                   </a>
                 )}
               </div>
+
+              {/* ---------- refund manual ---------- */}
+              {detail.payment_status === "PAID" ? (
+                <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-3">
+                  <p className="text-xs font-bold text-amber-900">
+                    Refund Manual (transfer balik via bank)
+                  </p>
+                  <p className="adm-sub mt-0.5 text-[11px]">
+                    Tripay tidak punya API refund otomatis — transfer dana ke pembeli dulu, lalu
+                    catat di sini agar status invoice berubah.
+                  </p>
+                  <input
+                    value={refundNote}
+                    onChange={(e) => setRefundNote(e.target.value)}
+                    placeholder="Catatan refund (mis: transfer BCA 12.00, bukti …)"
+                    className="adm-input mt-2 text-xs"
+                  />
+                  <button
+                    onClick={() => setConfirmingRefund(detail.id)}
+                    disabled={busy === `refund-${detail.id}`}
+                    className="adm-btn-danger mt-2 inline-flex items-center gap-1 px-4 py-1.5 text-xs disabled:opacity-50"
+                  >
+                    <AdminIcon name="undo" className="text-[15px]" />
+                    {busy === `refund-${detail.id}` ? "Memproses…" : "Tandai Sudah Direfund"}
+                  </button>
+                </div>
+              ) : detail.payment_status === "REFUNDED" ? (
+                <div className="rounded-xl border border-sky-200 bg-sky-50 p-3 text-xs text-sky-900">
+                  <p className="font-bold">✓ Refund tercatat {fmtTime(detail.refunded_at)}.</p>
+                  {detail.refund_note && <p className="mt-1">{detail.refund_note}</p>}
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
@@ -450,6 +553,15 @@ function AdminOrder() {
           message="Invoice dihapus permanen dari log Supabase. Gunakan untuk membersihkan order testing / sampah."
           onCancel={() => setConfirming(null)}
           onConfirm={() => remove(confirming)}
+        />
+      )}
+
+      {confirmingRefund && (
+        <ConfirmDialog
+          title={`Refund ${confirmingRefund}?`}
+          message="Pastikan dana SUDAH ditransfer balik ke pembeli. Status invoice akan berubah menjadi REFUND dan tercatat permanen."
+          onCancel={() => setConfirmingRefund(null)}
+          onConfirm={() => refund(confirmingRefund)}
         />
       )}
     </div>

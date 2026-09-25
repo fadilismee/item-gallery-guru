@@ -27,6 +27,10 @@ create table if not exists public.orders (
 alter table public.orders add column if not exists checkout_url text;
 alter table public.orders add column if not exists tripay_reference text;
 alter table public.orders add column if not exists pay_code text;
+alter table public.orders add column if not exists shipping_zone text;
+alter table public.orders add column if not exists shipping_fee bigint;
+alter table public.orders add column if not exists refund_note text;
+alter table public.orders add column if not exists refunded_at timestamp with time zone;
 
 -- Row Level Security (RLS) agar pembeli & server bisa baca/tulis order
 alter table public.orders enable row level security;

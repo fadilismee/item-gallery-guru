@@ -635,7 +635,7 @@ export const adminListUploads = createServerFn({ method: "GET" }).handler(
 
 export type OrderLogFilter = {
   token: string;
-  status?: "ALL" | "PENDING" | "PAID" | "EXPIRED" | "FAILED" | "CANCELLED";
+  status?: "ALL" | "PENDING" | "PAID" | "EXPIRED" | "FAILED" | "CANCELLED" | "REFUNDED";
   query?: string;
   limit?: number;
 };
@@ -743,7 +743,7 @@ export const adminVerifyOrder = createServerFn({ method: "POST" }).handler(
           : tripayStatus === "FAILED"
             ? "FAILED"
             : tripayStatus === "REFUND"
-              ? "CANCELLED"
+              ? "REFUNDED"
               : "PENDING";
 
     const paidAt =
@@ -758,10 +758,12 @@ export const adminVerifyOrder = createServerFn({ method: "POST" }).handler(
     if (mapped !== order.payment_status) {
       const patch: Partial<OrderRecord> = { payment_status: mapped };
       if (paidAt) patch.paid_at = paidAt;
+      if (mapped === "REFUNDED") patch.refunded_at = new Date().toISOString();
       const { error: upErr } = await supabase.from("orders").update(patch).eq("id", orderId);
       if (upErr) throw new Error(`Gagal sinkron ke database: ${upErr.message}`);
       order.payment_status = mapped;
       if (paidAt) order.paid_at = paidAt;
+      if (mapped === "REFUNDED") order.refunded_at = patch.refunded_at;
     }
 
     return { ok: true as const, order, tripayStatus };
@@ -779,6 +781,42 @@ export const adminDeleteOrder = createServerFn({ method: "POST" }).handler(
     const { error } = await supabase.from("orders").delete().eq("id", orderId);
     if (error) throw new Error(`Gagal menghapus: ${error.message}`);
     return { ok: true as const, orderId };
+  },
+);
+
+/**
+ * Proses refund manual: Tripay closed-payment tidak punya API refund otomatis,
+ * dana dikembalikan via transfer bank manual oleh admin, lalu dicatat di sini.
+ * Hanya untuk order berstatus PAID.
+ */
+export const adminRefundOrder = createServerFn({ method: "POST" }).handler(
+  async ({ data }: { data: { token: string; orderId: string; note?: string } }) => {
+    assertAuth(data?.token);
+    const orderId = (data?.orderId ?? "").trim();
+    const note = String(data?.note ?? "")
+      .trim()
+      .slice(0, 500);
+    if (!orderId) throw new Error("Order ID kosong.");
+    const supabase = getSupabaseClient();
+    if (!supabase) throw new Error("Supabase belum terhubung.");
+
+    const { data: row, error: readErr } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("id", orderId)
+      .single();
+    if (readErr || !row) throw new Error("Order tidak ditemukan di database.");
+    if ((row as OrderRecord).payment_status !== "PAID") {
+      throw new Error("Refund hanya bisa diproses untuk order berstatus LUNAS.");
+    }
+
+    const refundedAt = new Date().toISOString();
+    const { error } = await supabase
+      .from("orders")
+      .update({ payment_status: "REFUNDED", refunded_at: refundedAt, refund_note: note })
+      .eq("id", orderId);
+    if (error) throw new Error(`Gagal mencatat refund: ${error.message}`);
+    return { ok: true as const, orderId, refunded_at: refundedAt };
   },
 );
 

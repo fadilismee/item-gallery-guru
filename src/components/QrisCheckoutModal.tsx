@@ -5,12 +5,22 @@ import {
   CheckCircle2,
   Clock,
   Copy,
+  Loader2,
+  MapPin,
   MessageCircle,
+  Navigation,
   QrCode,
   Store,
+  Truck,
   X,
 } from "lucide-react";
-import { checkOrderStatus, createOrderQris, simulateOrderPayment } from "@/server/payment";
+import {
+  checkOrderStatus,
+  createOrderQris,
+  getShippingQuote,
+  simulateOrderPayment,
+  type ShippingQuote,
+} from "@/server/payment";
 import type { PublicPayMethod } from "@/hooks/use-payment-config";
 import type { OrderRecord } from "@/lib/supabase";
 
@@ -59,8 +69,14 @@ export function QrisCheckoutModal({ open, onClose, items, payMethods, onSuccess 
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 mins countdown
   const [copied, setCopied] = useState("");
   const [checking, setChecking] = useState(false);
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [quote, setQuote] = useState<ShippingQuote | null>(null);
+  const [quoteBusy, setQuoteBusy] = useState(false);
+  const [gpsBusy, setGpsBusy] = useState(false);
 
-  const totalAmount = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const itemsTotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const shippingFee = payMethod === "cod" ? 0 : (quote?.fee ?? 0);
+  const totalAmount = itemsTotal + shippingFee;
 
   const formatPrice = (v: number) => `Rp ${v.toLocaleString("id-ID")}`;
 
@@ -73,9 +89,48 @@ export function QrisCheckoutModal({ open, onClose, items, payMethods, onSuccess 
       setStep("form");
       setError("");
       setTimeLeft(15 * 60);
+      setQuote(null);
+      setCoords(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
+
+  const fetchQuote = async (addr: string, c: { lat: number; lng: number } | null) => {
+    setQuoteBusy(true);
+    setError("");
+    try {
+      const q = await getShippingQuote({
+        data: { addressText: addr, lat: c?.lat, lng: c?.lng },
+      });
+      setQuote(q);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Gagal menghitung ongkir.");
+    } finally {
+      setQuoteBusy(false);
+    }
+  };
+
+  const handleUseGps = () => {
+    if (!("geolocation" in navigator)) {
+      setError("Browser ini tidak mendukung GPS. Isi alamat manual lalu hitung ongkir.");
+      return;
+    }
+    setGpsBusy(true);
+    setError("");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const c = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setCoords(c);
+        setGpsBusy(false);
+        void fetchQuote(address, c);
+      },
+      () => {
+        setGpsBusy(false);
+        setError("Izin lokasi ditolak. Isi alamat manual lalu hitung ongkir.");
+      },
+      { enableHighAccuracy: false, timeout: 15000 },
+    );
+  };
 
   // Countdown timer
   useEffect(() => {
@@ -93,6 +148,10 @@ export function QrisCheckoutModal({ open, onClose, items, payMethods, onSuccess 
   const handleCreateOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    if (payMethod !== "cod" && !quote) {
+      setError("Hitung ongkir dulu (isi alamat / gunakan GPS) sebelum buat pesanan.");
+      return;
+    }
     setBusy(true);
 
     try {
@@ -103,6 +162,7 @@ export function QrisCheckoutModal({ open, onClose, items, payMethods, onSuccess 
           customerAddress: address,
           items,
           method: payMethod,
+          shippingZone: payMethod === "cod" ? "PICKUP" : quote?.zone,
         },
       });
 
@@ -311,15 +371,79 @@ export function QrisCheckoutModal({ open, onClose, items, payMethods, onSuccess 
 
               <div>
                 <label className="block font-semibold text-foreground mb-1">
-                  Alamat Pengiriman (Bila dikirim)
+                  Alamat Pengiriman{" "}
+                  {payMethod !== "cod" && <span className="text-destructive">*</span>}
                 </label>
                 <textarea
                   rows={2}
                   placeholder="Alamat lengkap, kecamatan, kota/kabupaten..."
                   value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  onChange={(e) => {
+                    setAddress(e.target.value);
+                    setQuote(null);
+                  }}
                   className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
+                {payMethod !== "cod" && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={handleUseGps}
+                      disabled={gpsBusy || quoteBusy}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted disabled:opacity-50"
+                    >
+                      <Navigation size={13} className="text-pri" />
+                      {gpsBusy ? "Membaca GPS…" : coords ? "GPS Terkunci ✓" : "Gunakan Lokasi Saya"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => fetchQuote(address, coords)}
+                      disabled={quoteBusy}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-slate-700 disabled:opacity-50"
+                    >
+                      {quoteBusy ? (
+                        <Loader2 size={13} className="animate-spin" />
+                      ) : (
+                        <Truck size={13} />
+                      )}
+                      {quoteBusy ? "Menghitung…" : "Hitung Ongkir"}
+                    </button>
+                  </div>
+                )}
+                {quote && payMethod !== "cod" && (
+                  <div className="mt-2 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-2.5 text-xs">
+                    <MapPin size={16} className="shrink-0 text-emerald-600" />
+                    <p className="text-emerald-900">
+                      <strong>{quote.zone === "JAWA" ? "Pulau Jawa" : "Luar Pulau Jawa"}</strong>
+                      {quote.city || quote.province
+                        ? ` (${[quote.city, quote.province].filter(Boolean).join(", ")})`
+                        : ""}{" "}
+                      — Ongkir <strong>{formatPrice(quote.fee)}</strong>
+                      <span className="font-mono text-[10px] text-emerald-600">
+                        {" "}
+                        • via {quote.source === "gemini" ? "AI" : "peta"}
+                      </span>
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Rincian total */}
+              <div className="rounded-2xl border border-border bg-muted/30 p-3 text-xs space-y-1">
+                <div className="flex justify-between text-muted-foreground">
+                  <span>Subtotal barang</span>
+                  <span className="font-mono">{formatPrice(itemsTotal)}</span>
+                </div>
+                <div className="flex justify-between text-muted-foreground">
+                  <span>Ongkir {quote && payMethod !== "cod" ? `(${quote.zone})` : ""}</span>
+                  <span className="font-mono">
+                    {payMethod === "cod" ? "Bayar di toko" : formatPrice(shippingFee)}
+                  </span>
+                </div>
+                <div className="flex justify-between border-t border-border pt-1.5 text-sm font-bold text-foreground">
+                  <span>Total</span>
+                  <span className="font-mono text-primary">{formatPrice(totalAmount)}</span>
+                </div>
               </div>
 
               <div className="pt-2">

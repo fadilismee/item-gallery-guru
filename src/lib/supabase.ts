@@ -42,9 +42,11 @@ export type OrderRecord = {
     image?: string;
   }>;
   total_amount: number;
+  shipping_zone?: "JAWA" | "LUAR_JAWA" | "PICKUP" | string;
+  shipping_fee?: number;
   payment_gateway: "tripay" | "tokopay" | "manual_wa";
   payment_channel: "qris" | "va_bca" | "va_mandiri" | "va_bri" | "cash_cod";
-  payment_status: "PENDING" | "PAID" | "EXPIRED" | "FAILED" | "CANCELLED";
+  payment_status: "PENDING" | "PAID" | "EXPIRED" | "FAILED" | "CANCELLED" | "REFUNDED";
   payment_url?: string;
   qris_string?: string;
   checkout_url?: string;
@@ -53,4 +55,6 @@ export type OrderRecord = {
   pay_code?: string;
   created_at: string;
   paid_at?: string;
+  refund_note?: string;
+  refunded_at?: string;
 };

@@ -130,7 +130,11 @@ function OrderStatusPage() {
                     <h1 className="font-heading text-xl font-extrabold sm:text-2xl">
                       {order.payment_status === "PAID"
                         ? "PEMBAYARAN LUNAS (PAID)"
-                        : "MENUNGGU PEMBAYARAN"}
+                        : order.payment_status === "REFUNDED"
+                          ? "DANA DIKEMBALIKAN (REFUNDED)"
+                          : order.payment_status === "PENDING"
+                            ? "MENUNGGU PEMBAYARAN"
+                            : `STATUS: ${order.payment_status}`}
                     </h1>
                   </div>
                 </div>
@@ -205,6 +209,17 @@ function OrderStatusPage() {
                       </div>
                     </div>
                   ))}
+                  {(order.shipping_fee ?? 0) > 0 && (
+                    <div className="flex items-center justify-between bg-card px-4 py-2.5 text-xs text-muted-foreground">
+                      <span>
+                        Ongkir{" "}
+                        {order.shipping_zone && order.shipping_zone !== "PICKUP"
+                          ? `(${order.shipping_zone === "JAWA" ? "Pulau Jawa" : "Luar Jawa"})`
+                          : ""}
+                      </span>
+                      <span className="font-mono">{formatPrice(order.shipping_fee ?? 0)}</span>
+                    </div>
+                  )}
                   <div className="p-4 bg-muted/40 flex items-center justify-between text-sm font-bold">
                     <span>Total Pembayaran:</span>
                     <span className="font-mono text-primary text-base">
@@ -213,6 +228,17 @@ function OrderStatusPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Info refund bila dana dikembalikan */}
+              {order.payment_status === "REFUNDED" && (
+                <div className="rounded-2xl border border-sky-300 bg-sky-50 p-4 text-xs text-sky-900">
+                  <p className="font-bold">Dana pesanan ini telah dikembalikan 100%.</p>
+                  {order.refund_note && <p className="mt-1">{order.refund_note}</p>}
+                  <p className="mt-1 text-sky-700">
+                    Bila belum menerima, hubungi WhatsApp toko dengan nomor invoice ini.
+                  </p>
+                </div>
+              )}
 
               {/* Panel bayar jika masih PENDING: QRIS atau nomor VA */}
               {order.payment_status === "PENDING" &&

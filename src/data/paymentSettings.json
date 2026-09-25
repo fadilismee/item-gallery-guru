@@ -7,8 +7,11 @@
     { "id": "va_bri", "label": "BRI Virtual Account", "enabled": false },
     { "id": "va_mandiri", "label": "Mandiri Virtual Account", "enabled": false },
     { "id": "va_bni", "label": "BNI Virtual Account", "enabled": false },
+    { "id": "retail_alfamart", "label": "Alfamart", "enabled": false },
+    { "id": "retail_indomaret", "label": "Indomaret", "enabled": false },
     { "id": "cod", "label": "COD / Bayar langsung di toko", "enabled": true },
     { "id": "manual_wa", "label": "Transfer manual via WhatsApp", "enabled": true }
   ],
-  "staticQrisUrl": ""
+  "staticQrisUrl": "",
+  "shipping": { "javaFee": 25000, "outsideJavaFee": 40000 }
 }

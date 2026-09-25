@@ -8,6 +8,7 @@ export type PublicPaymentConfig = {
   mode: "sandbox" | "live";
   methods: PublicPayMethod[];
   staticQrisUrl: string;
+  shipping: { javaFee: number; outsideJavaFee: number };
 };
 
 export function usePaymentConfig() {
@@ -33,8 +34,11 @@ export function usePaymentConfig() {
   const onlineMethods =
     config?.methods.filter((m) => m.enabled && m.id !== "cod" && m.id !== "manual_wa") ?? [];
 
+  /** Semua metode untuk popup checkout (termasuk COD, tanpa transfer manual). */
+  const checkoutMethods = config?.methods.filter((m) => m.enabled && m.id !== "manual_wa") ?? [];
+
   const canInstantCheckout =
     !config || (config.activeGateway !== "manual" && onlineMethods.length > 0) || enabled("cod");
 
-  return { config, enabled, onlineMethods, canInstantCheckout };
+  return { config, enabled, onlineMethods, checkoutMethods, canInstantCheckout };
 }
