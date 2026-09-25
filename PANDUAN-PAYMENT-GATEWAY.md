@@ -86,6 +86,7 @@ Sistem sudah dilengkapi modal SOP garansi di semua titik transaksi:
 ## 🛒 4 Opsi Pembelian yang Tersedia di Web Saat Ini:
 
 1. **⚡ QRIS Instan (Tripay / Tokopay):** Popup bayar langsung dengan invoice otomatis.
-2. **💬 Chat WhatsApp Toko:** Negosiasi harga & COD Toko Banguntapan, Bantul.
-3. **🟢 Tokopedia Resmi:** [tokopedia.com/bmccomp](https://www.tokopedia.com/bmccomp) (Rekber aman 100%).
-4. **🟠 Shopee Resmi:** Link toko Shopee Buana Computer.
+2. **🏪 QRIS Toko (QRIS statis sendiri → dinamis per nominal):** String stiker QRIS toko (`QRIS_STATIC_PAYLOAD`, env server, tidak ikut git) ditanam nominal order + nomor invoice (field 54 & 62) lalu CRC dihitung ulang (`src/server/qris.ts`). Order tercatat PENDING (gateway `manual`, channel `qris_toko`) karena QRIS tidak punya callback otomatis — admin verifikasi mutasi/bukti bayar lalu tekan **Tandai Lunas** di Log Transaksi (`adminMarkPaid`). Metode `qris_toko` di `paymentSettings.json`, bisa on/off dari dashboard.
+3. **💬 Chat WhatsApp Toko:** Negosiasi harga & COD Toko Banguntapan, Bantul.
+4. **🟢 Tokopedia Resmi:** [tokopedia.com/bmccomp](https://www.tokopedia.com/bmccomp) (Rekber aman 100%).
+5. **🟠 Shopee Resmi:** Link toko Shopee Buana Computer.

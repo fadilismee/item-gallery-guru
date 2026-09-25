@@ -44,8 +44,8 @@ export type OrderRecord = {
   total_amount: number;
   shipping_zone?: "JAWA" | "LUAR_JAWA" | "PICKUP" | string;
   shipping_fee?: number;
-  payment_gateway: "tripay" | "tokopay" | "manual_wa";
-  payment_channel: "qris" | "va_bca" | "va_mandiri" | "va_bri" | "cash_cod";
+  payment_gateway: "tripay" | "tokopay" | "manual_wa" | "manual";
+  payment_channel: "qris" | "qris_toko" | "va_bca" | "va_mandiri" | "va_bri" | "cash_cod";
   payment_status: "PENDING" | "PAID" | "EXPIRED" | "FAILED" | "CANCELLED" | "REFUNDED";
   payment_url?: string;
   qris_string?: string;

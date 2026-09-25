@@ -43,11 +43,12 @@ type Props = {
 
 const FALLBACK_METHODS: PublicPayMethod[] = [
   { id: "qris", label: "QRIS — semua bank & e-wallet", enabled: true },
+  { id: "qris_toko", label: "QRIS Toko — scan langsung", enabled: true },
   { id: "cod", label: "COD / Bayar langsung di toko", enabled: true },
 ];
 
 function methodIcon(id: string) {
-  if (id === "qris") return <QrCode size={16} />;
+  if (id === "qris" || id === "qris_toko") return <QrCode size={16} />;
   if (id === "cod") return <Store size={16} />;
   return <Banknote size={16} />;
 }
@@ -188,6 +189,10 @@ export function QrisCheckoutModal({ open, onClose, items, payMethods, onSuccess 
         setOrder(res.order);
         setStep("paid");
         if (onSuccess) onSuccess(res.order);
+      } else if (res.order.payment_gateway === "manual") {
+        setError(
+          "Pesanan QRIS Toko tercatat. Setelah bayar, kirim bukti via WhatsApp di bawah — admin akan verifikasi & menandai lunas.",
+        );
       } else {
         setError(
           "Pembayaran belum terdeteksi. Silakan selesaikan pembayaran di aplikasi m-banking / e-wallet Anda.",
@@ -298,9 +303,11 @@ export function QrisCheckoutModal({ open, onClose, items, payMethods, onSuccess 
                     {methodIcon(m.id)}
                     {m.id === "qris"
                       ? "QRIS"
-                      : m.id === "cod"
-                        ? "COD"
-                        : m.label.replace(" Virtual Account", "")}
+                      : m.id === "qris_toko"
+                        ? "QRIS Toko"
+                        : m.id === "cod"
+                          ? "COD"
+                          : m.label.replace(" Virtual Account", "")}
                   </button>
                 ))}
               </div>

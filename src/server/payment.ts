@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { tripayFetch } from "./egress";
+import { toDynamicQris } from "./qris";
 import { getSupabaseClient, type OrderRecord } from "@/lib/supabase";
 import { PaymentSettingsDataSchema } from "@/lib/schemas";
 import paymentSettingsData from "@/data/paymentSettings.json";
@@ -100,6 +101,33 @@ export function loadPaymentSecrets(): PaymentSecrets {
 
 export function isMethodEnabled(settings: PaymentSettings, id: string): boolean {
   return settings.methods.some((m) => m.id === id && m.enabled);
+}
+
+/** String QRIS statis milik toko (stiker), dari env server — tidak ikut ke git. */
+function merchantQrisPayload(): string {
+  return (process.env.QRIS_STATIC_PAYLOAD || "").trim();
+}
+
+/**
+ * QRIS Toko: statis milik toko → dinamis per nominal order + render gambar QR.
+ * Tanpa gateway: status order PENDING sampai admin verifikasi mutasi manual.
+ */
+async function createMerchantQris(
+  orderId: string,
+  totalAmount: number,
+): Promise<{ payload: string; dataUrl: string }> {
+  const staticPayload = merchantQrisPayload();
+  if (!staticPayload) {
+    throw new Error("QRIS toko belum diset. Tambahkan QRIS_STATIC_PAYLOAD di env server.");
+  }
+  const { payload } = toDynamicQris(staticPayload, totalAmount, orderId);
+  const { default: QRCode } = await import("qrcode");
+  const dataUrl = await QRCode.toDataURL(payload, {
+    width: 400,
+    margin: 2,
+    errorCorrectionLevel: "M",
+  });
+  return { payload, dataUrl };
 }
 
 /** Konfigurasi publik untuk UI checkout (tanpa secret!). */
@@ -488,7 +516,15 @@ export const createOrderQris = createServerFn({ method: "POST" }).handler(
     let gateway: OrderRecord["payment_gateway"] = "tripay";
     let isTestMode = false;
 
-    if (method === "cod") {
+    if (method === "qris_toko") {
+      // QRIS statis milik toko → dinamis per nominal. Tanpa gateway,
+      // tanpa cek activeGateway — selalu tersedia bila di-enable & env diset.
+      gateway = "manual";
+      const qr = await createMerchantQris(orderId, totalAmount);
+      payUrl = qr.dataUrl;
+      payString = qr.payload;
+      gatewayRef = orderId;
+    } else if (method === "cod") {
       // Bayar di toko — tanpa memanggil gateway sama sekali
       gateway = settings.activeGateway === "manual" ? "manual_wa" : settings.activeGateway;
     } else if (settings.activeGateway === "manual") {

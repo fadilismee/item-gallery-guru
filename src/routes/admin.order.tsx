@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   adminDeleteOrder,
   adminListOrders,
+  adminMarkPaid,
   adminRefundOrder,
   adminVerifyOrder,
 } from "@/server/admin";
@@ -95,6 +96,7 @@ function AdminOrder() {
   const [confirming, setConfirming] = useState<string | null>(null);
   const [refundNote, setRefundNote] = useState("");
   const [confirmingRefund, setConfirmingRefund] = useState<string | null>(null);
+  const [confirmingPaid, setConfirmingPaid] = useState<string | null>(null);
 
   const token = () => getAdminToken() ?? "";
 
@@ -160,6 +162,24 @@ function AdminOrder() {
       setError(errMsg(e));
     } finally {
       setBusy(null);
+    }
+  };
+
+  const markPaid = async (orderId: string) => {
+    setBusy(`paid-${orderId}`);
+    setError("");
+    setNotice("");
+    try {
+      const r = await adminMarkPaid({ data: { token: token(), orderId } });
+      setList((prev) => prev.map((o) => (o.id === orderId ? (r.order as typeof o) : o)));
+      if (detail?.id === orderId) setDetail(r.order);
+      setNotice(`✓ ${orderId} ditandai LUNAS manual (terverifikasi admin).`);
+      void reload(status, query);
+    } catch (e) {
+      setError(errMsg(e));
+    } finally {
+      setBusy(null);
+      setConfirmingPaid(null);
     }
   };
 
@@ -362,14 +382,16 @@ function AdminOrder() {
                       >
                         <AdminIcon name="visibility" className="text-[16px]" />
                       </button>
-                      <button
-                        onClick={() => verify(o.id)}
-                        disabled={busy === `verify-${o.id}`}
-                        title="Verifikasi silang ke Tripay"
-                        className="rounded-md border border-border p-1.5 text-pri hover:bg-pri/10 disabled:opacity-50"
-                      >
-                        <AdminIcon name="verified" className="text-[16px]" />
-                      </button>
+                      {(o.payment_gateway === "tripay" || o.payment_gateway === "tokopay") && (
+                        <button
+                          onClick={() => verify(o.id)}
+                          disabled={busy === `verify-${o.id}`}
+                          title="Verifikasi silang ke Tripay"
+                          className="rounded-md border border-border p-1.5 text-pri hover:bg-pri/10 disabled:opacity-50"
+                        >
+                          <AdminIcon name="verified" className="text-[16px]" />
+                        </button>
+                      )}
                       <button
                         onClick={() => setConfirming(o.id)}
                         title="Hapus dari log"
@@ -491,14 +513,27 @@ function AdminOrder() {
               </div>
 
               <div className="flex flex-wrap gap-2 pt-1">
-                <button
-                  onClick={() => verify(detail.id)}
-                  disabled={busy === `verify-${detail.id}`}
-                  className="adm-btn-pri inline-flex items-center gap-1 px-4 py-2 text-xs disabled:opacity-50"
-                >
-                  <AdminIcon name="verified" className="text-[15px]" />
-                  {busy === `verify-${detail.id}` ? "Memeriksa…" : "Cek ke Tripay"}
-                </button>
+                {(detail.payment_gateway === "tripay" || detail.payment_gateway === "tokopay") && (
+                  <button
+                    onClick={() => verify(detail.id)}
+                    disabled={busy === `verify-${detail.id}`}
+                    className="adm-btn-pri inline-flex items-center gap-1 px-4 py-2 text-xs disabled:opacity-50"
+                  >
+                    <AdminIcon name="verified" className="text-[15px]" />
+                    {busy === `verify-${detail.id}` ? "Memeriksa…" : "Cek ke Tripay"}
+                  </button>
+                )}
+                {detail.payment_status === "PENDING" && detail.payment_gateway === "manual" && (
+                  <button
+                    onClick={() => setConfirmingPaid(detail.id)}
+                    disabled={busy === `paid-${detail.id}`}
+                    title="Setelah cek mutasi QRIS / bukti bayar pembeli"
+                    className="adm-btn-green inline-flex items-center gap-1 px-4 py-2 text-xs disabled:opacity-50"
+                  >
+                    <AdminIcon name="check_circle" className="text-[15px]" />
+                    {busy === `paid-${detail.id}` ? "Memproses…" : "Tandai Lunas"}
+                  </button>
+                )}
                 {detail.checkout_url && (
                   <a
                     href={detail.checkout_url}
@@ -563,6 +598,15 @@ function AdminOrder() {
           message="Pastikan dana SUDAH ditransfer balik ke pembeli. Status invoice akan berubah menjadi REFUND dan tercatat permanen."
           onCancel={() => setConfirmingRefund(null)}
           onConfirm={() => refund(confirmingRefund)}
+        />
+      )}
+
+      {confirmingPaid && (
+        <ConfirmDialog
+          title={`Tandai lunas ${confirmingPaid}?`}
+          message="Pastikan dana SUDAH masuk (cek mutasi QRIS / bukti bayar pembeli). Status invoice akan berubah menjadi PAID."
+          onCancel={() => setConfirmingPaid(null)}
+          onConfirm={() => markPaid(confirmingPaid)}
         />
       )}
     </div>

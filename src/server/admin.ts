@@ -843,6 +843,40 @@ export const adminDeleteOrder = createServerFn({ method: "POST" }).handler(
 );
 
 /**
+ * Tandai order LUNAS manual — untuk QRIS Toko / COD yang diverifikasi
+ * admin via mutasi/bukti bayar (tanpa callback gateway otomatis).
+ */
+export const adminMarkPaid = createServerFn({ method: "POST" }).handler(
+  async ({ data }: { data: { token: string; orderId: string } }) => {
+    assertAdmin(data?.token);
+    const orderId = (data?.orderId ?? "").trim();
+    if (!orderId) throw new Error("Order ID kosong.");
+    const supabase = getSupabaseClient();
+    if (!supabase) throw new Error("Supabase belum terhubung.");
+    const { data: row, error: readErr } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("id", orderId)
+      .single();
+    if (readErr || !row) throw new Error("Order tidak ditemukan di database.");
+    const order = row as OrderRecord;
+    if (order.payment_status === "PAID") return { ok: true as const, order };
+    if (order.payment_status === "REFUNDED")
+      throw new Error("Order sudah direfund — tidak bisa ditandai lunas.");
+    const paidAt = new Date().toISOString();
+    const { error } = await supabase
+      .from("orders")
+      .update({ payment_status: "PAID", paid_at: paidAt })
+      .eq("id", orderId);
+    if (error) throw new Error(`Gagal menandai lunas: ${error.message}`);
+    return {
+      ok: true as const,
+      order: { ...order, payment_status: "PAID" as const, paid_at: paidAt },
+    };
+  },
+);
+
+/**
  * Proses refund manual: Tripay closed-payment tidak punya API refund otomatis,
  * dana dikembalikan via transfer bank manual oleh admin, lalu dicatat di sini.
  * Hanya untuk order berstatus PAID.
