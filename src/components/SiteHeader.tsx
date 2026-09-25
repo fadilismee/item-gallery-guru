@@ -37,7 +37,7 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [qrisCartOpen, setQrisCartOpen] = useState(false);
-  const { checkoutMethods, canInstantCheckout } = usePaymentConfig();
+  const { checkoutMethods, canInstantCheckout, config } = usePaymentConfig();
 
   const cartCheckoutItems: CartItemForCheckout[] = items.map((it) => ({
     id: it.product.id,
@@ -362,6 +362,8 @@ export function SiteHeader({ query: propQuery, onQueryChange }: SiteHeaderProps)
         onClose={() => setQrisCartOpen(false)}
         items={cartCheckoutItems}
         payMethods={checkoutMethods}
+        gateway={config?.activeGateway ?? "tripay"}
+        manualAccounts={config?.manualAccounts ?? []}
       />
     </header>
   );

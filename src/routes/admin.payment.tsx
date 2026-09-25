@@ -21,13 +21,29 @@ export const Route = createFileRoute("/admin/payment")({
 
 type MethodSetting = { id: string; label: string; enabled: boolean };
 
+type ManualAccount = {
+  id: string;
+  label: string;
+  kind: "bank" | "ewallet";
+  number: string;
+  holder: string;
+};
+
 type PaymentSettings = {
   activeGateway: "tripay" | "tokopay" | "manual";
   mode: "sandbox" | "live";
   methods: MethodSetting[];
   staticQrisUrl: string;
   shipping: { javaFee: number; outsideJavaFee: number };
+  manualAccounts: ManualAccount[];
 };
+
+const DEFAULT_MANUAL_ACCOUNTS: ManualAccount[] = [
+  { id: "dana", label: "DANA", kind: "ewallet", number: "", holder: "" },
+  { id: "gopay", label: "GoPay", kind: "ewallet", number: "", holder: "" },
+  { id: "seabank", label: "SeaBank", kind: "bank", number: "", holder: "" },
+  { id: "bca", label: "BCA", kind: "bank", number: "", holder: "" },
+];
 
 const GATEWAYS = [
   {
@@ -73,6 +89,10 @@ function AdminPayment() {
         setSettings({
           ...d,
           shipping: d.shipping ?? { javaFee: 25000, outsideJavaFee: 40000 },
+          manualAccounts:
+            d.manualAccounts && d.manualAccounts.length > 0
+              ? d.manualAccounts
+              : DEFAULT_MANUAL_ACCOUNTS,
         });
       })
       .catch((e) => setError(errMsg(e)));
@@ -309,6 +329,78 @@ function AdminPayment() {
         <p className="adm-sub mt-2 text-[11px]">
           💡 QRIS & Virtual Account membutuhkan gateway Tripay/Tokopay yang aktif. COD & transfer
           manual selalu bisa dipakai tanpa gateway.
+        </p>
+      </section>
+
+      {/* ---------- rekening & e-wallet manual ---------- */}
+      <section className="adm-card p-4 sm:p-5">
+        <h2 className="font-heading text-lg font-extrabold">Rekening & E-Wallet Manual</h2>
+        <p className="adm-sub">
+          Nomor tujuan yang tampil ke pembeli saat gateway Manual aktif (atau metode transfer
+          dipilih). QRIS Toko memakai string QRIS statis dari env server — tanpa nomor.
+        </p>
+        <div className="mt-3 space-y-2">
+          {(settings?.manualAccounts ?? []).map((a) => (
+            <div
+              key={a.id}
+              className={`rounded-xl border p-3 ${
+                a.number.trim()
+                  ? "border-emerald-200 bg-emerald-50/50"
+                  : "border-amber-200 bg-amber-50/50"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <p className="font-heading text-sm font-bold text-on-surface">{a.label}</p>
+                <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  {a.kind === "bank" ? "bank" : "e-wallet"}
+                </span>
+                {!a.number.trim() && (
+                  <span className="font-mono text-[10px] font-bold text-amber-700">
+                    BELUM DIISI
+                  </span>
+                )}
+              </div>
+              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <label className="adm-label">
+                  Nomor {a.kind === "bank" ? "rekening" : "HP / akun"}
+                  <input
+                    value={a.number}
+                    onChange={(e) =>
+                      settings &&
+                      setSettings({
+                        ...settings,
+                        manualAccounts: settings.manualAccounts.map((x) =>
+                          x.id === a.id ? { ...x, number: e.target.value } : x,
+                        ),
+                      })
+                    }
+                    placeholder={a.kind === "bank" ? "cth: 1234567890" : "cth: 081234567890"}
+                    className="adm-input mt-1 font-mono text-xs"
+                  />
+                </label>
+                <label className="adm-label">
+                  Atas nama
+                  <input
+                    value={a.holder}
+                    onChange={(e) =>
+                      settings &&
+                      setSettings({
+                        ...settings,
+                        manualAccounts: settings.manualAccounts.map((x) =>
+                          x.id === a.id ? { ...x, holder: e.target.value } : x,
+                        ),
+                      })
+                    }
+                    placeholder="cth: NAMA PEMILIK"
+                    className="adm-input mt-1 text-xs"
+                  />
+                </label>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="adm-sub mt-2 text-[11px]">
+          Jangan lupa tekan Simpan + Terbitkan agar nomor baru live di checkout pembeli.
         </p>
       </section>
 

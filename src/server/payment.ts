@@ -28,13 +28,25 @@ export type PaymentMethodSetting = { id: string; label: string; enabled: boolean
 
 export type ShippingSetting = { javaFee: number; outsideJavaFee: number };
 
+export type ManualAccount = {
+  id: string;
+  label: string;
+  kind: "bank" | "ewallet";
+  number: string;
+  holder: string;
+};
+
 export type PaymentSettings = {
   activeGateway: "tripay" | "tokopay" | "manual";
   mode: "sandbox" | "live";
   methods: PaymentMethodSetting[];
   staticQrisUrl: string;
   shipping: ShippingSetting;
+  manualAccounts: ManualAccount[];
 };
+
+/** Method transfer manual: QRIS toko + rekening bank / e-wallet admin. */
+export const MANUAL_TRANSFER_IDS = ["qris_toko", "dana", "gopay", "seabank", "bca"];
 
 export type PaymentSecrets = {
   tripay: { merchantCode: string; apiKey: string; privateKey: string };
@@ -51,6 +63,12 @@ const defaultSettings = (): PaymentSettings => ({
   ],
   staticQrisUrl: "",
   shipping: { javaFee: 25000, outsideJavaFee: 40000 },
+  manualAccounts: [
+    { id: "dana", label: "DANA", kind: "ewallet", number: "", holder: "" },
+    { id: "gopay", label: "GoPay", kind: "ewallet", number: "", holder: "" },
+    { id: "seabank", label: "SeaBank", kind: "bank", number: "", holder: "" },
+    { id: "bca", label: "BCA", kind: "bank", number: "", holder: "" },
+  ],
 });
 
 function secretsPath(): string {
@@ -70,6 +88,8 @@ export function loadPaymentSettings(): PaymentSettings {
       methods: parsed.methods,
       staticQrisUrl: parsed.staticQrisUrl,
       shipping: (parsed as { shipping?: ShippingSetting }).shipping ?? base.shipping,
+      manualAccounts:
+        (parsed as { manualAccounts?: ManualAccount[] }).manualAccounts ?? base.manualAccounts,
     };
   } catch {
     return defaultSettings();
@@ -139,6 +159,7 @@ export const getPublicPaymentConfig = createServerFn({ method: "GET" }).handler(
     methods: s.methods,
     staticQrisUrl: s.staticQrisUrl,
     shipping: s.shipping,
+    manualAccounts: s.manualAccounts,
   };
 });
 
@@ -524,6 +545,16 @@ export const createOrderQris = createServerFn({ method: "POST" }).handler(
       payUrl = qr.dataUrl;
       payString = qr.payload;
       gatewayRef = orderId;
+    } else if (settings.manualAccounts.some((a) => a.id === method)) {
+      // Transfer manual ke rekening / e-wallet admin — tanpa gateway.
+      const account = settings.manualAccounts.find((a) => a.id === method)!;
+      if (!account.number.trim()) {
+        throw new Error(
+          `Nomor ${account.label} belum diisi admin — pilih metode lain / hubungi toko.`,
+        );
+      }
+      gateway = "manual";
+      payCode = account.number.trim();
     } else if (method === "cod") {
       // Bayar di toko — tanpa memanggil gateway sama sekali
       gateway = settings.activeGateway === "manual" ? "manual_wa" : settings.activeGateway;

@@ -12,7 +12,8 @@ import {
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { checkOrderStatus } from "@/server/payment";
+import { checkOrderStatus, getPublicPaymentConfig } from "@/server/payment";
+import type { ManualAccount } from "@/hooks/use-payment-config";
 import type { OrderRecord } from "@/lib/supabase";
 
 export const Route = createFileRoute("/order/$orderId")({
@@ -30,6 +31,15 @@ function OrderStatusPage() {
   const [order, setOrder] = useState<OrderRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [manualAccounts, setManualAccounts] = useState<ManualAccount[]>([]);
+
+  useEffect(() => {
+    getPublicPaymentConfig()
+      .then((c) => setManualAccounts(c.manualAccounts ?? []))
+      .catch(() => {
+        // abaikan — panel transfer pakai nomor tersimpan di order
+      });
+  }, []);
 
   const formatPrice = (v: number) => `Rp ${v.toLocaleString("id-ID")}`;
 
@@ -240,7 +250,7 @@ function OrderStatusPage() {
                 </div>
               )}
 
-              {/* Panel bayar jika masih PENDING: QRIS atau nomor VA */}
+              {/* Panel bayar jika masih PENDING: QRIS / VA / transfer manual */}
               {order.payment_status === "PENDING" &&
                 (order.payment_channel === "cash_cod" ? (
                   <div className="rounded-2xl border border-amber-300 bg-amber-50 p-5 text-center shadow-sm">
@@ -254,7 +264,28 @@ function OrderStatusPage() {
                   </div>
                 ) : (
                   <div className="rounded-2xl border border-border bg-white p-5 text-center shadow-sm">
-                    {order.pay_code ? (
+                    {order.payment_gateway === "manual" && order.payment_channel !== "qris_toko" ? (
+                      <>
+                        <p className="font-heading text-sm font-bold text-slate-900">
+                          Transfer ke{" "}
+                          {manualAccounts.find((a) => a.id === order.payment_channel)?.label ??
+                            order.payment_channel.toUpperCase()}
+                          :
+                        </p>
+                        <p className="mt-2 font-mono text-2xl font-extrabold tracking-wider text-slate-900">
+                          {order.pay_code || "–"}
+                        </p>
+                        {manualAccounts.find((a) => a.id === order.payment_channel)?.holder && (
+                          <p className="mt-1 text-[11px] font-semibold text-slate-500">
+                            a.n.{" "}
+                            {manualAccounts.find((a) => a.id === order.payment_channel)?.holder}
+                          </p>
+                        )}
+                        <p className="mt-1 text-[11px] text-slate-500">
+                          Transfer tepat sejumlah tagihan, lalu kirim bukti via WhatsApp di bawah.
+                        </p>
+                      </>
+                    ) : order.pay_code ? (
                       <>
                         <p className="font-heading text-sm font-bold text-slate-900">
                           Transfer ke Virtual Account:

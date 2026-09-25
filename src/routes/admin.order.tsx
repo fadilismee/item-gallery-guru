@@ -502,6 +502,14 @@ function AdminOrder() {
                     <p className="font-bold text-on-surface">{detail.tripay_reference}</p>
                   </div>
                 )}
+                {detail.payment_gateway === "manual" && detail.pay_code && (
+                  <div className="col-span-2 rounded-lg bg-slate-50 p-2.5">
+                    <p className="text-slate-400">
+                      Tujuan {(detail.payment_channel || "").toUpperCase()}
+                    </p>
+                    <p className="font-bold text-on-surface">{detail.pay_code}</p>
+                  </div>
+                )}
                 {detail.payment_status === "REFUNDED" && (
                   <div className="col-span-2 rounded-lg bg-sky-50 border border-sky-200 p-2.5">
                     <p className="text-sky-600">Dana dikembalikan: {fmtTime(detail.refunded_at)}</p>

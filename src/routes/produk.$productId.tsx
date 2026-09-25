@@ -173,7 +173,7 @@ function ProductDetail() {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const { checkoutMethods, canInstantCheckout } = usePaymentConfig();
+  const { checkoutMethods, canInstantCheckout, config } = usePaymentConfig();
 
   const galleryImages =
     product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
@@ -607,6 +607,8 @@ function ProductDetail() {
         onClose={() => setQrisModalOpen(false)}
         items={checkoutItem}
         payMethods={checkoutMethods}
+        gateway={config?.activeGateway ?? "tripay"}
+        manualAccounts={config?.manualAccounts ?? []}
       />
     </div>
   );

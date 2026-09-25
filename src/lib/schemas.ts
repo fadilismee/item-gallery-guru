@@ -183,6 +183,15 @@ export const PaymentMethodSchema = z.object({
   enabled: z.boolean(),
 });
 
+/** Rekening bank / e-wallet milik toko untuk pembayaran manual (bukan secret!). */
+export const ManualAccountSchema = z.object({
+  id: z.string().min(1),
+  label: z.string().min(1),
+  kind: z.enum(["bank", "ewallet"]),
+  number: z.string(),
+  holder: z.string(),
+});
+
 export const PaymentShippingSchema = z.object({
   javaFee: z.number().int().nonnegative(),
   outsideJavaFee: z.number().int().nonnegative(),
@@ -194,6 +203,7 @@ export const PaymentSettingsDataSchema = z.object({
   methods: z.array(PaymentMethodSchema).min(1),
   staticQrisUrl: z.string(),
   shipping: PaymentShippingSchema,
+  manualAccounts: z.array(ManualAccountSchema).default([]),
 });
 
 /* ------------------------------------------------------------------ */

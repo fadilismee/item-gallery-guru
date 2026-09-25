@@ -3,12 +3,21 @@ import { getPublicPaymentConfig } from "@/server/payment";
 
 export type PublicPayMethod = { id: string; label: string; enabled: boolean };
 
+export type ManualAccount = {
+  id: string;
+  label: string;
+  kind: "bank" | "ewallet";
+  number: string;
+  holder: string;
+};
+
 export type PublicPaymentConfig = {
   activeGateway: "tripay" | "tokopay" | "manual";
   mode: "sandbox" | "live";
   methods: PublicPayMethod[];
   staticQrisUrl: string;
   shipping: { javaFee: number; outsideJavaFee: number };
+  manualAccounts: ManualAccount[];
 };
 
 export function usePaymentConfig() {
