@@ -218,14 +218,17 @@ export default {
 
       // Subdomain admin.buanacomputer.web.id = khusus area admin.
       // Selain /admin* & /admin-login, arahkan ke toko utama.
+      // Admin lokal (localhost / LAN kantor / preview) TIDAK di-redirect
+      // agar dashboard local-first tetap bisa dibuka langsung.
       const host = getHost(request);
+      const isLiveHost = host.endsWith("buanacomputer.web.id");
       const isAdminPath = url.pathname === "/admin-login" || url.pathname.startsWith("/admin");
-      if (host.startsWith("admin.")) {
+      if (isLiveHost && host.startsWith("admin.")) {
         if (!isAdminPath && !isInternalPath(url.pathname)) {
           return Response.redirect(`https://buanacomputer.web.id${url.pathname}${url.search}`, 308);
         }
-      } else if (isAdminPath) {
-        // Area admin hanya dilayani dari subdomain admin
+      } else if (isLiveHost && isAdminPath) {
+        // Area admin di domain live hanya dilayani dari subdomain admin
         return Response.redirect(
           `https://admin.buanacomputer.web.id${url.pathname}${url.search}`,
           308,
