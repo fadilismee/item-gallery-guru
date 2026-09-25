@@ -39,7 +39,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { CountUp, Reveal } from "@/components/Reveal";
 import reviewsData from "@/data/reviews.json";
-import poster1 from "@/img/Buanacomputer-poster1.jpg";
+import aboutModel from "@/img/buanacomp-aboutus.webp";
 import poster2 from "@/img/Buanacomputer-poster2.jpg";
 import poster3 from "@/img/Buanacomputer-poster3.jpg";
 
@@ -447,7 +447,7 @@ const heroShowcases = [
     id: "laptop",
     tab: "Laptop Second",
     badge: "GRADE A/B • SIAP PAKAI",
-    image: poster1,
+    image: aboutModel,
     title: "Laptop Second Mulus & Bergaransi",
     desc: "Kesehatan baterai prima, keyboard 100% normal, layar jernih, charger original.",
     tag: "Core i3 - i7 / Ryzen / RTX",
