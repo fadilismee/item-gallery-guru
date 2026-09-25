@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import {
+  cancelPendingOrder,
   checkOrderStatus,
   createOrderQris,
   getShippingQuote,
@@ -231,6 +232,20 @@ export function QrisCheckoutModal({
     setError("");
     setBusy(true);
     try {
+      // Ganti metode: batalkan order PENDING sebelumnya biar tidak jadi sampah.
+      if (order && order.payment_status === "PENDING") {
+        try {
+          await cancelPendingOrder({ data: { orderId: order.id, phone } });
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : "";
+          if (/LUNAS|diproses/i.test(msg)) {
+            setError("Pesanan sebelumnya sudah diproses — tidak bisa ganti metode.");
+            setBusy(false);
+            return;
+          }
+          // Gagal batal (mis. sudah lewat 30 mnt) — lanjut, admin bisa bersihkan.
+        }
+      }
       const created = await doCreateOrder(methodId, quote?.zone ?? "JAWA");
       setOrder(created);
       setPayMethod(methodId);
@@ -619,8 +634,20 @@ export function QrisCheckoutModal({
         {/* STEP 3: DETAIL PEMBAYARAN */}
         {step === "pay" && order && (
           <div className="text-center">
-            <div className="flex items-center justify-between border-b border-border pb-3 text-left">
-              <div>
+            <div className="flex items-center gap-2 border-b border-border pb-3 text-left">
+              <button
+                type="button"
+                onClick={() => {
+                  setStep("choose");
+                  setError("");
+                }}
+                title="Ganti metode pembayaran"
+                className="shrink-0 rounded-full bg-muted p-1.5 text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                aria-label="Ganti metode pembayaran"
+              >
+                <ArrowLeft size={18} />
+              </button>
+              <div className="min-w-0 flex-1">
                 <span className="rounded bg-primary/10 px-2 py-0.5 font-mono text-[10px] font-bold text-primary">
                   {order.id}
                 </span>

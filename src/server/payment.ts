@@ -807,3 +807,45 @@ export const simulateOrderPayment = createServerFn({ method: "POST" }).handler(
     return { ok: true as const, status: "PAID", paid_at: paidAt };
   },
 );
+
+/**
+ * Batalkan order PENDING milik sendiri saat pembeli ganti metode bayar.
+ * Aman: hanya PENDING < 30 menit + nomor WA harus cocok dengan pemesan.
+ */
+export const cancelPendingOrder = createServerFn({ method: "POST" }).handler(
+  async ({ data }: { data: { orderId: string; phone: string } }) => {
+    const orderId = (data?.orderId ?? "").trim();
+    const norm = (p: string) =>
+      String(p ?? "")
+        .replace(/\D/g, "")
+        .replace(/^62/, "0");
+    const phone = norm(data?.phone ?? "");
+    if (!orderId || phone.length < 8) throw new Error("Data pembatalan tidak valid.");
+    const supabase = getSupabaseClient();
+    if (!supabase) throw new Error("Supabase belum terhubung.");
+    const { data: row, error } = await supabase
+      .from("orders")
+      .select("id,customer_phone,payment_status,created_at")
+      .eq("id", orderId)
+      .single();
+    if (error || !row) throw new Error("Order tidak ditemukan.");
+    const o = row as {
+      id: string;
+      customer_phone: string;
+      payment_status: string;
+      created_at: string;
+    };
+    if (o.payment_status !== "PENDING") {
+      throw new Error("Order ini sudah LUNAS/diproses — tidak bisa dibatalkan.");
+    }
+    if (norm(o.customer_phone) !== phone) throw new Error("Nomor tidak cocok.");
+    const ageMin = (Date.now() - new Date(o.created_at).getTime()) / 60000;
+    if (!(ageMin >= 0 && ageMin <= 30)) throw new Error("Order sudah kedaluwarsa.");
+    const { error: upErr } = await supabase
+      .from("orders")
+      .update({ payment_status: "CANCELLED" })
+      .eq("id", orderId);
+    if (upErr) throw new Error("Gagal membatalkan order.");
+    return { ok: true as const, orderId };
+  },
+);
