@@ -8,7 +8,7 @@ import {
   adminValidate,
 } from "@/server/admin";
 import { AdminIcon as Icon } from "@/components/admin/AdminIcon";
-import { errMsg, getAdminToken } from "@/lib/adminClient";
+import { errMsg, getAdminToken, isReviewer } from "@/lib/adminClient";
 import { isEasyMode, useAdminMode } from "@/lib/adminMode";
 import type { ValidationResult } from "@/lib/validateAll";
 import poster1 from "@/img/Buanacomputer-poster1.jpg";
@@ -297,25 +297,37 @@ function AdminDashboard() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Link to="/admin/produk" className="adm-btn-pri inline-flex items-center gap-1.5">
-              <Icon name="add_shopping_cart" className="text-[18px]" />
-              Tambah Produk
-            </Link>
-            <Link to="/admin/blog" className="adm-btn-ghost inline-flex items-center gap-1.5">
-              <Icon name="edit_note" className="text-[18px] text-pri" />
-              Tulis Artikel
-            </Link>
-            <Link to="/admin/banner" className="adm-btn-ghost inline-flex items-center gap-1.5">
-              <Icon name="campaign" className="text-[18px] text-pri" />
-              Atur Banner
-            </Link>
-            <Link to="/admin/order" className="adm-btn-ghost inline-flex items-center gap-1.5">
-              <Icon name="receipt_long" className="text-[18px] text-pri" />
-              Log Transaksi
-              {orderStats && orderStats.pending > 0 && (
-                <span className="adm-chip adm-chip-amber ml-1">{orderStats.pending}</span>
-              )}
-            </Link>
+            {isReviewer() ? (
+              <Link to="/admin/order" className="adm-btn-pri inline-flex items-center gap-1.5">
+                <Icon name="receipt_long" className="text-[18px]" />
+                Lihat Log Transaksi
+                {orderStats && orderStats.pending > 0 && (
+                  <span className="adm-chip adm-chip-amber ml-1">{orderStats.pending}</span>
+                )}
+              </Link>
+            ) : (
+              <>
+                <Link to="/admin/produk" className="adm-btn-pri inline-flex items-center gap-1.5">
+                  <Icon name="add_shopping_cart" className="text-[18px]" />
+                  Tambah Produk
+                </Link>
+                <Link to="/admin/blog" className="adm-btn-ghost inline-flex items-center gap-1.5">
+                  <Icon name="edit_note" className="text-[18px] text-pri" />
+                  Tulis Artikel
+                </Link>
+                <Link to="/admin/banner" className="adm-btn-ghost inline-flex items-center gap-1.5">
+                  <Icon name="campaign" className="text-[18px] text-pri" />
+                  Atur Banner
+                </Link>
+                <Link to="/admin/order" className="adm-btn-ghost inline-flex items-center gap-1.5">
+                  <Icon name="receipt_long" className="text-[18px] text-pri" />
+                  Log Transaksi
+                  {orderStats && orderStats.pending > 0 && (
+                    <span className="adm-chip adm-chip-amber ml-1">{orderStats.pending}</span>
+                  )}
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -410,8 +422,8 @@ function AdminDashboard() {
         />
       </section>
 
-      {/* ---------- publish banner ---------- */}
-      {contentDirty.length > 0 && (
+      {/* ---------- publish banner (admin penuh saja) ---------- */}
+      {!isReviewer() && contentDirty.length > 0 && (
         <section className="adm-card flex flex-wrap items-center justify-between gap-3 border-green-200 bg-green-50/60 p-4">
           <p className="flex items-center gap-2 text-sm text-green-900">
             <Icon name="rocket_launch" className="text-[22px] text-green-700" />
@@ -795,70 +807,76 @@ function AdminDashboard() {
             </Link>
           </div>
 
-          {/* Pemeriksaan Kesehatan Data (Ditempatkan Rapi di Kolom Kanan) */}
-          <div className="adm-card p-4 sm:p-5">
-            <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
-              <span className="adm-icon-chip teal">
-                <Icon name="health_and_safety" />
-              </span>
-              <div>
-                <h3 className="font-heading text-[15px] font-bold text-on-surface">
-                  Kesehatan Sistem &amp; Data
-                </h3>
-                <p className="adm-sub text-xs">Validasi 5 dataset Zod &amp; sitemap</p>
+          {/* Pemeriksaan Kesehatan Data (admin penuh saja) */}
+          {!isReviewer() && (
+            <div className="adm-card p-4 sm:p-5">
+              <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+                <span className="adm-icon-chip teal">
+                  <Icon name="health_and_safety" />
+                </span>
+                <div>
+                  <h3 className="font-heading text-[15px] font-bold text-on-surface">
+                    Kesehatan Sistem &amp; Data
+                  </h3>
+                  <p className="adm-sub text-xs">Validasi 5 dataset Zod &amp; sitemap</p>
+                </div>
               </div>
-            </div>
 
-            <div className="mt-3 space-y-2 text-xs">
-              {!results ? (
-                <p className="adm-sub text-xs">
-                  Klik tombol di bawah untuk memeriksa integritas 5 file JSON data dan keunikan ID
-                  katalog.
-                </p>
-              ) : failed ? (
-                <div className="rounded-lg bg-red-50 p-2.5 text-red-800">
-                  <p className="font-bold">Ada dataset yang tidak valid:</p>
-                  <ul className="mt-1 list-disc pl-4 text-[11px]">
-                    {results
-                      .filter((r) => !r.ok)
-                      .map((r) => (
-                        <li key={r.file}>{r.file}</li>
-                      ))}
-                  </ul>
-                </div>
-              ) : (
-                <div className="rounded-lg bg-green-50 p-2.5 text-green-800">
-                  <p className="font-bold">✓ Seluruh 5 dataset lolos validasi Zod.</p>
-                  <p className="text-[11px] text-green-700">Sitemap dan link aman dari error.</p>
-                </div>
-              )}
-            </div>
+              <div className="mt-3 space-y-2 text-xs">
+                {!results ? (
+                  <p className="adm-sub text-xs">
+                    Klik tombol di bawah untuk memeriksa integritas 5 file JSON data dan keunikan ID
+                    katalog.
+                  </p>
+                ) : failed ? (
+                  <div className="rounded-lg bg-red-50 p-2.5 text-red-800">
+                    <p className="font-bold">Ada dataset yang tidak valid:</p>
+                    <ul className="mt-1 list-disc pl-4 text-[11px]">
+                      {results
+                        .filter((r) => !r.ok)
+                        .map((r) => (
+                          <li key={r.file}>{r.file}</li>
+                        ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <div className="rounded-lg bg-green-50 p-2.5 text-green-800">
+                    <p className="font-bold">✓ Seluruh 5 dataset lolos validasi Zod.</p>
+                    <p className="text-[11px] text-green-700">Sitemap dan link aman dari error.</p>
+                  </div>
+                )}
+              </div>
 
-            <button
-              onClick={runValidate}
-              disabled={busy === "validate"}
-              className="adm-btn-ghost mt-3 w-full text-xs py-1.5 inline-flex items-center justify-center gap-1.5"
-            >
-              <Icon name="check_circle" className="text-[15px] text-pri" />
-              {busy === "validate" ? "Memeriksa…" : "Jalankan Pemeriksaan Data"}
-            </button>
-          </div>
+              <button
+                onClick={runValidate}
+                disabled={busy === "validate"}
+                className="adm-btn-ghost mt-3 w-full text-xs py-1.5 inline-flex items-center justify-center gap-1.5"
+              >
+                <Icon name="check_circle" className="text-[15px] text-pri" />
+                {busy === "validate" ? "Memeriksa…" : "Jalankan Pemeriksaan Data"}
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* ---------- 6 MODUL NAVIGASI PINTASAN (SEIMBANG TANPA HANGING CARD) ---------- */}
+      {/* ---------- MODUL NAVIGASI (reviewer: hanya Transaksi) ---------- */}
       <section>
         <div className="mb-3 flex items-center justify-between">
           <div>
             <h2 className="font-heading text-[16px] font-bold text-on-surface">
-              Semua Modul Pengelolaan Toko
+              {isReviewer() ? "Modul Verifikasi" : "Semua Modul Pengelolaan Toko"}
             </h2>
-            <p className="adm-sub text-xs">Pilih modul untuk mengedit data secara visual</p>
+            <p className="adm-sub text-xs">
+              {isReviewer()
+                ? "Akses lihat-saja untuk tim verifikasi eksternal"
+                : "Pilih modul untuk mengedit data secara visual"}
+            </p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
-          {modules.map((m) => (
+          {(isReviewer() ? modules.filter((m) => m.to === "/admin/order") : modules).map((m) => (
             <Link
               key={m.to}
               to={m.to}
@@ -892,8 +910,8 @@ function AdminDashboard() {
         </div>
       </section>
 
-      {/* ---------- git panel (mode teknis) ---------- */}
-      {!easy && (
+      {/* ---------- git panel (mode teknis, admin penuh saja) ---------- */}
+      {!easy && !isReviewer() && (
         <section className="adm-card p-4 sm:p-5">
           <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
             <span className="adm-icon-chip violet">

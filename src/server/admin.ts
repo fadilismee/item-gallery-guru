@@ -41,6 +41,26 @@ function expectedToken(): string {
   return createHmac("sha256", adminPassword()).update(TOKEN_LABEL).digest("hex");
 }
 
+const REVIEWER_LABEL = "buana-reviewer";
+
+/**
+ * Password akun reviewer (akses lihat-saja untuk tim verifikasi eksternal).
+ * Kosong = peran reviewer nonaktif. Ganti/rotasi setelah selesai diverifikasi.
+ */
+function reviewerPassword(): string {
+  return (process.env.ADMIN_REVIEWER_PASSWORD || "").trim();
+}
+
+function reviewerToken(): string {
+  return createHmac("sha256", reviewerPassword()).update(REVIEWER_LABEL).digest("hex");
+}
+
+function tokensEqual(a: string, b: string): boolean {
+  const ba = Buffer.from(a, "utf8");
+  const bb = Buffer.from(b, "utf8");
+  return ba.length === bb.length && bb.length > 0 && timingSafeEqual(ba, bb);
+}
+
 function assertUsableRepo() {
   if (!existsSync(join(ROOT, "src", "data", "products.json"))) {
     throw new Error(
@@ -62,13 +82,21 @@ function isLocalRepo(): boolean {
   return existsSync(join(ROOT, "src", "data", "products.json"));
 }
 
-function assertAuth(token: unknown) {
+export type CallerRole = "admin" | "reviewer";
+
+function assertAuth(token: unknown): CallerRole {
   if (typeof token !== "string" || token.length === 0)
     throw new Error("Unauthorized: silakan login dulu.");
-  const a = Buffer.from(token, "utf8");
-  const b = Buffer.from(expectedToken(), "utf8");
-  if (a.length !== b.length || !timingSafeEqual(a, b)) {
-    throw new Error("Unauthorized: token tidak valid.");
+  if (tokensEqual(token, expectedToken())) return "admin";
+  const rp = reviewerPassword();
+  if (rp && tokensEqual(token, reviewerToken())) return "reviewer";
+  throw new Error("Unauthorized: token tidak valid.");
+}
+
+/** Operasi tulis/hapus/sensitif — hanya peran admin penuh. */
+function assertAdmin(token: unknown): void {
+  if (assertAuth(token) !== "admin") {
+    throw new Error("Mode reviewer: hanya boleh melihat, tidak boleh mengubah.");
   }
 }
 
@@ -94,18 +122,27 @@ export const adminLogin = createServerFn({ method: "POST" }).handler(
       "utf8",
     );
     const b = Buffer.from(createHmac("sha256", pw).update(TOKEN_LABEL).digest("hex"), "utf8");
-    if (a.length !== b.length || !timingSafeEqual(a, b)) {
-      throw new Error("Password salah.");
+    if (a.length === b.length && timingSafeEqual(a, b) && pw.length > 0) {
+      // Akun admin penuh (dengan 2FA bila diaktifkan)
+      if (getTotpSecret()) {
+        const code = String(data?.code ?? "").replace(/\s/g, "");
+        if (!code) throw new Error("2FA_REQUIRED");
+        if (!verifyTotp(getTotpSecret(), code)) {
+          throw new Error("Kode 2FA salah atau kedaluwarsa.");
+        }
+      }
+      return { token: expectedToken(), role: "admin" as const };
     }
-    // Langkah 2 (2FA): bila ADMIN_TOTP_SECRET diset, kode authenticator wajib valid
-    if (getTotpSecret()) {
-      const code = String(data?.code ?? "").replace(/\s/g, "");
-      if (!code) throw new Error("2FA_REQUIRED");
-      if (!verifyTotp(getTotpSecret(), code)) {
-        throw new Error("Kode 2FA salah atau kedaluwarsa.");
+    // Akun reviewer (lihat-saja, tanpa 2FA — password dirotasi setelah verifikasi)
+    const rp = reviewerPassword();
+    if (rp) {
+      const ra = Buffer.from(createHmac("sha256", rp).update(REVIEWER_LABEL).digest("hex"), "utf8");
+      const rb = Buffer.from(createHmac("sha256", pw).update(REVIEWER_LABEL).digest("hex"), "utf8");
+      if (ra.length === rb.length && timingSafeEqual(ra, rb) && pw.length > 0) {
+        return { token: reviewerToken(), role: "reviewer" as const };
       }
     }
-    return { token: expectedToken() };
+    throw new Error("Password salah.");
   },
 );
 
@@ -270,7 +307,7 @@ export const adminGetDataset = createServerFn({ method: "GET" }).handler(
 
 export const adminSaveDataset = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; name: string; data: unknown } }) => {
-    assertAuth(data?.token);
+    assertAdmin(data?.token);
     assertWriteAllowed();
     const ds = DATASETS[data.name];
     if (!ds) throw new Error(`Dataset tidak dikenal: ${data.name}`);
@@ -315,7 +352,7 @@ export const adminGitStatus = createServerFn({ method: "GET" }).handler(
 
 export const adminGitCommitPush = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; message: string } }) => {
-    assertAuth(data?.token);
+    assertAdmin(data?.token);
     assertWriteAllowed();
     const message = (data?.message ?? "").trim();
     if (message.length < 5) throw new Error("Pesan commit minimal 5 karakter.");
@@ -396,7 +433,7 @@ function googleApiKey(): string {
 
 export const adminPolishText = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; text: string; context?: string } }) => {
-    assertAuth(data?.token);
+    assertAdmin(data?.token);
     const text = (data?.text ?? "").trim();
     if (!text) throw new Error("Teks kosong.");
     if (text.length > 6000) throw new Error("Teks terlalu panjang (maks 6000 karakter).");
@@ -445,7 +482,7 @@ export const adminPolishText = createServerFn({ method: "POST" }).handler(
 
 export const adminEnhanceImage = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; imageUrl: string; prompt?: string } }) => {
-    assertAuth(data?.token);
+    assertAdmin(data?.token);
     const imageUrl = (data?.imageUrl ?? "").trim();
     if (!imageUrl || !/^https?:\/\//i.test(imageUrl)) throw new Error("URL gambar tidak valid.");
     const key = googleApiKey();
@@ -551,7 +588,7 @@ export const adminEnhanceImage = createServerFn({ method: "POST" }).handler(
 
 export const adminUploadImage = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; fileName: string; dataUrl: string } }) => {
-    assertAuth(data?.token);
+    assertAdmin(data?.token);
     const fileName = (data?.fileName ?? "upload").trim() || "upload";
     const ext = (fileName.split(".").pop() ?? "").toLowerCase();
     if (!ALLOWED_EXT.includes(ext)) {
@@ -594,7 +631,7 @@ export const adminUploadImage = createServerFn({ method: "POST" }).handler(
 
 export const adminUploadLocalBanner = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; fileName: string; dataUrl: string } }) => {
-    assertAuth(data?.token);
+    assertAdmin(data?.token);
     assertWriteAllowed();
     const rawName = (data?.fileName ?? "banner").trim() || "banner";
     // Bersihkan nama file dan buang ekstensi lama
@@ -713,7 +750,8 @@ export const adminListOrders = createServerFn({ method: "GET" }).handler(
  */
 export const adminVerifyOrder = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; orderId: string } }) => {
-    assertAuth(data?.token);
+    // Reviewer boleh membandingkan status, tapi sinkron tulis hanya untuk admin.
+    const role = assertAuth(data?.token);
     const orderId = (data?.orderId ?? "").trim();
     if (!orderId) throw new Error("Order ID kosong.");
 
@@ -728,7 +766,14 @@ export const adminVerifyOrder = createServerFn({ method: "POST" }).handler(
     if (error || !row) throw new Error("Order tidak ditemukan di database.");
     const order = row as OrderRecord;
 
-    const apiKey = (process.env.TRIPAY_API_KEY || "").trim();
+    // Samakan sumber kredensial dengan payment.ts: file secrets lokal dulu, lalu env.
+    let apiKey = (process.env.TRIPAY_API_KEY || "").trim();
+    try {
+      const raw = readJson(PAYMENT_SECRETS_FILE) as Partial<PaymentSecrets>;
+      if (raw.tripay?.apiKey) apiKey = String(raw.tripay.apiKey);
+    } catch {
+      // abaikan, pakai env
+    }
     if (!apiKey) throw new Error("TRIPAY_API_KEY belum diset di server.");
     const baseUrl = apiKey.startsWith("DEV-")
       ? "https://tripay.co.id/api-sandbox"
@@ -771,7 +816,7 @@ export const adminVerifyOrder = createServerFn({ method: "POST" }).handler(
             : new Date().toISOString()
         : undefined;
 
-    if (mapped !== order.payment_status) {
+    if (mapped !== order.payment_status && role === "admin") {
       const patch: Partial<OrderRecord> = { payment_status: mapped };
       if (paidAt) patch.paid_at = paidAt;
       if (mapped === "REFUNDED") patch.refunded_at = new Date().toISOString();
@@ -782,14 +827,14 @@ export const adminVerifyOrder = createServerFn({ method: "POST" }).handler(
       if (mapped === "REFUNDED") order.refunded_at = patch.refunded_at;
     }
 
-    return { ok: true as const, order, tripayStatus };
+    return { ok: true as const, order, tripayStatus, readOnly: role !== "admin" };
   },
 );
 
 /** Hapus order testing / sampah dari log (operasi cloud, bukan file lokal). */
 export const adminDeleteOrder = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; orderId: string } }) => {
-    assertAuth(data?.token);
+    assertAdmin(data?.token);
     const orderId = (data?.orderId ?? "").trim();
     if (!orderId) throw new Error("Order ID kosong.");
     const supabase = getSupabaseClient();
@@ -807,7 +852,7 @@ export const adminDeleteOrder = createServerFn({ method: "POST" }).handler(
  */
 export const adminRefundOrder = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; orderId: string; note?: string } }) => {
-    assertAuth(data?.token);
+    assertAdmin(data?.token);
     const orderId = (data?.orderId ?? "").trim();
     const note = String(data?.note ?? "")
       .trim()
@@ -865,14 +910,17 @@ function readSecrets(): PaymentSecrets {
 
 export const adminGetPaymentSecrets = createServerFn({ method: "GET" }).handler(
   async ({ data }: { data: { token: string } }) => {
-    assertAuth(data?.token);
-    return { secrets: readSecrets() };
+    // Reviewer tidak boleh melihat API key — kembalikan kosong agar UI tidak crash.
+    if (assertAuth(data?.token) !== "admin") {
+      return { secrets: blankSecrets(), masked: true as const };
+    }
+    return { secrets: readSecrets(), masked: false as const };
   },
 );
 
 export const adminSavePaymentSecrets = createServerFn({ method: "POST" }).handler(
   async ({ data }: { data: { token: string; secrets: PaymentSecrets } }) => {
-    assertAuth(data?.token);
+    assertAdmin(data?.token);
     assertWriteAllowed();
     const s = data?.secrets;
     if (!s || typeof s !== "object" || !s.tripay || !s.tokopay) {

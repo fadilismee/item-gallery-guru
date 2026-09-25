@@ -68,7 +68,17 @@ Atau dari dashboard admin kami: `/admin/payment` → **Tes Koneksi** (ada untuk 
 2. Buka [tripay.co.id/simulator](https://tripay.co.id/simulator), masukkan kode referensi → **Bayar**.
 3. Callback masuk → invoice otomatis `PAID`. Cek silang manual: tombol **✓ Cek ke Tripay** di halaman invoice / log admin.
 
-## 6. Kontak Teknis Toko
+## 6. Data Login Verifikasi (Akun Reviewer Khusus)
+
+Untuk keperluan verifikasi merchant, kami sediakan **akun reviewer lihat-saja** (bukan akun admin utama):
+
+- **URL Login:** `https://admin.buanacomputer.web.id/admin-login`
+- **Password reviewer:** `Buana-HU7N-DSBG-8NPQ`
+- **Yang bisa dilihat:** Dashboard ringkasan + Log Transaksi (`/admin/order`) lengkap dengan tombol verifikasi silang ke Tripay.
+- **Yang TIDAK bisa dilakukan:** mengubah/menghapus data apa pun, melihat API key, menerbitkan perubahan, memproses refund. Seluruh tombol tulis disembunyikan dan diblokir di server.
+- **Catatan:** checkout pembeli tidak butuh login sama sekali (guest checkout). Kredensial reviewer ini akan kami **rotasi/ganti setelah proses verifikasi selesai**.
+
+## 7. Kontak Teknis Toko
 
 - WhatsApp: `0859-7922-0599`
 - Alamat: Mertosan Kulon, Potorono, Banguntapan, Bantul, DI Yogyakarta 55196

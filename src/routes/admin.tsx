@@ -1,7 +1,7 @@
 import { Link, Outlet, createFileRoute, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { adminGitCommitPush, adminGitStatus } from "@/server/admin";
-import { clearAdminToken, errMsg, getAdminToken } from "@/lib/adminClient";
+import { clearAdminToken, errMsg, getAdminToken, isReviewer } from "@/lib/adminClient";
 import { isEasyMode, useAdminMode } from "@/lib/adminMode";
 
 export const Route = createFileRoute("/admin")({
@@ -30,6 +30,11 @@ function AdminLayout() {
   const [dirtyCount, setDirtyCount] = useState(0);
   const [publishing, setPublishing] = useState(false);
   const [pubMsg, setPubMsg] = useState("");
+  // Reviewer eksternal: hanya Dashboard + Transaksi, tanpa tombol tulis/terbit.
+  const reviewer = isReviewer();
+  const visibleNav = reviewer
+    ? NAV.filter((n) => n.to === "/admin" || n.to === "/admin/order")
+    : NAV;
 
   useEffect(() => {
     if (!getAdminToken()) {
@@ -98,21 +103,28 @@ function AdminLayout() {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2 md:order-last">
-            <button
-              onClick={toggleMode}
-              title={easy ? "Pindah ke mode teknis (JSON + git)" : "Pindah ke mode mudah"}
-              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors sm:px-3 sm:py-1.5 ${
-                easy
-                  ? "border-green-300 bg-green-50 text-green-800"
-                  : "border-slate-400 bg-slate-800 text-white"
-              }`}
-            >
-              <span className="adm-icon text-[15px]">
-                {easy ? "sentiment_satisfied" : "terminal"}
+            {reviewer ? (
+              <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-800">
+                <span className="adm-icon text-[15px]">visibility</span>
+                Mode Reviewer — lihat saja
               </span>
-              <span className="hidden sm:inline">{easy ? "Mode Mudah" : "Mode Teknis"}</span>
-            </button>
-            {easy && (
+            ) : (
+              <button
+                onClick={toggleMode}
+                title={easy ? "Pindah ke mode teknis (JSON + git)" : "Pindah ke mode mudah"}
+                className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors sm:px-3 sm:py-1.5 ${
+                  easy
+                    ? "border-green-300 bg-green-50 text-green-800"
+                    : "border-slate-400 bg-slate-800 text-white"
+                }`}
+              >
+                <span className="adm-icon text-[15px]">
+                  {easy ? "sentiment_satisfied" : "terminal"}
+                </span>
+                <span className="hidden sm:inline">{easy ? "Mode Mudah" : "Mode Teknis"}</span>
+              </button>
+            )}
+            {!reviewer && easy && (
               <button
                 onClick={publishEasy}
                 disabled={publishing || dirtyCount === 0}
@@ -154,7 +166,7 @@ function AdminLayout() {
           </div>
 
           <nav className="order-last flex w-full items-center gap-1 overflow-x-auto pb-1 pt-1 md:order-none md:w-auto md:flex-wrap md:overflow-visible md:py-0 scrollbar-none">
-            {NAV.map((n) => (
+            {visibleNav.map((n) => (
               <Link
                 key={n.to}
                 to={n.to}
