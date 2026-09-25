@@ -39,7 +39,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { CountUp, Reveal } from "@/components/Reveal";
 import reviewsData from "@/data/reviews.json";
-import aboutModel from "@/img/buanacomp-aboutus.webp";
+import aboutModel from "@/img/buanacomp-aboutus-np.webp";
 
 const WA_NUMBER = "6285979220599";
 const WA_CONSULT = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
