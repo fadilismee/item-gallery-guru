@@ -83,7 +83,7 @@ Akses di `/admin` & `/admin-login` (password via `ADMIN_PASSWORD` di `.env`). Pr
 | `/admin/review`  | Kelola ulasan, rating bintang, dan media testimoni.                             |
 | `/admin/banner`  | Slot hero slider homepage (WebP HD `Buanacomputer-*.webp`, tersimpan di repo).  |
 
-- **Keamanan:** Token sesi HMAC, proteksi timing-attack, guard unsaved-changes; fungsi tulis data menolak berjalan di production (view-only untuk review).
+- **Keamanan:** Token sesi HMAC, proteksi timing-attack, guard unsaved-changes; fungsi tulis data menolak berjalan di production (view-only untuk review). Login 2 langkah: password + kode TOTP 6 digit (Google Authenticator) bila `ADMIN_TOTP_SECRET` diset.
 - **Mode Mudah vs Teknis:** Form visual + tombol Terbitkan, atau editor JSON + panel git.
 
 ---

@@ -25,32 +25,6 @@ function signaturesEqual(a: string, b: string): boolean {
   return ba.length === bb.length && ba.length > 0 && timingSafeEqual(ba, bb);
 }
 
-function getHost(request: Request): string {
-  return (
-    request.headers.get("x-forwarded-host") ||
-    request.headers.get("host") ||
-    ""
-  ).toLowerCase();
-}
-
-const PASS_THROUGH_PATHS = [
-  "/favicon.ico",
-  "/favicon.png",
-  "/apple-touch-icon.png",
-  "/manifest.json",
-  "/robots.txt",
-  "/sitemap.xml",
-];
-
-function isInternalPath(pathname: string): boolean {
-  return (
-    pathname.startsWith("/_") ||
-    pathname.startsWith("/assets") ||
-    pathname.startsWith("/api/") ||
-    PASS_THROUGH_PATHS.includes(pathname)
-  );
-}
-
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
 };
@@ -216,24 +190,9 @@ export default {
         }
       }
 
-      // Subdomain admin.buanacomputer.web.id = khusus area admin.
-      // Selain /admin* & /admin-login, arahkan ke toko utama.
-      // Admin lokal (localhost / LAN kantor / preview) TIDAK di-redirect
-      // agar dashboard local-first tetap bisa dibuka langsung.
-      const host = getHost(request);
-      const isLiveHost = host.endsWith("buanacomputer.web.id");
-      const isAdminPath = url.pathname === "/admin-login" || url.pathname.startsWith("/admin");
-      if (isLiveHost && host.startsWith("admin.")) {
-        if (!isAdminPath && !isInternalPath(url.pathname)) {
-          return Response.redirect(`https://buanacomputer.web.id${url.pathname}${url.search}`, 308);
-        }
-      } else if (isLiveHost && isAdminPath) {
-        // Area admin di domain live hanya dilayani dari subdomain admin
-        return Response.redirect(
-          `https://admin.buanacomputer.web.id${url.pathname}${url.search}`,
-          308,
-        );
-      }
+      // Area admin (/admin*, /admin-login) dilayani langsung di SEMUA host:
+      // domain utama, subdomain admin, localhost, maupun LAN kantor.
+      // Tidak ada redirect — admin subdomain hanya pintu alternatif.
 
       // Redirect any legacy /jual routes to homepage store
       if (url.pathname.startsWith("/jual")) {

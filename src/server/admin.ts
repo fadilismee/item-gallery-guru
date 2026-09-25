@@ -14,6 +14,7 @@ import {
 } from "@/lib/schemas";
 import { validateAllData } from "@/lib/validateAll";
 import { getSupabaseClient, type OrderRecord } from "@/lib/supabase";
+import { getTotpSecret, verifyTotp } from "./totp";
 
 const execFileAsync = promisify(execFile);
 const TOKEN_LABEL = "buana-admin";
@@ -57,8 +58,11 @@ function assertWriteAllowed() {
   assertUsableRepo();
 }
 
+function isLocalRepo(): boolean {
+  return existsSync(join(ROOT, "src", "data", "products.json"));
+}
+
 function assertAuth(token: unknown) {
-  assertUsableRepo();
   if (typeof token !== "string" || token.length === 0)
     throw new Error("Unauthorized: silakan login dulu.");
   const a = Buffer.from(token, "utf8");
@@ -83,8 +87,7 @@ function zodIssues(e: unknown): string {
 /* ---------------- server functions ---------------- */
 
 export const adminLogin = createServerFn({ method: "POST" }).handler(
-  async ({ data }: { data: { password: string } }) => {
-    assertUsableRepo();
+  async ({ data }: { data: { password: string; code?: string } }) => {
     const pw = data?.password ?? "";
     const a = Buffer.from(
       createHmac("sha256", adminPassword()).update(TOKEN_LABEL).digest("hex"),
@@ -93,6 +96,14 @@ export const adminLogin = createServerFn({ method: "POST" }).handler(
     const b = Buffer.from(createHmac("sha256", pw).update(TOKEN_LABEL).digest("hex"), "utf8");
     if (a.length !== b.length || !timingSafeEqual(a, b)) {
       throw new Error("Password salah.");
+    }
+    // Langkah 2 (2FA): bila ADMIN_TOTP_SECRET diset, kode authenticator wajib valid
+    if (getTotpSecret()) {
+      const code = String(data?.code ?? "").replace(/\s/g, "");
+      if (!code) throw new Error("2FA_REQUIRED");
+      if (!verifyTotp(getTotpSecret(), code)) {
+        throw new Error("Kode 2FA salah atau kedaluwarsa.");
+      }
     }
     return { token: expectedToken() };
   },
@@ -216,6 +227,9 @@ export const adminStatus = createServerFn({ method: "GET" }).handler(
     return {
       ok: true as const,
       env: process.env.NODE_ENV ?? "development",
+      // local=false (production/Vercel): file JSON tidak ada di serverless,
+      // statistik katalog tampil 0 — tapi log transaksi Supabase tetap live.
+      local: isLocalRepo(),
       counts: {
         products: products.length,
         articles: articles.length,
@@ -280,6 +294,8 @@ export const adminValidate = createServerFn({ method: "GET" }).handler(
 export const adminGitStatus = createServerFn({ method: "GET" }).handler(
   async ({ data }: { data: { token: string } }) => {
     assertAuth(data?.token);
+    // Di production / tanpa repo git: kembalikan status kosong, bukan error,
+    // agar dashboard mode lihat-jarak-jauh tetap bisa dibuka.
     try {
       const [status, log, branch] = await Promise.all([
         execFileAsync("git", ["status", "--porcelain"], { cwd: ROOT, timeout: 15000 }),
@@ -291,8 +307,8 @@ export const adminGitStatus = createServerFn({ method: "GET" }).handler(
         dirty: status.stdout.trim().split("\n").filter(Boolean),
         log: log.stdout.trim().split("\n").filter(Boolean),
       };
-    } catch (e) {
-      throw new Error(`git gagal: ${e instanceof Error ? e.message : String(e)}`);
+    } catch {
+      return { branch: "-", dirty: [], log: [] };
     }
   },
 );

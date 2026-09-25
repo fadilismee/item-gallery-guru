@@ -322,6 +322,13 @@ function AdminDashboard() {
 
       {error && <p className="adm-alert-err">{error}</p>}
       {notice && <p className="adm-alert-ok whitespace-pre-wrap">{notice}</p>}
+      {dash && !dash.local && (
+        <p className="adm-alert-err">
+          Mode lihat-jarak-jauh: server ini tidak memegang file katalog, jadi statistik produk/blog
+          tampil 0 dan tombol tulis nonaktif. Untuk edit &amp; Terbitkan, buka dashboard dari PC dev
+          / LAN kantor. Log transaksi Supabase di bawah tetap live.
+        </p>
+      )}
 
       {/* ---------- 6 STAT CARDS (STORE FOCUS) ---------- */}
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">

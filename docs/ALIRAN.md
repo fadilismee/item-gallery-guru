@@ -47,7 +47,7 @@ Kontak toko: WA `6285979220599` · Mertosan Kulon, Potorono, Banguntapan, Bantul
 
 1. Buka `http://localhost:3001/admin-login` (dari HP/PC se-WiFi: `http://<IP-PC>:3001/admin-login`). Di internet juga bisa via `https://admin.buanacomputer.web.id/admin-login` (mode lihat saja).
 2. Masukkan password = `ADMIN_PASSWORD` di file `.env` (tidak di-commit; restart dev server setelah mengubah).
-3. Server (`adminLogin`) membandingkan HMAC-SHA256 password dengan `timingSafeEqual`; jika cocok → token HMAC dikembalikan.
+3. Server (`adminLogin`) membandingkan HMAC-SHA256 password dengan `timingSafeEqual`; jika cocok → token HMAC dikembalikan. Bila `ADMIN_TOTP_SECRET` diset, ada langkah 2: masukkan kode 6 digit dari aplikasi authenticator (daftarkan manual entry dengan secret tersebut; TOTP RFC 6238, toleransi ±30 detik).
 4. Token disimpan di `sessionStorage["buana-admin-token"]` (lihat `src/lib/adminClient.ts`) — hilang saat tab/browser ditutup (logout otomatis).
 
 ### 2.2 Dashboard (`/admin`)
