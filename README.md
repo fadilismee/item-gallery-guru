@@ -120,7 +120,7 @@ scripts/               → validate-data.ts, generate-sitemap.mjs (prebuild)
 
 ```sh
 npm i
-npm run dev       # dev server, http://localhost:3000
+npm run dev       # dev server, http://localhost:3001
 npm run lint      # eslint — harus 0 error
 npm run validate  # validasi 5 dataset JSON + keunikan id/slug
 npm run build     # production build (Vite + Nitro, generate sitemap)

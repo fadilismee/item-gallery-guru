@@ -41,11 +41,11 @@ Kontak toko: WA `6285979220599` · Mertosan Kulon, Potorono, Banguntapan, Bantul
 
 ## 2. ADMIN FLOW (lokal + LAN, NONAKTIF di production)
 
-> Server menolak semua fungsi admin saat `NODE_ENV=production` (`assertLocal` di `src/server/admin.ts`). Artinya: halaman admin hanya hidup di PC dev / LAN kantor, tidak bisa diakses dari situs production.
+> Fungsi **tulis** data admin (simpan/upload/commit) hanya jalan di PC dev / LAN kantor (`assertWriteAllowed` di `src/server/admin.ts`). Login dan lihat-lihat dashboard tetap bisa dari production/subdomain admin (mode lihat saja) — berguna untuk review verifikasi.
 
 ### 2.1 Login
 
-1. Buka `http://localhost:3000/admin-login` (dari HP/PC se-WiFi: `http://<IP-PC>:3000/admin-login`).
+1. Buka `http://localhost:3001/admin-login` (dari HP/PC se-WiFi: `http://<IP-PC>:3001/admin-login`). Di internet juga bisa via `https://admin.buanacomputer.web.id/admin-login` (mode lihat saja).
 2. Masukkan password = `ADMIN_PASSWORD` di file `.env` (tidak di-commit; restart dev server setelah mengubah).
 3. Server (`adminLogin`) membandingkan HMAC-SHA256 password dengan `timingSafeEqual`; jika cocok → token HMAC dikembalikan.
 4. Token disimpan di `sessionStorage["buana-admin-token"]` (lihat `src/lib/adminClient.ts`) — hilang saat tab/browser ditutup (logout otomatis).
@@ -75,5 +75,5 @@ Kontak toko: WA `6285979220599` · Mertosan Kulon, Potorono, Banguntapan, Bantul
 
 - `npm run validate` → validasi 9 file data + keunikan id/slug (dipakai juga oleh `adminValidate` di dashboard).
 - `npm run lint` (ESLint + Prettier) dan `npm run build` (Vite + Nitro) harus lolos sebelum commit/push.
-- Dev server jalan sebagai scheduled task Windows `buana-dev` (port 3000, `host: true` untuk akses LAN). Restart: `schtasks /End /TN buana-dev` lalu `schtasks /Run /TN buana-dev`.
+- Dev server jalan sebagai scheduled task Windows `buana-dev` (port 3001, `host: true` untuk akses LAN). Restart: `schtasks /End /TN buana-dev` lalu `schtasks /Run /TN buana-dev`. Catatan: port 3000 dipakai service Windows lain (iphlpsvc) — jangan pakai 3000 agar browser tidak salah sambung.
 - File otentikasi: `ADMIN_PASSWORD` hanya di `.env` lokal (+ Vercel env bila perlu); **jangan pernah commit**.
