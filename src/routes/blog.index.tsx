@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { Reveal } from "@/components/Reveal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { blogArticles, blogCategories, type BlogArticle, type TagTone } from "@/data/blog";
@@ -75,7 +76,7 @@ function HeroStory({ article }: { article: BlogArticle }) {
     <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-10">
       <div className="rounded-xl bg-surface-lowest p-5 sm:p-6 md:p-10 shadow-md transition-all duration-300 hover:shadow-xl">
         <div className="grid grid-cols-1 items-center gap-6 sm:gap-8 lg:grid-cols-12 lg:gap-10">
-          <div className="flex flex-col items-start lg:col-span-7">
+          <Reveal className="flex flex-col items-start lg:col-span-7">
             <div className="font-monotech mb-3 flex items-center gap-2 text-[11px]">
               <span className="rounded-full bg-pri px-3 py-0.5 font-semibold uppercase tracking-wider text-on-pri">
                 {article.tag}
@@ -129,8 +130,8 @@ function HeroStory({ article }: { article: BlogArticle }) {
                 {article.cta} <span aria-hidden>→</span>
               </Link>
             </div>
-          </div>
-          <div className="relative lg:col-span-5">
+          </Reveal>
+          <Reveal scale delayMs={150} className="relative lg:col-span-5">
             <div className="group relative aspect-[4/3] overflow-hidden rounded-lg bg-surface-high shadow-inner">
               <img
                 src={article.image}
@@ -160,7 +161,7 @@ function HeroStory({ article }: { article: BlogArticle }) {
                 </p>
               </div>
             </div>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>
@@ -222,7 +223,10 @@ function Newsletter() {
   const [done, setDone] = useState(false);
   return (
     <section className="mx-auto w-full max-w-7xl px-4 pb-8 sm:pb-10">
-      <div className="relative overflow-hidden rounded-xl bg-inverse-surface p-6 text-inverse-on-surface shadow-lg md:p-10">
+      <Reveal
+        scale
+        className="relative overflow-hidden rounded-xl bg-inverse-surface p-6 text-inverse-on-surface shadow-lg md:p-10"
+      >
         <div className="pointer-events-none absolute -bottom-20 -right-20 h-80 w-80 rounded-full bg-pri-container/20 blur-3xl" />
         <div className="relative z-10 grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
           <div className="lg:col-span-7">
@@ -275,7 +279,7 @@ function Newsletter() {
             </div>
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
@@ -316,7 +320,7 @@ function BlogPage() {
       <HeroStory article={featured} />
 
       <section className="mx-auto w-full max-w-7xl px-4 pb-6">
-        <div className="flex flex-col justify-between gap-4 pb-3 md:flex-row md:items-center">
+        <Reveal className="flex flex-col justify-between gap-4 pb-3 md:flex-row md:items-center">
           <div>
             <h2 className="font-heading text-2xl font-semibold text-on-surface sm:text-3xl">
               Eksplorasi Topik &amp; Panduan
@@ -328,7 +332,7 @@ function BlogPage() {
           <span className="font-monotech text-[11px] uppercase tracking-wider text-outline">
             Kategori: {blogCategories.length} Direktori
           </span>
-        </div>
+        </Reveal>
         <div className="flex items-center gap-2 overflow-x-auto py-2 scrollbar-none">
           {blogCategories.map((c) => {
             const active = category === c;
@@ -361,8 +365,10 @@ function BlogPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {list.map((a) => (
-              <ArticleCard key={a.slug} article={a} />
+            {list.map((a, i) => (
+              <Reveal key={a.slug} delayMs={(i % 3) * 90}>
+                <ArticleCard article={a} />
+              </Reveal>
             ))}
           </div>
         )}
@@ -386,8 +392,13 @@ function BlogPage() {
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4 text-center sm:grid-cols-4 lg:col-span-7">
-              {labStats.map((s) => (
-                <div key={s.label} className="rounded-lg bg-surface-lowest p-4 shadow-sm">
+              {labStats.map((s, i) => (
+                <Reveal
+                  key={s.label}
+                  scale
+                  delayMs={i * 80}
+                  className="rounded-lg bg-surface-lowest p-4 shadow-sm"
+                >
                   <span
                     className={`font-heading block text-2xl font-bold sm:text-3xl ${s.accent ? "text-pri" : "text-on-surface"}`}
                   >
@@ -397,7 +408,7 @@ function BlogPage() {
                     {s.label}
                   </span>
                   <span className="font-monotech text-[11px] text-outline">{s.sub}</span>
-                </div>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -407,7 +418,7 @@ function BlogPage() {
       <Newsletter />
 
       <section className="mx-auto w-full max-w-7xl px-4 pb-10">
-        <div className="flex flex-col items-center justify-between gap-4 rounded-xl bg-surface-lowest p-5 shadow-sm md:flex-row">
+        <Reveal className="flex flex-col items-center justify-between gap-4 rounded-xl bg-surface-lowest p-5 shadow-sm md:flex-row">
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-surface-high text-xl text-pri">
               🛠
@@ -430,7 +441,7 @@ function BlogPage() {
           >
             <span className="text-pri">💬</span> Konsultasi WA: 0859-7922-0599
           </a>
-        </div>
+        </Reveal>
       </section>
 
       <SiteFooter />

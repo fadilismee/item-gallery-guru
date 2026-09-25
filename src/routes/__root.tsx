@@ -4,10 +4,12 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { FloatingCs } from "@/components/FloatingCs";
 
 import appCss from "../styles.css?url";
 
@@ -241,11 +243,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isAdminArea =
+    pathname === "/admin" || pathname.startsWith("/admin/") || pathname === "/admin-login";
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      {!isAdminArea && <FloatingCs />}
     </QueryClientProvider>
   );
 }

@@ -221,6 +221,10 @@
   animation: marquee 36s linear infinite;
 }
 
+.animate-marquee-reverse {
+  animation: marquee 36s linear infinite reverse;
+}
+
 @keyframes buana-float {
   0%,
   100% {
@@ -304,6 +308,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee,
+  .animate-marquee-reverse,
   .animate-float,
   .animate-float-slow,
   .animate-pulse-glow {

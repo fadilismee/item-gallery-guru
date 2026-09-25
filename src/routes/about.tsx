@@ -1190,8 +1190,77 @@ function QualityStandardsSection() {
   );
 }
 
+type AboutReview = {
+  id: string;
+  date?: string;
+  title: string;
+  text: string;
+  name: string;
+  productLabel?: string;
+};
+
+function TestimonialCard({ rev, idx }: { rev: AboutReview; idx: number }) {
+  return (
+    <div
+      key={`${rev.id}-${idx}`}
+      className="flex w-[290px] sm:w-[330px] shrink-0 flex-col justify-between rounded-2xl border border-slate-200 bg-surface-low p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-pri/40 hover:shadow-md hover:bg-white"
+    >
+      <div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1 text-amber-500">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} size={13} fill="currentColor" />
+            ))}
+          </div>
+          <span className="font-mono text-[10px] text-slate-400">{rev.date}</span>
+        </div>
+        <h4 className="font-heading mt-2.5 text-sm font-bold text-technavy line-clamp-1">
+          “{rev.title}”
+        </h4>
+        <p className="mt-1 text-xs leading-relaxed text-slate-600 line-clamp-3">{rev.text}</p>
+      </div>
+      <div className="mt-4 flex items-center justify-between border-t border-slate-200/80 pt-3 font-mono text-[11px]">
+        <span className="font-bold text-slate-800 truncate pr-2">{rev.name}</span>
+        <span className="shrink-0 rounded bg-white border border-slate-200 px-2 py-0.5 text-[10px] text-slate-600 font-semibold">
+          {rev.productLabel}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function TestimonialRow({
+  items,
+  reverse = false,
+  label,
+}: {
+  items: AboutReview[];
+  reverse?: boolean;
+  label: string;
+}) {
+  const looped = [...items, ...items]; // Duplicated for smooth infinite loop
+  return (
+    <div className="group relative w-full overflow-hidden py-2" aria-label={label}>
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-white to-transparent sm:w-32" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-white to-transparent sm:w-32" />
+      <div
+        className={`flex w-max gap-4 group-hover:[animation-play-state:paused] [animation-duration:40s] ${
+          reverse ? "animate-marquee-reverse" : "animate-marquee"
+        }`}
+      >
+        {looped.map((rev, idx) => (
+          <TestimonialCard key={`${rev.id}-${idx}`} rev={rev} idx={idx} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function TestimonialsMarqueeSection() {
-  const reviews = [...reviewsData, ...reviewsData]; // Duplicated for smooth infinite loop
+  const base = reviewsData as AboutReview[];
+  const half = Math.floor(base.length / 2);
+  const rotated = [...base.slice(half), ...base.slice(0, half)];
+  const reversed = [...base].reverse();
 
   return (
     <section className="overflow-hidden bg-white py-16 sm:py-20">
@@ -1227,42 +1296,11 @@ function TestimonialsMarqueeSection() {
         </Reveal>
       </div>
 
-      {/* Infinite Animated Marquee Strip */}
-      <div className="group relative w-full overflow-hidden py-2">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-white to-transparent sm:w-32" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-white to-transparent sm:w-32" />
-
-        <div className="flex w-max gap-4 animate-marquee group-hover:[animation-play-state:paused] [animation-duration:40s]">
-          {reviews.map((rev, idx) => (
-            <div
-              key={`${rev.id}-${idx}`}
-              className="flex w-[290px] sm:w-[330px] shrink-0 flex-col justify-between rounded-2xl border border-slate-200 bg-surface-low p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-pri/40 hover:shadow-md hover:bg-white"
-            >
-              <div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-amber-500">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={13} fill="currentColor" />
-                    ))}
-                  </div>
-                  <span className="font-mono text-[10px] text-slate-400">{rev.date}</span>
-                </div>
-                <h4 className="font-heading mt-2.5 text-sm font-bold text-technavy line-clamp-1">
-                  “{rev.title}”
-                </h4>
-                <p className="mt-1 text-xs leading-relaxed text-slate-600 line-clamp-3">
-                  {rev.text}
-                </p>
-              </div>
-              <div className="mt-4 flex items-center justify-between border-t border-slate-200/80 pt-3 font-mono text-[11px]">
-                <span className="font-bold text-slate-800 truncate pr-2">{rev.name}</span>
-                <span className="shrink-0 rounded bg-white border border-slate-200 px-2 py-0.5 text-[10px] text-slate-600 font-semibold">
-                  {rev.productLabel}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* Tiga lajur marquee selang-seling: kanan → kiri → kanan */}
+      <div className="space-y-4">
+        <TestimonialRow items={base} label="Ulasan pembeli lajur 1" />
+        <TestimonialRow items={reversed} reverse label="Ulasan pembeli lajur 2" />
+        <TestimonialRow items={rotated} label="Ulasan pembeli lajur 3" />
       </div>
     </section>
   );
